@@ -1,4 +1,4 @@
-@ToolShare.Api_HostAddress = http://localhost:5137
+@ToolShare.Api_HostAddress = http://localhost:7171
 
 GET {{ToolShare.Api_HostAddress}}/weatherforecast/
 Accept: application/json
