@@ -12,8 +12,8 @@ namespace ToolShare.UI.Pages
         [Parameter]
         public string UserId { get; set;}    
 
-        public User User { get; set; } = new User();
-        public IEnumerable<User> Users { get; set; }
+        public AppUser User { get; set; } = new AppUser();
+        public IEnumerable<AppUser> Users { get; set; }
         public List<Pod> Pods { get; set; }
         public List<Tool> Tools { get; set; }
 
@@ -47,7 +47,7 @@ namespace ToolShare.UI.Pages
 
         private void InitializeUsers()
         {
-            var u1 = new User 
+            var u1 = new AppUser 
             {
                 UserId = "1",
                 UserName = "tomSmith",
@@ -58,7 +58,7 @@ namespace ToolShare.UI.Pages
                 PodId = 1,
             };
 
-            var u2 = new User 
+            var u2 = new AppUser 
             {
                 UserId = "2",
                 UserName = "bettySmith",
@@ -69,7 +69,7 @@ namespace ToolShare.UI.Pages
                 PodId = 2,
             };
 
-            Users = new List<User> { u1, u2 }; 
+            Users = new List<AppUser> { u1, u2 }; 
         }
     }
 }

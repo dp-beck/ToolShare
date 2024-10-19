@@ -43,8 +43,8 @@ namespace ToolShare.Api
                 return;
             }
 
-            var userStore = new UserStore<User>(context);
-            var password = new PasswordHasher<User>();
+            var userStore = new UserStore<AppUser>(context);
+            var password = new PasswordHasher<AppUser>();
 
             using var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
 
@@ -58,7 +58,7 @@ namespace ToolShare.Api
                 }   
             }
 
-            using var userManager = serviceProvider.GetRequiredService<UserManager<User>>();
+            using var userManager = serviceProvider.GetRequiredService<UserManager<AppUser>>();
 
             foreach (var seedUser in seedUsers)
             {
@@ -79,7 +79,7 @@ namespace ToolShare.Api
 
             await context.SaveChangesAsync();
         }
-        private class SeedUser : User
+        private class SeedUser : AppUser
         {
             public string[]? RoleList { get; set; }
         }

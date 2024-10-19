@@ -20,7 +20,7 @@ builder.Services.AddAuthentication(IdentityConstants.ApplicationScheme).AddIdent
 builder.Services.AddAuthorizationBuilder();
 
 // Add Identity and Opt in to API Endpoints
-builder.Services.AddIdentityCore<User>()
+builder.Services.AddIdentityCore<AppUser>()
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddApiEndpoints();
@@ -48,7 +48,7 @@ builder.Services.AddSwaggerGen();
 var app = builder.Build();
 
 //This is what creates the Identity endpoint routes
-app.MapIdentityApi<User>();
+app.MapIdentityApi<AppUser>();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -69,7 +69,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 // Log out endpoint
-app.MapPost("/logout", async (SignInManager<User> signInManager, [FromBody] object empty) =>
+app.MapPost("/logout", async (SignInManager<AppUser> signInManager, [FromBody] object empty) =>
 {
     if (empty is not null)
     {
