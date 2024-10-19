@@ -68,18 +68,6 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 
-// Log out endpoint
-app.MapPost("/logout", async (SignInManager<AppUser> signInManager, [FromBody] object empty) =>
-{
-    if (empty is not null)
-    {
-        await signInManager.SignOutAsync();
-        return Results.Ok();
-    }
-
-    return Results.Unauthorized();
-}).RequireAuthorization();
-
 // provide an endpoint for user roles
 app.MapGet("/roles", (ClaimsPrincipal user) =>
 {

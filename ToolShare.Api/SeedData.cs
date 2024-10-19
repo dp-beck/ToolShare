@@ -20,20 +20,19 @@ namespace ToolShare.Api
                 NormalizedEmail = "LEELA@CONTOSO.COM", 
                 NormalizedUserName = "LEELA@CONTOSO.COM", 
                 RoleList = [ "Administrator", "Manager" ], 
-                UserName = "leela@contoso.com"          
+                UserName = "Leela123"          
             },
 
             new SeedUser()
             {
-            Email = "harry@contoso.com",
-            NormalizedEmail = "HARRY@CONTOSO.COM",
-            NormalizedUserName = "HARRY@CONTOSO.COM",
-            RoleList = [ "User" ],
-            UserName = "harry@contoso.com"
+                Email = "harry@contoso.com",
+                NormalizedEmail = "HARRY@CONTOSO.COM",
+                NormalizedUserName = "HARRY@CONTOSO.COM",
+                RoleList = [ "User" ],
+                UserName = "Harry123"
             }
         ];
 
-        // TO DO: Write the InitializeAsync Method
         public static async Task InitializeAsync(IServiceProvider serviceProvider)
         {
             using var context = new ApplicationDbContext(serviceProvider.GetRequiredService<DbContextOptions<ApplicationDbContext>>());
