@@ -3,12 +3,14 @@ using System.Text.Json;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using ToolShare.Data;
 using ToolShare.Data.Dtos;
 using ToolShare.Data.DTOs;
 
 namespace ToolShare.Api.Controllers
 {
+    //TO DO: Rewrite to convert to using with SQLite Dbase
     [ApiController]
     [Route("api")]
     public class AccountController : ControllerBase
@@ -23,7 +25,26 @@ namespace ToolShare.Api.Controllers
 
         public string Index()
         {
-            return "test";
+            return "Works";
+        }
+
+        [HttpGet]
+        [Authorize]
+        [Route("users")]
+        public async Task<List<AppUserDto>> GetUsers()
+        {
+            var users = await _userManager.Users.ToListAsync();
+            var userDtos = users.Select(u => new AppUserDto
+            {
+                UserName = u.UserName,
+                Email = u.Email,
+                FirstName = u.FirstName,
+                LastName = u.LastName,
+                AboutMe = u.AboutMe,
+                ProfilePhotoUrl = u.ProfilePhotoUrl
+            }).ToList();
+
+            return userDtos;
         }
 
         [HttpGet]

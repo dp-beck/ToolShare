@@ -7,11 +7,11 @@ using ToolShare.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
+var connectionString = 
+    builder.Configuration.GetConnectionString("ToolShare") ?? "Data Source=../ToolShare.Data/ToolShare.db";
+
 // Add the Database
-// TO DO: Switch to SQLITE
-builder.Services.AddDbContext<ApplicationDbContext>(
-    options => options.UseInMemoryDatabase("AppDb")
-);
+builder.Services.AddSqlite<ApplicationDbContext>(connectionString);
 
 // Add Authentication with Cookies
 builder.Services.AddAuthentication(IdentityConstants.ApplicationScheme).AddIdentityCookies();
@@ -54,8 +54,8 @@ app.MapIdentityApi<AppUser>();
 if (app.Environment.IsDevelopment())
 {
     // Seed the Database
-    await using var scope = app.Services.CreateAsyncScope();
-    await SeedData.InitializeAsync(scope.ServiceProvider);
+    // await using var scope = app.Services.CreateAsyncScope();
+    // await SeedData.InitializeAsync(scope.ServiceProvider);
     
     app.UseOpenApi();
     app.UseSwaggerUI();
