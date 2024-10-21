@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 
-namespace ToolShare.Data;
+namespace ToolShare.Data.Models;
 
 public class AppUser : IdentityUser
 {
@@ -8,7 +9,10 @@ public class AppUser : IdentityUser
     public string? LastName { get; set;}
     public string? AboutMe { get; set; }
     public string? ProfilePhotoUrl { get; set; }
-    public int PodId { get; set; }
     public DateTime CreatedAt { get; } = DateTime.Now;
+    public ICollection<Tool> ToolsOwned { get; set; } = new List<Tool>();
+    public ICollection<Tool> ToolsBorrowed { get; set; } = new List<Tool>();
+    public ICollection<Share> Shares{ get; set; } = new List<Share>();
+    public Pod? Pod { get; set; }
 
 }

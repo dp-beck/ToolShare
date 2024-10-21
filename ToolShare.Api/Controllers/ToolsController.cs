@@ -10,10 +10,10 @@ namespace ToolShare.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class ToolController : ControllerBase
+    public class ToolsController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
-        public ToolController(ApplicationDbContext context)
+        public ToolsController(ApplicationDbContext context)
         {
             _context = context;
         }
