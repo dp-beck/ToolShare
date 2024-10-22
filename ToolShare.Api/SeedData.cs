@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using ToolShare.Data;
+using ToolShare.Data.Models;
 using YamlDotNet.Serialization;
 
 namespace ToolShare.Api

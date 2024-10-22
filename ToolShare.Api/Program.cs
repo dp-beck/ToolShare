@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ToolShare.Api;
 using ToolShare.Data;
+using ToolShare.Data.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 

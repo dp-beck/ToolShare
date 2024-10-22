@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using ToolShare.Data;
+using ToolShare.Data.Models;
 using ToolShare.Data.Dtos;
 using ToolShare.Data.DTOs;
 
@@ -13,11 +13,11 @@ namespace ToolShare.Api.Controllers
     //TO DO: Rewrite to convert to using with SQLite Dbase
     [ApiController]
     [Route("api")]
-    public class AccountController : ControllerBase
+    public class UsersController : ControllerBase
     {
         private readonly UserManager<AppUser> _userManager;
         private readonly SignInManager<AppUser> _signInManager;
-        public AccountController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager)
+        public UsersController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager)
         {
             _userManager = userManager;
             _signInManager = signInManager;
