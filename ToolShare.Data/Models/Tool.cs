@@ -19,16 +19,17 @@ namespace ToolShare.Data
         
         public int BorrowingPeriodInDays { get; set; }
         public ToolStatus ToolStatus { get; set; } = ToolStatus.AvailableForBorrowing;
-        public int OwnerId { get; set; }
+        public string OwnerId { get; set; }
 
         [Required]
         public AppUser ToolOwner { get; set; }
         
-        public int? BorrowerId { get; set; }
+        public string? BorrowerId { get; set; }
         
         public AppUser? ToolBorrower { get; set; }
         
         public DateTime CreatedAt { get; set; }
+        public DateOnly DateDue { get; set; }
 
     }
 }

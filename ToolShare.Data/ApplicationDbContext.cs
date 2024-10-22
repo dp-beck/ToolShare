@@ -13,7 +13,8 @@ namespace ToolShare.Data
     {
         public DbSet<Tool> Tools { get; set; }
         public DbSet<Pod> Pods { get; set; }
-        public DbSet<Share> Shares { get; set; }
+        public DbSet<JoinPodRequest> JoinPodRequests { get; set; }
+        public DbSet<ShareRequest> ShareRequests{ get; set; }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) :
             base(options)
@@ -23,6 +24,8 @@ namespace ToolShare.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder);
+            
             modelBuilder.Entity<AppUser>()
                 .HasMany(a => a.ToolsOwned)
                 .WithOne(t => t.ToolOwner)
@@ -33,6 +36,12 @@ namespace ToolShare.Data
                 .HasMany(a => a.ToolsBorrowed)
                 .WithOne(t => t.ToolBorrower)
                 .HasForeignKey(t => t.BorrowerId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Pod>()
+                .HasMany(p => p.PodMembers)
+                .WithOne(a => a.Pod)
+                .HasForeignKey(a => a.PodId)
                 .OnDelete(DeleteBehavior.Cascade);
         }
 

@@ -11,8 +11,8 @@ namespace ToolShare.Data.Models
         [Key]
         public int PodId { get; set; }
         public string? Name { get; set; }  
-        public int PodManagerId { get; set; }
+        public string PodManagerId { get; set; }
         public AppUser PodManager { get; set; }
-        public ICollection<AppUser> AppUsers { get; set; } = new List<AppUser>();
+        public ICollection<AppUser> PodMembers { get; set; } = new List<AppUser>();
     }
 }

@@ -13,11 +13,11 @@ namespace ToolShare.Data.Models
         [Required]
         public Tool ToolRequested { get; set; }
 
-        public int ToolOwnerId { get; set; }
+        public string ToolOwnerId { get; set; }
         [Required]
         public AppUser ToolOwner { get; set; }
 
-        public int ToolRequestorId { get; set; }
+        public string ToolRequestorId { get; set; }
         [Required]
         public AppUser ToolRequestor { get; set; }
 
