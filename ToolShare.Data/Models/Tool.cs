@@ -18,7 +18,7 @@ namespace ToolShare.Data
         public string? Description { get; set; }
         
         public int BorrowingPeriodInDays { get; set; }
-        
+        public ToolStatus ToolStatus { get; set; } = ToolStatus.AvailableForBorrowing;
         public int OwnerId { get; set; }
 
         [Required]

@@ -11,7 +11,7 @@ namespace ToolShare.Data.Models
         [Key]
         public int ShareId { get; set; }
         
-        public int ToolSharedId { get; set; }
+        public int ToolShareId { get; set; }
         [Required]
         public Tool ToolShared { get; set; }
 
