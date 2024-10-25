@@ -2,20 +2,26 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using ToolShare.Api.Dtos;
 using ToolShare.Data;
+using ToolShare.Data.Models;
 
 //TO DO: Rewrite to use Repository Architecture -- Written this way just to test things 
 namespace ToolShare.Api.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/users/{username}/[controller]")]
     public class ToolsController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
-        public ToolsController(ApplicationDbContext context)
+        private readonly UserManager<AppUser> _userManager;
+
+        public ToolsController(ApplicationDbContext context, UserManager<AppUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         [HttpGet]
@@ -25,12 +31,23 @@ namespace ToolShare.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateTool([FromBody] Tool tool)
+        public async Task<ActionResult<Tool>> CreateTool(string username, [FromBody] ToolDto toolDto)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
+            var user = await _userManager.FindByNameAsync(username);
+            if (user == null) return BadRequest("User not found");
+
+            Tool tool = new Tool
+            {
+                Name = toolDto.Name,
+                Description = toolDto.Description,
+                BorrowingPeriodInDays = toolDto.BorrowingPeriodInDays,  
+            };
+
+            tool.ToolOwner = user;
 
             _context.Tools.Add(tool);
             await _context.SaveChangesAsync();

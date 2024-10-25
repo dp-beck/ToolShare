@@ -10,7 +10,7 @@ using ToolShare.Api.Dtos;
 namespace ToolShare.Api.Controllers
 {
     [ApiController]
-    [Route("api")]
+    [Route("api/users")]
     public class UsersController : ControllerBase
     {
         private readonly UserManager<AppUser> _userManager;
@@ -21,14 +21,8 @@ namespace ToolShare.Api.Controllers
             _signInManager = signInManager;
         }
 
-        public string Index()
-        {
-            return "Works";
-        }
-        
         [HttpGet]
         [Authorize]
-        [Route("users")]
         public async Task<List<AppUserDto>> GetAllUsers()
         {
             var users = await _userManager.Users.ToListAsync();
@@ -46,7 +40,7 @@ namespace ToolShare.Api.Controllers
         }
 
         [HttpGet]
-        [Route("userinfo")]
+        [Route("info")]
         [Authorize]
         public async Task<AppUserDto> GetCurrentUserInfo()
         {
@@ -66,7 +60,7 @@ namespace ToolShare.Api.Controllers
         }
 
         [HttpGet]
-        [Route("userinfo/{username}")]
+        [Route("info/{username}")]
         [Authorize]
         public async Task<AppUserDto> GetUserInfoByUsername(string username)
         {
