@@ -26,12 +26,6 @@ namespace ToolShare.Api.Controllers
             return "Works";
         }
         
-        // GETS
-
-        // TO DO:
-        // Get single by Id
-        // Get List by Pod
-
         [HttpGet]
         [Authorize]
         [Route("users")]
@@ -71,7 +65,24 @@ namespace ToolShare.Api.Controllers
             return appUserDto;
         }
 
-        // POSTS
+        [HttpGet]
+        [Route("userinfo/{username}")]
+        [Authorize]
+        public async Task<AppUserDto> GetUserInfoByUsername(string username)
+        {
+            var appUser = await _userManager.FindByNameAsync(username);
+            var appUserDto = new AppUserDto
+            {
+                UserName = appUser.UserName,
+                Email = appUser.Email,
+                FirstName = appUser.FirstName,
+                LastName = appUser.LastName,
+                AboutMe = appUser.AboutMe,
+                ProfilePhotoUrl = appUser.ProfilePhotoUrl,
+            };
+            
+            return appUserDto;
+        }
 
         [HttpPost]   
         [Route("register")]
@@ -124,7 +135,6 @@ namespace ToolShare.Api.Controllers
             return Results.Unauthorized();
         }
 
-        // Puts
         [HttpPut]
         [Route("change-password")]
         [Authorize]
@@ -141,7 +151,6 @@ namespace ToolShare.Api.Controllers
             return BadRequest(new {Errors = result.Errors});
         }
 
-        // Update User Info
         [HttpPut]
         [Route("update")]
         [Authorize]
@@ -165,7 +174,6 @@ namespace ToolShare.Api.Controllers
  
         }
 
-        // Delete
         [HttpDelete]
         [Route("delete")]
         [Authorize]
