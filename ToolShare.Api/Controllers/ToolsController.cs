@@ -19,7 +19,7 @@ namespace ToolShare.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllProducts()
+        public async Task<IActionResult> GetAllTools()
         {
             return Ok(_context.Tools.ToList());
         }
