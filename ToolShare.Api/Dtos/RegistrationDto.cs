@@ -3,15 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ToolShare.Data.Dtos
+namespace ToolShare.Api.Dtos
 {
-    public class AppUserDto
+    public class RegistrationDto
     {
         public string UserName { get; set; }
         public string Email { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
-        public string AboutMe { get; set; }
-        public string ProfilePhotoUrl { get; set; }        
+        public string Password { get; set; }
     }
 }

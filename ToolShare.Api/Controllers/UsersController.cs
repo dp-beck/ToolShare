@@ -5,18 +5,16 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ToolShare.Data.Models;
-using ToolShare.Data.Dtos;
-using ToolShare.Data.DTOs;
+using ToolShare.Api.Dtos;
 
 namespace ToolShare.Api.Controllers
 {
-    //TO DO: Rewrite to convert to using with SQLite Dbase
     [ApiController]
     [Route("api")]
     public class UsersController : ControllerBase
     {
         private readonly UserManager<AppUser> _userManager;
-        private readonly SignInManager<AppUser> _signInManager;
+        private readonly SignInManager<AppUser> _signInManager; // will remove once I finish making the repository
         public UsersController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager)
         {
             _userManager = userManager;
@@ -27,11 +25,17 @@ namespace ToolShare.Api.Controllers
         {
             return "Works";
         }
+        
+        // GETS
+
+        // TO DO:
+        // Get single by Id
+        // Get List by Pod
 
         [HttpGet]
         [Authorize]
         [Route("users")]
-        public async Task<List<AppUserDto>> GetUsers()
+        public async Task<List<AppUserDto>> GetAllUsers()
         {
             var users = await _userManager.Users.ToListAsync();
             var userDtos = users.Select(u => new AppUserDto
@@ -50,7 +54,7 @@ namespace ToolShare.Api.Controllers
         [HttpGet]
         [Route("userinfo")]
         [Authorize]
-        public async Task<AppUserDto> GetUserInfo()
+        public async Task<AppUserDto> GetCurrentUserInfo()
         {
             var user = HttpContext.User;
             var appUser = await _userManager.GetUserAsync(user);
@@ -67,19 +71,21 @@ namespace ToolShare.Api.Controllers
             return appUserDto;
         }
 
+        // POSTS
+
         [HttpPost]   
         [Route("register")]
-         public async Task<IActionResult> Register([FromBody] RegistrationDto model)
+         public async Task<IActionResult> Register([FromBody] RegistrationDto registrationDto)
         {
             var user = new AppUser
             {
-                UserName = model.UserName,
-                Email = model.Email,
-                FirstName = model.FirstName,
-                LastName = model.LastName,
+                UserName = registrationDto.UserName,
+                Email = registrationDto.Email,
+                FirstName = registrationDto.FirstName,
+                LastName = registrationDto.LastName,
             };
 
-            var result = await _userManager.CreateAsync(user, model.Password);
+            var result = await _userManager.CreateAsync(user, registrationDto.Password);
 
             if (result.Succeeded)
             {
@@ -90,7 +96,7 @@ namespace ToolShare.Api.Controllers
 
         [HttpPost]
         [Route("login")]
-        public async Task<IResult> Login([FromBody] LoginRequestDto login, [FromQuery] bool? useCookies, [FromQuery] bool? useSessionCookies)
+        public async Task<IActionResult> Login([FromBody] LoginRequestDto login, [FromQuery] bool? useCookies, [FromQuery] bool? useSessionCookies)
         {
             var useCookieScheme = (useCookies == true) || (useSessionCookies == true);
             var isPersistent = (useCookies == true) && (useSessionCookies != true);
@@ -100,11 +106,9 @@ namespace ToolShare.Api.Controllers
 
             if (!result.Succeeded)
             {
-                return TypedResults.Problem(result.ToString(), statusCode: StatusCodes.Status401Unauthorized);
+                return BadRequest(new {Errors = result });
             }
-
-            // The signInManager already produced the needed response in the form of a cookie or bearer token.
-            return TypedResults.Empty;
+            return Ok(new { Message = "Login successful"});
         }
 
         [HttpPost]   
@@ -118,6 +122,49 @@ namespace ToolShare.Api.Controllers
                 return Results.Ok();
             }
             return Results.Unauthorized();
+        }
+
+        // Puts
+        [HttpPut]
+        [Route("change-password")]
+        [Authorize]
+        public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordDto changePasswordDto)
+        {
+            var currentUser = await _userManager.GetUserAsync(HttpContext.User);
+            var result = await _userManager.ChangePasswordAsync(currentUser, changePasswordDto.CurrentPassword, changePasswordDto.NewPassword);
+
+            if (result.Succeeded)
+            {
+                return Ok(new { Message = "Password change sucessful"});
+            }
+
+            return BadRequest(new {Errors = result.Errors});
+        }
+
+        // Update User Info
+        [HttpPut]
+        [Route("update")]
+        [Authorize]
+        public async Task<IActionResult> UpdateUser()
+        {
+            throw new NotImplementedException();
+        }
+
+        // Delete
+        [HttpDelete]
+        [Route("delete")]
+        [Authorize]
+        public async Task<IResult> Delete([FromBody] object empty)
+        {
+            if (empty is not null)
+            {   
+                var currentUser = await _userManager.GetUserAsync(HttpContext.User);
+                await _userManager.DeleteAsync(currentUser);
+                return Results.Ok();
+            }
+            
+            return Results.Unauthorized();
+
         }
     }
 
