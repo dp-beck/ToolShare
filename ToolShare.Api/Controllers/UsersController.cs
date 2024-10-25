@@ -145,20 +145,36 @@ namespace ToolShare.Api.Controllers
         [HttpPut]
         [Route("update")]
         [Authorize]
-        public async Task<IActionResult> UpdateUser()
+        public async Task<IActionResult> UpdateUser(AppUserDto appUserDto)
         {
-            throw new NotImplementedException();
+            var currentUser = await _userManager.GetUserAsync(HttpContext.User);
+            currentUser.UserName = appUserDto.UserName;
+            currentUser.AboutMe = appUserDto.AboutMe;
+            currentUser.Email = appUserDto.Email;
+            currentUser.FirstName = appUserDto.FirstName;
+            currentUser.LastName = appUserDto.LastName;
+            currentUser.ProfilePhotoUrl = appUserDto.ProfilePhotoUrl;
+
+            var result = _userManager.UpdateAsync(currentUser);
+            if (result.IsCompletedSuccessfully)
+            {
+                return Ok(new{ Message = "User Update Successful"});
+            }
+
+            return BadRequest(new {Errors = result.Result});
+ 
         }
 
         // Delete
         [HttpDelete]
         [Route("delete")]
         [Authorize]
-        public async Task<IResult> Delete([FromBody] object empty)
+        public async Task<IResult> Delete()
         {
-            if (empty is not null)
+            var currentUser = await _userManager.GetUserAsync(HttpContext.User);
+
+            if (currentUser is not null)
             {   
-                var currentUser = await _userManager.GetUserAsync(HttpContext.User);
                 await _userManager.DeleteAsync(currentUser);
                 return Results.Ok();
             }
