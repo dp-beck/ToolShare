@@ -23,8 +23,10 @@ namespace ToolShare.Api.Controllers
 
         [HttpGet]
         [Authorize]
-        public async Task<List<AppUserDto>> GetAllUsers()
+        public async Task<ActionResult<List<AppUserDto>>> GetAllUsers()
         {
+            try 
+            {
             var users = await _userManager.Users.ToListAsync();
             var userDtos = users.Select(u => new AppUserDto
             {
@@ -37,13 +39,20 @@ namespace ToolShare.Api.Controllers
             }).ToList();
 
             return userDtos;
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e);
+            }
         }
 
         [HttpGet]
         [Route("info")]
         [Authorize]
-        public async Task<AppUserDto> GetCurrentUserInfo()
+        public async Task<ActionResult<AppUserDto>> GetCurrentUserInfo()
         {
+            try
+            {
             var user = HttpContext.User;
             var appUser = await _userManager.GetUserAsync(user);
             var appUserDto = new AppUserDto
@@ -57,14 +66,22 @@ namespace ToolShare.Api.Controllers
             };
             
             return appUserDto;
+            } catch (Exception e)
+            {
+                return BadRequest(e);
+            }
         }
 
         [HttpGet]
         [Route("info/{username}")]
         [Authorize]
-        public async Task<AppUserDto> GetUserInfoByUsername(string username)
+        public async Task<ActionResult<AppUserDto>> GetUserInfoByUsername(string username)
         {
             var appUser = await _userManager.FindByNameAsync(username);
+
+            if (appUser is null)
+                return BadRequest(new { message = "User not found" });
+
             var appUserDto = new AppUserDto
             {
                 UserName = appUser.UserName,
@@ -109,24 +126,27 @@ namespace ToolShare.Api.Controllers
 
             var result = await _signInManager.PasswordSignInAsync(login.UserName, login.Password, isPersistent, lockoutOnFailure: false);
 
-            if (!result.Succeeded)
+            if (result.Succeeded)
             {
-                return BadRequest(new {Errors = result });
+                return Ok(new { Message = "Login successful."});
             }
-            return Ok(new { Message = "Login successful"});
+            
+            return BadRequest(new { Message = "Login unsucessful. Either the password or username is incorrect."} );
         }
 
         [HttpPost]   
         [Route("logout")]
         [Authorize]
-         public async Task<IResult> Logout([FromBody] object empty)
+        public async Task<IResult> Logout()
         {
-            if (empty is not null)
+            try
             {
                 await _signInManager.SignOutAsync();
                 return Results.Ok();
+            } catch (Exception e)
+            {
+                return Results.BadRequest(e);
             }
-            return Results.Unauthorized();
         }
 
         [HttpPut]
@@ -171,18 +191,19 @@ namespace ToolShare.Api.Controllers
         [HttpDelete]
         [Route("delete")]
         [Authorize]
-        public async Task<IResult> Delete()
+        public async Task<IActionResult> Delete()
         {
             var currentUser = await _userManager.GetUserAsync(HttpContext.User);
 
-            if (currentUser is not null)
-            {   
-                await _userManager.DeleteAsync(currentUser);
-                return Results.Ok();
-            }
-            
-            return Results.Unauthorized();
+            if (currentUser is null)
+               return BadRequest(new{ Message = "There is no current user to delete."});
 
+            var result = await _userManager.DeleteAsync(currentUser);
+
+            if (result.Succeeded)
+                return Ok(new { Message = "Current user deleted sucessfully."});
+            
+            return BadRequest(new { Errors = result.Errors});
         }
     }
 
