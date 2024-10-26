@@ -65,6 +65,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
 builder.Services.AddScoped<IToolsRepository, ToolsRepository>();
+builder.Services.AddScoped<IPodsRepository, PodsRepository>();
 
 var app = builder.Build();
 
