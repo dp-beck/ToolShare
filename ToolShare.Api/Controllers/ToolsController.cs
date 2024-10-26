@@ -4,9 +4,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using ToolShare.Api.Dtos;
 using ToolShare.Data;
 using ToolShare.Data.Models;
+using ToolShare.Data.Repositories;
 
 //TO DO: Rewrite to use Repository Architecture -- Written this way just to test things 
 namespace ToolShare.Api.Controllers
@@ -17,17 +19,21 @@ namespace ToolShare.Api.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<AppUser> _userManager;
+        private readonly IToolsRepository _toolsRepository;
 
-        public ToolsController(ApplicationDbContext context, UserManager<AppUser> userManager)
+        public ToolsController(ApplicationDbContext context, 
+            UserManager<AppUser> userManager,
+            IToolsRepository toolsRepository)
         {
             _context = context;
             _userManager = userManager;
+            _toolsRepository = toolsRepository;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAllTools()
         {
-            return Ok(_context.Tools.ToList());
+            return Ok(await _toolsRepository.GetAllTools());
         }
 
         [HttpPost]

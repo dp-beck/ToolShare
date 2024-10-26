@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using ToolShare.Api;
 using ToolShare.Data;
 using ToolShare.Data.Models;
+using ToolShare.Data.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -62,6 +63,8 @@ builder.Services.AddControllers().AddJsonOptions(x =>
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
+
+builder.Services.AddScoped<IToolsRepository, ToolsRepository>();
 
 var app = builder.Build();
 
