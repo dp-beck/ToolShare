@@ -1,3 +1,4 @@
+using System.Reflection;
 using System.Security.Claims;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Identity;
@@ -27,6 +28,17 @@ builder.Services.AddIdentityCore<AppUser>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddApiEndpoints();
 
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.LoginPath = "/api/users/login";
+    options.Events.OnRedirectToLogin = context => 
+    {
+        context.Response.StatusCode = 401; // Unauthorized
+        return Task.CompletedTask;
+    };
+});
+    
+
 // Add a CORS Policy
 builder.Services.AddCors(
     options => options.AddPolicy(
@@ -49,10 +61,9 @@ builder.Services.AddControllers().AddJsonOptions(x =>
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddSwaggerGen();
 
-var app = builder.Build();
+builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
-//This is what creates the Identity endpoint routes
-app.MapIdentityApi<AppUser>();
+var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

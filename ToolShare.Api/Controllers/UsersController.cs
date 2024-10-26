@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ToolShare.Data.Models;
 using ToolShare.Api.Dtos;
+using AutoMapper;
 
 namespace ToolShare.Api.Controllers
 {
@@ -14,11 +15,16 @@ namespace ToolShare.Api.Controllers
     public class UsersController : ControllerBase
     {
         private readonly UserManager<AppUser> _userManager;
-        private readonly SignInManager<AppUser> _signInManager; // will remove once I finish making the repository
-        public UsersController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager)
+        private readonly SignInManager<AppUser> _signInManager;
+        private readonly IMapper _mapper;
+        public UsersController(UserManager<AppUser> userManager, 
+            SignInManager<AppUser> signInManager,
+            IMapper mapper
+        )
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _mapper = mapper;
         }
 
         [HttpGet]
@@ -28,16 +34,7 @@ namespace ToolShare.Api.Controllers
             try 
             {
             var users = await _userManager.Users.ToListAsync();
-            var userDtos = users.Select(u => new AppUserDto
-            {
-                UserName = u.UserName,
-                Email = u.Email,
-                FirstName = u.FirstName,
-                LastName = u.LastName,
-                AboutMe = u.AboutMe,
-                ProfilePhotoUrl = u.ProfilePhotoUrl
-            }).ToList();
-
+            List<AppUserDto> userDtos = _mapper.Map<List<AppUserDto>>(users);
             return userDtos;
             }
             catch (Exception e)
