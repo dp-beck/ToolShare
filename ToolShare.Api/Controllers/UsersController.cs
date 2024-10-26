@@ -52,16 +52,8 @@ namespace ToolShare.Api.Controllers
             {
             var user = HttpContext.User;
             var appUser = await _userManager.GetUserAsync(user);
-            var appUserDto = new AppUserDto
-            {
-                UserName = appUser.UserName,
-                Email = appUser.Email,
-                FirstName = appUser.FirstName,
-                LastName = appUser.LastName,
-                AboutMe = appUser.AboutMe,
-                ProfilePhotoUrl = appUser.ProfilePhotoUrl,
-            };
-            
+            AppUserDto appUserDto = _mapper.Map<AppUserDto>(appUser);
+                        
             return appUserDto;
             } catch (Exception e)
             {
@@ -79,15 +71,7 @@ namespace ToolShare.Api.Controllers
             if (appUser is null)
                 return BadRequest(new { message = "User not found" });
 
-            var appUserDto = new AppUserDto
-            {
-                UserName = appUser.UserName,
-                Email = appUser.Email,
-                FirstName = appUser.FirstName,
-                LastName = appUser.LastName,
-                AboutMe = appUser.AboutMe,
-                ProfilePhotoUrl = appUser.ProfilePhotoUrl,
-            };
+            AppUserDto appUserDto = _mapper.Map<AppUserDto>(appUser);
             
             return appUserDto;
         }
