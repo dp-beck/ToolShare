@@ -39,7 +39,7 @@ namespace ToolShare.Api.Controllers
                 Name = podDto.Name
             };
 
-            pod.PodManager = appUser;
+            pod.PodMembers.Add(appUser);
             await _podsRepository.CreatePod(pod);
             
             return CreatedAtAction(nameof(InitializeNewPod), new { podId = pod.PodId }, pod);
