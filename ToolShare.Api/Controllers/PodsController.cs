@@ -55,13 +55,11 @@ namespace ToolShare.Api.Controllers
             return CreatedAtAction(nameof(InitializeNewPod), new { podId = pod.PodId }, pod);
 
         }
-        
-        /*
-        // FIX ME: NEED TO FINISH
-        [HttpPost]
+
+        [HttpPut]
         [Authorize(Roles = "PodManager")]
         [Route("{podId}")]
-        public async Task<IActionResult> AddUserToPod(int podId, [FromBody] AppUserDto requestorDto)
+        public async Task<IActionResult> AddUserToPod(int podId, [FromBody] string requesterId)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -72,9 +70,12 @@ namespace ToolShare.Api.Controllers
             if (currentUser.PodId != podId)
                 return StatusCode(401);
 
-            ...
+            var pod = await _podsRepository.GetByIdAsync(podId);
+            var requester = await _userManager.FindByIdAsync(requesterId);
 
+            _podsRepository.AddUserToPod(requester, pod);
+
+            return Ok(new { Message = "User added to pod." });
         }
-        */
     }
 }

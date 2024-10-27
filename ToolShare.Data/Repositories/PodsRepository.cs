@@ -21,9 +21,16 @@ namespace ToolShare.Data.Repositories
             _context = context;
             _userManager = userManager;
         }
+        
         public async Task CreatePod(Pod pod)
         {
             await _context.Pods.AddAsync(pod);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task AddUserToPod(AppUser appUser, Pod pod)
+        {
+            pod.PodMembers.Add(appUser);
             await _context.SaveChangesAsync();
         }
     }
