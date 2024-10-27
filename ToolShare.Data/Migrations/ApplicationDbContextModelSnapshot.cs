@@ -239,7 +239,7 @@ namespace ToolShare.Data.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("RequestorId")
+                    b.Property<string>("RequesterId")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
@@ -249,7 +249,7 @@ namespace ToolShare.Data.Migrations
 
                     b.HasIndex("PodManagerId");
 
-                    b.HasIndex("RequestorId");
+                    b.HasIndex("RequesterId");
 
                     b.ToTable("JoinPodRequests");
                 });
@@ -287,7 +287,7 @@ namespace ToolShare.Data.Migrations
                     b.Property<int>("ToolRequestedToolId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("ToolRequestorId")
+                    b.Property<string>("ToolRequesterId")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
@@ -297,7 +297,7 @@ namespace ToolShare.Data.Migrations
 
                     b.HasIndex("ToolRequestedToolId");
 
-                    b.HasIndex("ToolRequestorId");
+                    b.HasIndex("ToolRequesterId");
 
                     b.ToTable("ShareRequests");
                 });
@@ -418,9 +418,9 @@ namespace ToolShare.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ToolShare.Data.Models.AppUser", "Requestor")
+                    b.HasOne("ToolShare.Data.Models.AppUser", "Requester")
                         .WithMany()
-                        .HasForeignKey("RequestorId")
+                        .HasForeignKey("RequesterId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -428,7 +428,7 @@ namespace ToolShare.Data.Migrations
 
                     b.Navigation("RequestedPod");
 
-                    b.Navigation("Requestor");
+                    b.Navigation("Requester");
                 });
 
             modelBuilder.Entity("ToolShare.Data.Models.ShareRequest", b =>
@@ -445,9 +445,9 @@ namespace ToolShare.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ToolShare.Data.Models.AppUser", "ToolRequestor")
+                    b.HasOne("ToolShare.Data.Models.AppUser", "ToolRequester")
                         .WithMany()
-                        .HasForeignKey("ToolRequestorId")
+                        .HasForeignKey("ToolRequesterId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -455,7 +455,7 @@ namespace ToolShare.Data.Migrations
 
                     b.Navigation("ToolRequested");
 
-                    b.Navigation("ToolRequestor");
+                    b.Navigation("ToolRequester");
                 });
 
             modelBuilder.Entity("ToolShare.Data.Tool", b =>
