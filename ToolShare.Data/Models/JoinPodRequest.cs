@@ -10,9 +10,9 @@ namespace ToolShare.Data.Models
     {
         [Key]
         public int JoinPodRequestId { get; set; }
-        public string RequestorId { get; set; }
+        public string RequesterId { get; set; }
         [Required]
-        public AppUser Requestor { get; set; }
+        public AppUser Requester { get; set; }
         public int PodId { get; set; }
         public Pod RequestedPod { get; set; }
 

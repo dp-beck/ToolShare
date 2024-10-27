@@ -17,9 +17,9 @@ namespace ToolShare.Data.Models
         [Required]
         public AppUser ToolOwner { get; set; }
 
-        public string ToolRequestorId { get; set; }
+        public string ToolRequesterId { get; set; }
         [Required]
-        public AppUser ToolRequestor { get; set; }
+        public AppUser ToolRequester { get; set; }
 
         public DateTime DateRequested { get; set; } = DateTime.Today;
         
