@@ -8,12 +8,13 @@ using ToolShare.Data.Models;
 
 namespace ToolShare.Data.Repositories
 {
-    public class ToolsRepository : IToolsRepository
+    public class ToolsRepository : GenericRepository<Tool>, IToolsRepository
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<AppUser> _userManager;
 
-        public ToolsRepository(ApplicationDbContext context, UserManager<AppUser> userManager)
+        public ToolsRepository(ApplicationDbContext context, 
+            UserManager<AppUser> userManager) : base(context)
         {
             _context = context;
             _userManager = userManager;
@@ -22,11 +23,6 @@ namespace ToolShare.Data.Repositories
         public Task CreateTool()
         {
             throw new NotImplementedException();
-        }
-
-        public async Task<List<Tool>> GetAllTools()
-        {
-            return await _context.Tools.ToListAsync();
         }
     }
 }

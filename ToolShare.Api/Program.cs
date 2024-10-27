@@ -69,6 +69,14 @@ builder.Services.AddScoped<IPodsRepository, PodsRepository>();
 
 var app = builder.Build();
 
+// Coonfigure Roles for Authorization
+using (var scope = app.Services.CreateScope())
+{
+    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+    if (!await roleManager.RoleExistsAsync("PodManager"))
+        await roleManager.CreateAsync(new IdentityRole("PodManager"));
+}
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {

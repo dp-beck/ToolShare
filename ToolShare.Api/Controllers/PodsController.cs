@@ -24,6 +24,13 @@ namespace ToolShare.Api.Controllers
             _userManager = userManager;
         }
 
+        [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> GetAllPods()
+        {
+            return Ok(await _podsRepository.GetAllAsync());
+        }
+
         [HttpPost]
         [Authorize]
         public async Task<IActionResult> InitializeNewPod([FromBody] PodDto podDto)
@@ -40,10 +47,34 @@ namespace ToolShare.Api.Controllers
             };
 
             pod.PodMembers.Add(appUser);
+
+            _userManager.AddToRoleAsync(appUser, "PodManager");
+
             await _podsRepository.CreatePod(pod);
             
             return CreatedAtAction(nameof(InitializeNewPod), new { podId = pod.PodId }, pod);
 
         }
+        
+        /*
+        // FIX ME: NEED TO FINISH
+        [HttpPost]
+        [Authorize(Roles = "PodManager")]
+        [Route("{podId}")]
+        public async Task<IActionResult> AddUserToPod(int podId, [FromBody] AppUserDto requestorDto)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+            
+            var user = HttpContext.User;
+            var currentUser = await _userManager.GetUserAsync(user);
+
+            if (currentUser.PodId != podId)
+                return StatusCode(401);
+
+            ...
+
+        }
+        */
     }
 }

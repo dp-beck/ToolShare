@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 
 namespace ToolShare.Data.Repositories
 {
-    public interface IToolsRepository : IRepository<Tool>
+    public interface IRepository<T> where T : class
     {
-        public Task CreateTool();
+        public Task<IEnumerable<T>> GetAllAsync();
     }
 }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using ToolShare.Data;
+using ToolShare.Data.Models;
 
 namespace ToolShare.UI.Pages
 {
@@ -22,7 +23,7 @@ namespace ToolShare.UI.Pages
             InitializeUsers();
             InitializePods();
             InitializeTools();
-            User = Users.FirstOrDefault(u => u.UserId == UserId);
+            User = Users.FirstOrDefault(u => u.Id == UserId);
 
             return base.OnInitializedAsync();
         }
