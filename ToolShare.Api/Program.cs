@@ -66,6 +66,7 @@ builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
 builder.Services.AddScoped<IToolsRepository, ToolsRepository>();
 builder.Services.AddScoped<IPodsRepository, PodsRepository>();
+builder.Services.AddScoped<IJoinPodRequestsRepository, JoinPodRequestsRepository>();
 
 var app = builder.Build();
 
@@ -73,8 +74,13 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-    if (!await roleManager.RoleExistsAsync("PodManager"))
-        await roleManager.CreateAsync(new IdentityRole("PodManager"));
+    string[] roles = ["NoPodUser", "User", "PodManager"];
+
+    foreach (var role in roles)
+    {
+        if (!await roleManager.RoleExistsAsync(role))
+            await roleManager.CreateAsync(new IdentityRole(role));
+    }
 }
 
 // Configure the HTTP request pipeline.

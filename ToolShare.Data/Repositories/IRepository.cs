@@ -8,6 +8,7 @@ namespace ToolShare.Data.Repositories
     public interface IRepository<T> where T : class
     {
         public Task<IEnumerable<T>> GetAllAsync();
-        public Task<T> GetByIdAsync(int id);
+        public Task<T?> GetByIdAsync(int id);
+        public Task CreateAsync(T entity);
     }
 }

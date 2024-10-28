@@ -32,7 +32,7 @@ namespace ToolShare.Api.Controllers
         }
 
         [HttpPost]
-        [Authorize]
+        [Authorize(Roles = "NoPodUser")]
         public async Task<IActionResult> InitializeNewPod([FromBody] PodDto podDto)
         {
             if (!ModelState.IsValid)
@@ -53,7 +53,6 @@ namespace ToolShare.Api.Controllers
             await _podsRepository.CreatePod(pod);
             
             return CreatedAtAction(nameof(InitializeNewPod), new { podId = pod.PodId }, pod);
-
         }
 
         [HttpPut]
@@ -67,7 +66,7 @@ namespace ToolShare.Api.Controllers
             var user = HttpContext.User;
             var currentUser = await _userManager.GetUserAsync(user);
 
-            if (currentUser.PodId != podId)
+            if (currentUser.PodManagedId != podId)
                 return StatusCode(401);
 
             var pod = await _podsRepository.GetByIdAsync(podId);

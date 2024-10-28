@@ -52,7 +52,13 @@ namespace ToolShare.Api.Controllers
             {
             var user = HttpContext.User;
             var appUser = await _userManager.GetUserAsync(user);
-            AppUserDto appUserDto = _mapper.Map<AppUserDto>(appUser);
+            
+            var appUserId = await _userManager.GetUserIdAsync(appUser);
+            var currentUser = _userManager.Users
+                .Include(u => u.PodJoined)
+                .FirstOrDefault(x => x.Id == appUserId);
+            
+            AppUserDto appUserDto = _mapper.Map<AppUserDto>(currentUser);
                         
             return appUserDto;
             } catch (Exception e)
@@ -92,6 +98,7 @@ namespace ToolShare.Api.Controllers
 
             if (result.Succeeded)
             {
+                await _userManager.AddToRoleAsync(user, "NoPodUser");
                 return Ok(new { Message = "Registration successful"});
             }
             return BadRequest(new {Errors = result.Errors});

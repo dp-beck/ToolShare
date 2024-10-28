@@ -25,5 +25,11 @@ namespace ToolShare.Data.Repositories
         {
             return await _dbSet.FindAsync(id);
         }
+
+        public async Task CreateAsync(T entity)
+        {
+            _dbSet.Add(entity);
+            await _context.SaveChangesAsync();
+        }
     }
 }

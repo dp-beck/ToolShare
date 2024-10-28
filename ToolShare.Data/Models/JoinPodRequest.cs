@@ -11,14 +11,11 @@ namespace ToolShare.Data.Models
         [Key]
         public int JoinPodRequestId { get; set; }
         public string RequesterId { get; set; }
-        [Required]
         public AppUser Requester { get; set; }
-        public int PodId { get; set; }
-        public Pod RequestedPod { get; set; }
-
-        public string PodManagerId { get; set; }
-        [Required]
-        public AppUser PodManager { get; set; }
+        public string ReceiverId { get; set; }
+        public AppUser Receiver { get; set; }
+        public int podRequestedId { get; set; }
+        public Pod podRequested { get; set; }
 
 
     }

@@ -38,12 +38,35 @@ namespace ToolShare.Data
                 .HasForeignKey(t => t.BorrowerId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            modelBuilder.Entity<Pod>()
-                .HasMany(p => p.PodMembers)
-                .WithOne(a => a.Pod)
-                .HasForeignKey(a => a.PodId)
+            modelBuilder.Entity<AppUser>()
+                .HasMany(a => a.JoinPodRequestsReceived)
+                .WithOne(j => j.Receiver)
+                .HasForeignKey(j => j.ReceiverId)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            modelBuilder.Entity<Pod>()
+                .HasMany(p => p.PodMembers)
+                .WithOne(a => a.PodJoined)
+                .HasForeignKey(a => a.PodJoinedId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Pod>()
+                .HasOne(p => p.podManager)
+                .WithOne(pm => pm.PodManaged)
+                .HasForeignKey<AppUser>(pm => pm.PodManagedId)
+                .OnDelete(DeleteBehavior.Cascade);
+            
+            modelBuilder.Entity<JoinPodRequest>()
+                .HasOne(j => j.Requester)
+                .WithOne(r => r.joinPodRequestSent)
+                .HasForeignKey<AppUser>(r => r.joinPodRequestsentId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<JoinPodRequest>()
+                .HasOne(j => j.podRequested)
+                .WithMany(p => p.requestsToJoin)
+                .HasForeignKey(j => j.podRequestedId)
+                 .OnDelete(DeleteBehavior.Cascade);
         }
 
     }

@@ -13,6 +13,7 @@ namespace ToolShare.Api.Profiles
         public AppUserProfile()
         {
             this.CreateMap<AppUser, AppUserDto>();
+            this.CreateMap<Pod, PodDto>();
         }
     }
 }
