@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -17,18 +18,33 @@ namespace ToolShare.Api.Controllers
     {
         private readonly IPodsRepository _podsRepository;
         private readonly UserManager<AppUser> _userManager;
+        private readonly IMapper _mapper;
+
         public PodsController(IPodsRepository podsRepository, 
-            UserManager<AppUser> userManager)
+            UserManager<AppUser> userManager,
+            IMapper mapper)
         {
             _podsRepository = podsRepository;
             _userManager = userManager;
+            _mapper = mapper;
         }
 
         [HttpGet]
         [Authorize]
         public async Task<IActionResult> GetAllPods()
         {
-            return Ok(await _podsRepository.GetAllAsync());
+            try
+            {
+                var pods = await _podsRepository.GetAllAsyncWithIncludes(p => p.PodMembers);
+
+                List<PodDto> podDtos = _mapper.Map<List<PodDto>>(pods);
+                
+                return Ok(podDtos);
+            } catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+            
         }
 
         [HttpPost]
@@ -48,7 +64,8 @@ namespace ToolShare.Api.Controllers
 
             pod.PodMembers.Add(appUser);
 
-            _userManager.AddToRoleAsync(appUser, "PodManager");
+            await _userManager.AddToRoleAsync(appUser, "PodManager");
+            await _userManager.RemoveFromRoleAsync(appUser, "NoPodUser");
 
             await _podsRepository.CreatePod(pod);
             
@@ -72,7 +89,13 @@ namespace ToolShare.Api.Controllers
             var pod = await _podsRepository.GetByIdAsync(podId);
             var requester = await _userManager.FindByIdAsync(requesterId);
 
-            _podsRepository.AddUserToPod(requester, pod);
+            if (requester.PodJoined is not null)
+                return BadRequest(new {Message = "User already a member of a pod."});
+            
+            await _userManager.RemoveFromRoleAsync(requester, "NoPodUser");
+            await _userManager.AddToRoleAsync(requester, "User");
+
+            await _podsRepository.AddUserToPod(requester, pod);
 
             return Ok(new { Message = "User added to pod." });
         }

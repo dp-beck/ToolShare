@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using ToolShare.Data.Extensions;
 
 namespace ToolShare.Data.Repositories
 {
@@ -19,6 +21,10 @@ namespace ToolShare.Data.Repositories
         public async Task<IEnumerable<T>> GetAllAsync()
         {
             return await _dbSet.ToListAsync();
+        }
+        public async Task<IEnumerable<T>> GetAllAsyncWithIncludes(params Expression<Func<T, object>>[] includes)
+        {
+            return await _dbSet.IncludeProperties(includes).ToListAsync();
         }
 
         public async Task<T?> GetByIdAsync(int id)

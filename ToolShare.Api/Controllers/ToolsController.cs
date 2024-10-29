@@ -33,7 +33,7 @@ namespace ToolShare.Api.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllTools()
         {
-            return Ok(await _toolsRepository.GetAllAsync());
+            return Ok(await _toolsRepository.GetAllAsyncWithIncludes());
         }
 
         [HttpPost]
