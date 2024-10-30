@@ -13,7 +13,7 @@ using ToolShare.Data.Repositories;
 namespace ToolShare.Api.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/pods")]
     public class PodsController : ControllerBase
     {
         private readonly IPodsRepository _podsRepository;
@@ -76,27 +76,27 @@ namespace ToolShare.Api.Controllers
         [HttpPut]
         [Authorize(Roles = "PodManager")]
         [Route("{podId}")]
-        public async Task<IActionResult> AddUserToPod(int podId, [FromBody] string requesterId)
+        public async Task<IActionResult> AddUserToPod([FromBody] string username)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
             
             var user = HttpContext.User;
-            var currentUser = await _userManager.GetUserAsync(user);
+            var currentPodManager = await _userManager.GetUserAsync(user);
 
-            if (currentUser.PodManagedId != podId)
-                return StatusCode(401);
+            if (currentPodManager.PodManagedId == null)   
+                return BadRequest(new { Message = "You are not a manager of your pod."});
 
-            var pod = await _podsRepository.GetByIdAsync(podId);
-            var requester = await _userManager.FindByIdAsync(requesterId);
+            var pod = await _podsRepository.GetByIdAsync((int)currentPodManager.PodManagedId);
+            var userToAdd = await _userManager.FindByNameAsync(username);
 
-            if (requester.PodJoined is not null)
+            if (userToAdd.PodJoined is not null)
                 return BadRequest(new {Message = "User already a member of a pod."});
             
-            await _userManager.RemoveFromRoleAsync(requester, "NoPodUser");
-            await _userManager.AddToRoleAsync(requester, "User");
+            await _userManager.RemoveFromRoleAsync(userToAdd, "NoPodUser");
+            await _userManager.AddToRoleAsync(userToAdd, "User");
 
-            await _podsRepository.AddUserToPod(requester, pod);
+            await _podsRepository.AddUserToPod(userToAdd, pod);
 
             return Ok(new { Message = "User added to pod." });
         }

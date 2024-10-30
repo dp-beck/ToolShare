@@ -44,7 +44,7 @@ namespace ToolShare.Api.Controllers
         }
 
         [HttpGet]
-        [Route("info")]
+        [Route("currentuser")]
         [Authorize]
         public async Task<ActionResult<AppUserDto>> GetCurrentUserInfo()
         {
@@ -71,7 +71,7 @@ namespace ToolShare.Api.Controllers
         [HttpGet]
         [Route("info/{username}")]
         [Authorize]
-        public async Task<ActionResult<AppUserDto>> GetUserInfoByUsername(string username)
+        public async Task<ActionResult<AppUserDto>> FindUserInfoByUsername(string username)
         {
             var appUser = await _userManager.FindByNameAsync(username);
 
@@ -81,6 +81,27 @@ namespace ToolShare.Api.Controllers
             AppUserDto appUserDto = _mapper.Map<AppUserDto>(appUser);
             
             return appUserDto;
+        }
+
+        [HttpGet]
+        [Route("users-without-pods")]
+        [Authorize(Roles = "PodManager")]
+        public async Task<ActionResult<AppUserDto>> GetAllUsersWithoutPods()
+        {
+            try 
+            {
+                var users = await _userManager.Users
+                    .Where(u => u.PodJoinedId == null)
+                    .ToListAsync();
+
+                List<AppUserDto> userDtos = _mapper.Map<List<AppUserDto>>(users);
+                return Ok(userDtos);
+
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e);
+            }
         }
 
         [HttpPost]   
