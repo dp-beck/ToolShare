@@ -17,6 +17,8 @@ namespace ToolShare.Api.Dtos
         public string ProfilePhotoUrl { get; set; }
         public int PodJoinedId { get; set; }
         public PodDto PodJoined { get; set; }
+        public int PodManagedId { get; set; }
+        public PodDto PodManaged { get; set; }  
         
     }
 }

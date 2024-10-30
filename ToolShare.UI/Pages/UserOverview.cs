@@ -35,8 +35,8 @@ namespace ToolShare.UI.Pages
         {
             Tools = new List<Tool>()
             {
-                new Tool { ToolId = 1, Name = "Scroll Saw", BorrowingPeriodInDays = 7, CreatedAt = DateTime.Now, Description = "A Scroll Saw", IsOwnedById = 1, IsPossessedById = 2 },
-                new Tool { ToolId = 2, Name = "Power Washer", BorrowingPeriodInDays = 14, CreatedAt = DateTime.Now, Description = "A Powerwasher", IsOwnedById = 2, IsPossessedById = 1}
+                new Tool { ToolId = 1, Name = "Scroll Saw", BorrowingPeriodInDays = 7, CreatedAt = DateTime.Now, Description = "A Scroll Saw" },
+                new Tool { ToolId = 2, Name = "Power Washer", BorrowingPeriodInDays = 14, CreatedAt = DateTime.Now, Description = "A Powerwasher" }
             };
         }
 
@@ -44,24 +44,22 @@ namespace ToolShare.UI.Pages
         {
             var u1 = new AppUser 
             {
-                UserId = "1",
                 UserName = "tomSmith",
                 Email = "tomsmith@aol.com",
                 FirstName = "Tom",
                 LastName = "Smith",
                 AboutMe = "I am Tom Smith",
-                PodId = 1,
+                PodJoinedId = 1,
             };
 
             var u2 = new AppUser 
             {
-                UserId = "2",
                 UserName = "bettySmith",
                 Email = "bettysmith@aol.com",
                 FirstName = "Betty",
                 LastName = "Smith",
                 AboutMe = "I am Betty Smith",
-                PodId = 2,
+                PodJoinedId = 2,
             };
 
             Users = new List<AppUser> { u1, u2 }; 

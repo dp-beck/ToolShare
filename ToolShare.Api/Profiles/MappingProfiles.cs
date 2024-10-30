@@ -8,9 +8,9 @@ using ToolShare.Data.Models;
 
 namespace ToolShare.Api.Profiles
 {
-    public class AppUserProfile : Profile
+    public class MappingProfiles : Profile
     {
-        public AppUserProfile()
+        public MappingProfiles()
         {
             this.CreateMap<AppUser, AppUserDto>();
             this.CreateMap<Pod, PodDto>();

@@ -66,7 +66,6 @@ builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
 builder.Services.AddScoped<IToolsRepository, ToolsRepository>();
 builder.Services.AddScoped<IPodsRepository, PodsRepository>();
-builder.Services.AddScoped<IJoinPodRequestsRepository, JoinPodRequestsRepository>();
 
 var app = builder.Build();
 

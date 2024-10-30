@@ -56,6 +56,7 @@ namespace ToolShare.Api.Controllers
             var appUserId = await _userManager.GetUserIdAsync(appUser);
             var currentUser = _userManager.Users
                 .Include(u => u.PodJoined)
+                .Include(u => u.PodManaged)
                 .FirstOrDefault(x => x.Id == appUserId);
             
             AppUserDto appUserDto = _mapper.Map<AppUserDto>(currentUser);
