@@ -20,9 +20,5 @@ namespace ToolShare.Data.Repositories
             _userManager = userManager;
         }
 
-        public Task CreateTool()
-        {
-            throw new NotImplementedException();
-        }
     }
 }

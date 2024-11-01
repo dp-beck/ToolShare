@@ -8,8 +8,7 @@ namespace ToolShare.Data.Repositories
 {
     public interface IPodsRepository : IRepository<Pod>
     {
-        public Task CreatePod(Pod pod);
-
         public Task AddUserToPod(AppUser appUser, Pod pod);
+        public Task<Pod> FindPodByName(string podName);
     }
 }

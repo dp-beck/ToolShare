@@ -6,6 +6,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using ToolShare.Api.Dtos;
 using ToolShare.Data.Models;
 using ToolShare.Data.Repositories;
@@ -40,11 +41,36 @@ namespace ToolShare.Api.Controllers
                 List<PodDto> podDtos = _mapper.Map<List<PodDto>>(pods);
                 
                 return Ok(podDtos);
-            } catch (Exception e)
+            } 
+            catch (Exception e)
             {
                 return BadRequest(e.Message);
             }
-            
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "User,PodManager")]
+        [Route("{podName}")]
+        public async Task<IActionResult> FindPodInfoByPodName(string podName)
+        {
+            try
+            {
+                var pod = await _podsRepository.FindPodByName(podName);
+
+                var user = HttpContext.User;
+                var appUser = await _userManager.GetUserAsync(user);
+
+                if (pod.PodId != appUser.PodJoinedId)
+                    return BadRequest(new {Message = "You are not a member of this pod."});
+
+                PodDto podDto = _mapper.Map<PodDto>(pod);
+                return Ok(podDto);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+
         }
 
         [HttpPost]
@@ -68,7 +94,7 @@ namespace ToolShare.Api.Controllers
             await _userManager.AddToRoleAsync(appUser, "PodManager");
             await _userManager.RemoveFromRoleAsync(appUser, "NoPodUser");
 
-            await _podsRepository.CreatePod(pod);
+            await _podsRepository.AddAsync(pod);
             
             return CreatedAtAction(nameof(InitializeNewPod), new { podId = pod.PodId }, pod);
         }

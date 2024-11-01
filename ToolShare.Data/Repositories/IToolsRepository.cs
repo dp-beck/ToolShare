@@ -7,6 +7,5 @@ namespace ToolShare.Data.Repositories
 {
     public interface IToolsRepository : IRepository<Tool>
     {
-        public Task CreateTool();
     }
 }

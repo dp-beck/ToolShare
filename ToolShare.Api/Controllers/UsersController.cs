@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using ToolShare.Data.Models;
 using ToolShare.Api.Dtos;
 using AutoMapper;
+using AutoMapper.QueryableExtensions;
 
 namespace ToolShare.Api.Controllers
 {
@@ -57,6 +58,7 @@ namespace ToolShare.Api.Controllers
             var currentUser = _userManager.Users
                 .Include(u => u.PodJoined)
                 .Include(u => u.PodManaged)
+                .Include(u => u.ToolsOwned)
                 .FirstOrDefault(x => x.Id == appUserId);
             
             AppUserDto appUserDto = _mapper.Map<AppUserDto>(currentUser);

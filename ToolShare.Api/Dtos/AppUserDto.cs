@@ -19,6 +19,7 @@ namespace ToolShare.Api.Dtos
         public PodDto PodJoined { get; set; }
         public int PodManagedId { get; set; }
         public PodDto PodManaged { get; set; }  
-        
+        public ICollection<ToolDto> ToolsOwned { get; set; }
+        public ICollection<ToolDto> ToolsBorrowed { get; set; }
     }
 }

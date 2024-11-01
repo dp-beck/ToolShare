@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -10,11 +11,10 @@ using ToolShare.Data;
 using ToolShare.Data.Models;
 using ToolShare.Data.Repositories;
 
-//TO DO: Rewrite to use Repository Architecture -- Written this way just to test things 
 namespace ToolShare.Api.Controllers
 {
     [ApiController]
-    [Route("api/users/{username}/[controller]")]
+    [Route("api/users/currentuser/tools")]
     public class ToolsController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
@@ -37,14 +37,16 @@ namespace ToolShare.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Tool>> CreateTool(string username, [FromBody] ToolDto toolDto)
+        [Authorize(Roles = "User,PodManager")]
+        public async Task<ActionResult<Tool>> CreateTool([FromBody] ToolDto toolDto)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-            var user = await _userManager.FindByNameAsync(username);
-            if (user == null) return BadRequest("User not found");
+
+            var user = HttpContext.User;
+            var appUser = await _userManager.GetUserAsync(user);
 
             Tool tool = new Tool
             {
@@ -53,9 +55,10 @@ namespace ToolShare.Api.Controllers
                 BorrowingPeriodInDays = toolDto.BorrowingPeriodInDays,  
             };
 
-            tool.ToolOwner = user;
+            tool.ToolOwner = appUser;
 
-            _context.Tools.Add(tool);
+            await _toolsRepository.AddAsync(tool);
+
             await _context.SaveChangesAsync();
 
             return CreatedAtAction(nameof(CreateTool), new { toolId = tool.ToolId }, tool);
