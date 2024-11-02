@@ -127,12 +127,56 @@ namespace ToolShare.Api.Controllers
             return Ok(new { Message = "User added to pod." });
         }
 
+
         [HttpPut]
         [Authorize(Roles = "PodManager")]
-        [Route("{podId}")]
-        public async Task<IActionResult> UpdatePod([FromBody] PodDto podDto)
+        [Route("{podId}/removeuser")]
+        public async Task<IActionResult> RemoveUserFromPod([FromBody] string username)
         {
-            return Ok();
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+            
+            var user = HttpContext.User;
+            var currentPodManager = await _userManager.GetUserAsync(user);
+
+            if (currentPodManager.PodManagedId == null)   
+                return BadRequest(new { Message = "You are not a manager of your pod."});
+
+            var pod = await _podsRepository.GetByIdAsync((int)currentPodManager.PodManagedId);
+            var userToRemove = await _userManager.FindByNameAsync(username);
+
+            if (userToRemove.PodJoinedId != currentPodManager.PodManagedId)
+                return BadRequest(new {Message = "This user is not a member of your pod"});
+            
+            await _userManager.RemoveFromRoleAsync(userToRemove, "User");
+            await _userManager.AddToRoleAsync(userToRemove, "NoPodUser");
+
+            await _podsRepository.RemoveUserFromPod(userToRemove, pod);
+
+            return Ok(new { Message = "User removed from pod." });
+        }
+        
+        [HttpPut]
+        [Authorize(Roles = "PodManager")]
+        [Route("{podId}/updatename")]
+        public async Task<IActionResult> UpdatePodName(int podId, [FromBody] string newName)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+            
+            var user = HttpContext.User;
+            var currentPodManager = await _userManager.GetUserAsync(user);
+
+            if (currentPodManager.PodManagedId == null)   
+                return BadRequest(new { Message = "You are not a manager of your pod."});
+
+            var pod = await _podsRepository.GetByIdAsync(podId);
+
+            if (pod is null)
+                return BadRequest(new {Message ="No pod located with that id"});
+
+            await _podsRepository.UpdateName(newName, pod);
+            return Ok(new {Message = "Pod name changed."});
         }
     }
 }
