@@ -148,14 +148,17 @@ namespace ToolShare.Api.Controllers
             if (userToRemove.PodJoinedId != currentPodManager.PodManagedId)
                 return BadRequest(new {Message = "This user is not a member of your pod"});
             
-            await _userManager.RemoveFromRoleAsync(userToRemove, "User");
-            await _userManager.AddToRoleAsync(userToRemove, "NoPodUser");
-
+            if (pod.podManager.Id != userToRemove.Id)
+            {
+                await _userManager.RemoveFromRoleAsync(userToRemove, "User");
+                await _userManager.AddToRoleAsync(userToRemove, "NoPodUser");
+            }
+            
             await _podsRepository.RemoveUserFromPod(userToRemove, pod);
 
             return Ok(new { Message = "User removed from pod." });
         }
-        
+
         [HttpPut]
         [Authorize(Roles = "PodManager")]
         [Route("{podId}/updatename")]
@@ -177,6 +180,28 @@ namespace ToolShare.Api.Controllers
 
             await _podsRepository.UpdateName(newName, pod);
             return Ok(new {Message = "Pod name changed."});
+        }
+
+        [HttpDelete]
+        [Authorize(Roles = "PodManager")]
+        public async Task<IActionResult> DeletePod()
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+            
+            var user = HttpContext.User;
+            var currentPodManager = await _userManager.GetUserAsync(user);
+            var pod = currentPodManager.PodManaged;
+
+            if (pod.PodMembers.Any())
+                return BadRequest(new { Message = "You must remove all members from the pod before deleting, including yourself"});
+
+            await _userManager.RemoveFromRoleAsync(currentPodManager, "PodManager");
+            await _userManager.AddToRoleAsync(currentPodManager, "NoPodUser");
+            
+            await _podsRepository.DeleteAsync(currentPodManager.PodManaged);
+
+            return Ok(new {Message = "Pod sucessfully deleted."});
         }
     }
 }
