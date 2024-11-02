@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -14,26 +15,54 @@ using ToolShare.Data.Repositories;
 namespace ToolShare.Api.Controllers
 {
     [ApiController]
-    [Route("api/users/currentuser/tools")]
+    [Route("api/tools")]
     public class ToolsController : ControllerBase
     {
-        private readonly ApplicationDbContext _context;
         private readonly UserManager<AppUser> _userManager;
         private readonly IToolsRepository _toolsRepository;
+        private readonly IMapper _mapper;
 
-        public ToolsController(ApplicationDbContext context, 
+        public ToolsController( 
             UserManager<AppUser> userManager,
-            IToolsRepository toolsRepository)
+            IToolsRepository toolsRepository,
+            IMapper mapper)
         {
-            _context = context;
             _userManager = userManager;
             _toolsRepository = toolsRepository;
+            _mapper = mapper;
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> GetAllTools()
         {
-            return Ok(await _toolsRepository.GetAllAsyncWithIncludes());
+            var tools = await _toolsRepository.GetAllAsyncWithIncludes(
+                t => t.ToolOwner, t => t.ToolBorrower
+            );
+
+            List<ToolDto> toolDtos = _mapper.Map<List<ToolDto>>(tools);
+
+            return Ok(toolDtos);
+        }
+
+        [HttpGet]
+        [Authorize]
+        [Route("{toolId}")]
+        public async Task<IActionResult> GetToolById(int toolId)
+        {
+            try
+            {
+            var tool = await _toolsRepository.GetByIdAsyncWithIncludes(toolId,
+                t => t.ToolOwner, t => t.ToolBorrower);
+            
+            ToolDto toolDto = _mapper.Map<ToolDto>(tool);
+
+            return Ok(toolDto);   
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
         }
 
         [HttpPost]
@@ -58,8 +87,6 @@ namespace ToolShare.Api.Controllers
             tool.ToolOwner = appUser;
 
             await _toolsRepository.AddAsync(tool);
-
-            await _context.SaveChangesAsync();
 
             return CreatedAtAction(nameof(CreateTool), new { toolId = tool.ToolId }, tool);
         }

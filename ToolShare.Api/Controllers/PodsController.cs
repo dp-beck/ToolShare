@@ -101,7 +101,7 @@ namespace ToolShare.Api.Controllers
 
         [HttpPut]
         [Authorize(Roles = "PodManager")]
-        [Route("{podId}")]
+        [Route("{podId}/adduser")]
         public async Task<IActionResult> AddUserToPod([FromBody] string username)
         {
             if (!ModelState.IsValid)
@@ -125,6 +125,14 @@ namespace ToolShare.Api.Controllers
             await _podsRepository.AddUserToPod(userToAdd, pod);
 
             return Ok(new { Message = "User added to pod." });
+        }
+
+        [HttpPut]
+        [Authorize(Roles = "PodManager")]
+        [Route("{podId}")]
+        public async Task<IActionResult> UpdatePod([FromBody] PodDto podDto)
+        {
+            return Ok();
         }
     }
 }

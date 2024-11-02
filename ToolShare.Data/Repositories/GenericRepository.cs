@@ -32,6 +32,11 @@ namespace ToolShare.Data.Repositories
             return await _dbSet.FindAsync(id);
         }
 
+        public async Task<T> GetByIdAsyncWithIncludes(int id, params Expression<Func<T, object>>[] includes)
+        {
+            return await _dbSet.IncludeProperties(includes).FirstOrDefaultAsync();
+        }
+
         public async Task AddAsync(T entity)
         {
             _dbSet.Add(entity);
