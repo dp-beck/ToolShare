@@ -12,5 +12,7 @@ namespace ToolShare.Api.Dtos
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Password { get; set; }
+        public string AboutMe { get; set; }
+        public string ProfilePhotoUrl { get; set; } = "www.photo.com";
     }
 }

@@ -1,10 +1,7 @@
 using System.Reflection;
-using System.Security.Claims;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using ToolShare.Api;
 using ToolShare.Data;
 using ToolShare.Data.Models;
 using ToolShare.Data.Repositories;
@@ -52,14 +49,11 @@ builder.Services.AddCors(
 
 builder.Services.AddEndpointsApiExplorer();
 
-// Add NSwag Services
-// TO DO: What are Nswag services?
 builder.Services.AddOpenApiDocument();
 
 builder.Services.AddControllers().AddJsonOptions(x => 
     x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve);
     
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
@@ -99,29 +93,6 @@ app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();
-
-// provide an endpoint for user roles
-app.MapGet("/roles", (ClaimsPrincipal user) =>
-{
-    if (user.Identity is not null && user.Identity.IsAuthenticated)
-    {
-        var identity = (ClaimsIdentity)user.Identity;
-        var roles = identity.FindAll(identity.RoleClaimType)
-            .Select(c => 
-                new
-                {
-                    c.Issuer, 
-                    c.OriginalIssuer, 
-                    c.Type, 
-                    c.Value, 
-                    c.ValueType
-                });
-
-        return TypedResults.Json(roles);
-    }
-
-    return Results.Unauthorized();
-}).RequireAuthorization();
 
 app.MapControllers();
 

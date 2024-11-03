@@ -42,9 +42,9 @@ namespace ToolShare.Api.Controllers
                 
                 return Ok(podDtos);
             } 
-            catch (Exception e)
+            catch (Exception)
             {
-                return BadRequest(e.Message);
+                return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
             }
         }
 

@@ -30,30 +30,36 @@ namespace ToolShare.Api.Controllers
 
         [HttpGet]
         [Authorize]
-        public async Task<ActionResult<List<AppUserDto>>> GetAllUsers()
+        public async Task<IActionResult> GetAllUsers()
         {
             try 
             {
-            var users = await _userManager.Users.ToListAsync();
-            List<AppUserDto> userDtos = _mapper.Map<List<AppUserDto>>(users);
-            return userDtos;
+                var users = await _userManager.Users
+                    .Include(u => u.PodJoined)
+                    .Include(u => u.PodManaged)
+                    .Include(u => u.ToolsOwned)
+                    .Include(u => u.ToolsBorrowed)
+                    .ToListAsync();
+
+                List<AppUserDto> userDtos = _mapper.Map<List<AppUserDto>>(users);
+                return Ok(userDtos);
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                return BadRequest(e);
+                return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
             }
         }
 
         [HttpGet]
-        [Route("currentuser")]
+        [Route("current-user")]
         [Authorize]
-        public async Task<ActionResult<AppUserDto>> GetCurrentUserInfo()
+        public async Task<IActionResult> GetCurrentUserInfo()
         {
             try
             {
-            var user = HttpContext.User;
-            var appUser = await _userManager.GetUserAsync(user);
-            
+            var appUser = await _userManager.GetUserAsync(HttpContext.User);
+            if (appUser is null) return BadRequest(new {Message = "No current user is logged in."});
+        
             var appUserId = await _userManager.GetUserIdAsync(appUser);
             var currentUser = _userManager.Users
                 .Include(u => u.PodJoined)
@@ -63,26 +69,38 @@ namespace ToolShare.Api.Controllers
             
             AppUserDto appUserDto = _mapper.Map<AppUserDto>(currentUser);
                         
-            return appUserDto;
-            } catch (Exception e)
+            return Ok(appUserDto);
+            } catch (Exception)
             {
-                return BadRequest(e);
+                return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
             }
         }
 
         [HttpGet]
-        [Route("info/{username}")]
+        [Route("{username}")]
         [Authorize]
-        public async Task<ActionResult<AppUserDto>> FindUserInfoByUsername(string username)
+        public async Task<IActionResult> FindUserInfoByUsername(string username)
         {
-            var appUser = await _userManager.FindByNameAsync(username);
+            try
+            {
+                var appUser = await _userManager.FindByNameAsync(username);
 
-            if (appUser is null)
-                return BadRequest(new { message = "User not found" });
+                if (appUser is null) return BadRequest(new { message = "User not found" });
 
-            AppUserDto appUserDto = _mapper.Map<AppUserDto>(appUser);
-            
-            return appUserDto;
+                var user = _userManager.Users
+                    .Include(u => u.PodJoined)
+                    .Include(u => u.PodManaged)
+                    .Include(u => u.ToolsOwned)
+                    .FirstOrDefault(x => x.UserName == username);
+
+                AppUserDto appUserDto = _mapper.Map<AppUserDto>(user);
+
+                return Ok(appUserDto);
+            }
+            catch (Exception)
+            {
+                return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
+            }
         }
 
         [HttpGet]
@@ -100,64 +118,112 @@ namespace ToolShare.Api.Controllers
                 return Ok(userDtos);
 
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                return BadRequest(e);
+                return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
+            }
+        }
+
+        [HttpGet]
+        [Route("current-user/roles")]
+        [Authorize]
+        public IResult GetRoles(ClaimsPrincipal user)
+        {
+            try
+            {
+                if (user.Identity is not null && user.Identity.IsAuthenticated)
+                {
+                    var identity = (ClaimsIdentity)user.Identity;
+                    var roles = identity.FindAll(identity.RoleClaimType)
+                        .Select(c => 
+                            new
+                        {
+                            c.Issuer, 
+                            c.OriginalIssuer, 
+                            c.Type, 
+                            c.Value, 
+                            c.ValueType
+                        });
+
+                return TypedResults.Json(roles);
+                }
+
+                return Results.Unauthorized();
+        
+            }
+            catch (Exception)
+            {
+                return Results.StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
 
         [HttpPost]   
         [Route("register")]
-         public async Task<IActionResult> Register([FromBody] RegistrationDto registrationDto)
+        public async Task<IActionResult> Register([FromBody] RegistrationDto registrationDto)
         {
-            var user = new AppUser
+            try
             {
+                var user = new AppUser
+                {
                 UserName = registrationDto.UserName,
                 Email = registrationDto.Email,
                 FirstName = registrationDto.FirstName,
                 LastName = registrationDto.LastName,
-            };
+                AboutMe = registrationDto.AboutMe,
+                };
 
-            var result = await _userManager.CreateAsync(user, registrationDto.Password);
+                var result = await _userManager.CreateAsync(user, registrationDto.Password);
 
-            if (result.Succeeded)
-            {
-                await _userManager.AddToRoleAsync(user, "NoPodUser");
-                return Ok(new { Message = "Registration successful"});
+                if (result.Succeeded)
+                {
+                    await _userManager.AddToRoleAsync(user, "NoPodUser");
+                    return Ok(new { Message = "Registration successful"});
+                }
+
+                return BadRequest(new {Errors = result.Errors});
+
             }
-            return BadRequest(new {Errors = result.Errors});
+            catch (Exception)
+            {
+                return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
+            }
         }
 
         [HttpPost]
         [Route("login")]
         public async Task<IActionResult> Login([FromBody] LoginRequestDto login, [FromQuery] bool? useCookies, [FromQuery] bool? useSessionCookies)
         {
-            var useCookieScheme = (useCookies == true) || (useSessionCookies == true);
-            var isPersistent = (useCookies == true) && (useSessionCookies != true);
-            _signInManager.AuthenticationScheme = useCookieScheme ? IdentityConstants.ApplicationScheme : IdentityConstants.BearerScheme;
-
-            var result = await _signInManager.PasswordSignInAsync(login.UserName, login.Password, isPersistent, lockoutOnFailure: false);
-
-            if (result.Succeeded)
+            try
             {
-                return Ok(new { Message = "Login successful."});
-            }
+                var useCookieScheme = (useCookies == true) || (useSessionCookies == true);
+                var isPersistent = (useCookies == true) && (useSessionCookies != true);
+                _signInManager.AuthenticationScheme = useCookieScheme ? IdentityConstants.ApplicationScheme : IdentityConstants.BearerScheme;
+                
+                var result = await _signInManager.PasswordSignInAsync(login.UserName, login.Password, isPersistent, lockoutOnFailure: false);
+
+                if (result.Succeeded) return Ok(new { Message = "Login successful."});
             
-            return BadRequest(new { Message = "Login unsucessful. Either the password or username is incorrect."} );
+                return BadRequest(new { Message = "Login unsucessful. Either the password or username is incorrect."} );
+            }
+            catch (Exception)
+            {
+                return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
+            }
         }
 
         [HttpPost]   
         [Route("logout")]
         [Authorize]
-        public async Task<IResult> Logout()
+        public async Task<IActionResult> Logout()
         {
             try
             {
                 await _signInManager.SignOutAsync();
-                return Results.Ok();
-            } catch (Exception e)
+                return Ok(new { Message = "Logout successful"});
+
+            } catch (Exception)
             {
-                return Results.BadRequest(e);
+                return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
             }
         }
 
@@ -166,38 +232,57 @@ namespace ToolShare.Api.Controllers
         [Authorize]
         public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordDto changePasswordDto)
         {
-            var currentUser = await _userManager.GetUserAsync(HttpContext.User);
-            var result = await _userManager.ChangePasswordAsync(currentUser, changePasswordDto.CurrentPassword, changePasswordDto.NewPassword);
-
-            if (result.Succeeded)
+            try
             {
-                return Ok(new { Message = "Password change sucessful"});
-            }
+                var currentUser = await _userManager.GetUserAsync(HttpContext.User);
+                if (currentUser is null) return BadRequest(new {Message = "No current user is logged in."});
+                
+                var result = await _userManager.ChangePasswordAsync(currentUser, 
+                    changePasswordDto.CurrentPassword, 
+                    changePasswordDto.NewPassword);
 
-            return BadRequest(new {Errors = result.Errors});
+                if (result.Succeeded)
+                {
+                    return Ok(new { Message = "Password change sucessful"});
+                }
+                
+                return BadRequest(new {Errors = result.Errors});
+
+            } catch (Exception)
+            {
+                return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
+            }
         }
 
         [HttpPut]
-        [Route("update")]
+        [Route("current-user/update")]
         [Authorize]
         public async Task<IActionResult> UpdateUser(AppUserDto appUserDto)
         {
-            var currentUser = await _userManager.GetUserAsync(HttpContext.User);
-            currentUser.UserName = appUserDto.UserName;
-            currentUser.AboutMe = appUserDto.AboutMe;
-            currentUser.Email = appUserDto.Email;
-            currentUser.FirstName = appUserDto.FirstName;
-            currentUser.LastName = appUserDto.LastName;
-            currentUser.ProfilePhotoUrl = appUserDto.ProfilePhotoUrl;
-
-            var result = _userManager.UpdateAsync(currentUser);
-            if (result.IsCompletedSuccessfully)
+            try
             {
-                return Ok(new{ Message = "User Update Successful"});
-            }
+                var currentUser = await _userManager.GetUserAsync(HttpContext.User);
+                if (currentUser is null) return BadRequest(new { Message = "No current user is logged in." });
 
-            return BadRequest(new {Errors = result.Result});
- 
+                currentUser.UserName = appUserDto.UserName;
+                currentUser.AboutMe = appUserDto.AboutMe;
+                currentUser.Email = appUserDto.Email;
+                currentUser.FirstName = appUserDto.FirstName;
+                currentUser.LastName = appUserDto.LastName;
+                currentUser.ProfilePhotoUrl = appUserDto.ProfilePhotoUrl;
+
+                var result = _userManager.UpdateAsync(currentUser);
+                if (result.IsCompletedSuccessfully)
+                {
+                    return Ok(new { Message = "User Update Successful" });
+                }
+
+                return BadRequest(new { Errors = result.Result });
+            }
+            catch (Exception)
+            {
+                return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
+            }
         }
 
         [HttpDelete]
@@ -205,17 +290,22 @@ namespace ToolShare.Api.Controllers
         [Authorize]
         public async Task<IActionResult> Delete()
         {
-            var currentUser = await _userManager.GetUserAsync(HttpContext.User);
+            try
+            {
+                var currentUser = await _userManager.GetUserAsync(HttpContext.User);
+                if (currentUser is null) return BadRequest(new{ Message = "There is no current user to delete."});
 
-            if (currentUser is null)
-               return BadRequest(new{ Message = "There is no current user to delete."});
+                var result = await _userManager.DeleteAsync(currentUser);
 
-            var result = await _userManager.DeleteAsync(currentUser);
-
-            if (result.Succeeded)
-                return Ok(new { Message = "Current user deleted sucessfully."});
+                if (result.Succeeded)
+                    return Ok(new { Message = "Current user deleted sucessfully."});
             
-            return BadRequest(new { Errors = result.Errors});
+                return BadRequest(new { Errors = result.Errors});
+            }
+            catch (Exception)
+            {
+                return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
+            }
         }
     }
 
