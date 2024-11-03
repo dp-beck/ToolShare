@@ -52,7 +52,7 @@ namespace ToolShare.Api.Controllers
         {
             try
             {
-            var tool = await _toolsRepository.GetByIdAsyncWithIncludes(toolId,
+            var tool = await _toolsRepository.GetByIdAsyncWithIncludes(toolId, t => t.ToolId == toolId,
                 t => t.ToolOwner, t => t.ToolBorrower);
             
             ToolDto toolDto = _mapper.Map<ToolDto>(tool);
@@ -89,6 +89,96 @@ namespace ToolShare.Api.Controllers
             await _toolsRepository.AddAsync(tool);
 
             return CreatedAtAction(nameof(CreateTool), new { toolId = tool.ToolId }, tool);
+        }
+
+        [HttpPut]
+        [Authorize(Roles = "User,PodManager")]
+        [Route("{toolId}")]
+        public async Task<IActionResult> UpdateTool(int toolId, [FromBody] UpdateToolDto updateToolDto)
+        {
+            try
+            {
+                var oldTool = await _toolsRepository.GetByIdAsync(toolId);
+                if (oldTool == null) return NotFound("Could not find tool with this id.");
+                
+                _mapper.Map(updateToolDto, oldTool);
+
+                await _toolsRepository.SaveChangesAsync();
+
+                return Ok(new {MEssage = "Tool Updated Successfully"});
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
+        [HttpPut]
+        [Authorize(Roles = "User,PodManager")]
+        [Route("{toolId}/lendtool")]
+        public async Task<IActionResult> LendTool(int toolId, [FromBody] string toolBorrowerUserName)
+        {
+            try 
+            {
+                Tool toolBorrowed = await _toolsRepository.GetByIdAsync(toolId);
+                AppUser ToolBorrower = await _userManager.FindByNameAsync(toolBorrowerUserName);
+
+                toolBorrowed.ToolBorrower = ToolBorrower;
+                toolBorrowed.ToolStatus = ToolStatus.CurrentlyBorrowed;
+
+                _toolsRepository.SaveChangesAsync();
+
+                return Ok(new {Message = "Tool successfully lent"});
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
+                [HttpPut]
+        [Authorize(Roles = "User,PodManager")]
+        [Route("{toolId}/returntool")]
+        public async Task<IActionResult> ReturnTool(int toolId)
+        {
+            try 
+            {
+                Tool toolBorrowed = await _toolsRepository.GetByIdAsync(toolId);
+
+                toolBorrowed.ToolBorrower = null;
+                toolBorrowed.BorrowerId = null;
+                toolBorrowed.ToolStatus = ToolStatus.AvailableForBorrowing;
+
+                _toolsRepository.SaveChangesAsync();
+
+                return Ok(new {Message = "Tool successfully returned"});
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
+        [HttpDelete]
+        [Authorize(Roles = "User,PodManager")]
+        [Route("{toolId}")]
+        public async Task<ActionResult> DeleteTool(int toolId)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+            
+            var user = HttpContext.User;
+            var currentUser = await _userManager.GetUserAsync(user);
+            
+            var tool = await _toolsRepository.GetByIdAsync(toolId);
+
+            if (tool.OwnerId != currentUser.Id)
+                return BadRequest(new {Message = "You are not the owner of this tool."});
+            
+            await _toolsRepository.DeleteAsync(tool);
+
+            return Ok(new {Message = "Tool successfully deleted"});
+
         }
 
     }

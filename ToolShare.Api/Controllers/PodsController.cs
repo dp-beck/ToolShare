@@ -50,6 +50,30 @@ namespace ToolShare.Api.Controllers
 
         [HttpGet]
         [Authorize(Roles = "User,PodManager")]
+        [Route("{podId}")]
+        public async Task<IActionResult> GetPodById(int podId)
+        {
+            try
+            {
+                var pod = await _podsRepository.GetByIdAsync(podId);
+
+                var user = HttpContext.User;
+                var appUser = await _userManager.GetUserAsync(user);
+
+                if (pod.PodId != appUser.PodJoinedId)
+                    return BadRequest(new {Message = "You are not a member of this pod."});
+
+                PodDto podDto = _mapper.Map<PodDto>(pod);
+                return Ok(podDto);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "User,PodManager")]
         [Route("{podName}")]
         public async Task<IActionResult> FindPodInfoByPodName(string podName)
         {
@@ -70,7 +94,6 @@ namespace ToolShare.Api.Controllers
             {
                 return BadRequest(e.Message);
             }
-
         }
 
         [HttpPost]
@@ -102,7 +125,7 @@ namespace ToolShare.Api.Controllers
         [HttpPut]
         [Authorize(Roles = "PodManager")]
         [Route("{podId}/adduser")]
-        public async Task<IActionResult> AddUserToPod([FromBody] string username)
+        public async Task<IActionResult> AddUserToPod(int podId, [FromBody] string username)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -110,10 +133,10 @@ namespace ToolShare.Api.Controllers
             var user = HttpContext.User;
             var currentPodManager = await _userManager.GetUserAsync(user);
 
-            if (currentPodManager.PodManagedId == null)   
-                return BadRequest(new { Message = "You are not a manager of your pod."});
+            if (currentPodManager.PodManagedId != podId)   
+                return BadRequest(new { Message = "You are not a manager of this pod."});
 
-            var pod = await _podsRepository.GetByIdAsync((int)currentPodManager.PodManagedId);
+            var pod = await _podsRepository.GetByIdAsync(podId);
             var userToAdd = await _userManager.FindByNameAsync(username);
 
             if (userToAdd.PodJoined is not null)
@@ -131,7 +154,7 @@ namespace ToolShare.Api.Controllers
         [HttpPut]
         [Authorize(Roles = "PodManager")]
         [Route("{podId}/removeuser")]
-        public async Task<IActionResult> RemoveUserFromPod([FromBody] string username)
+        public async Task<IActionResult> RemoveUserFromPod(int podId, [FromBody] string username)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -139,10 +162,10 @@ namespace ToolShare.Api.Controllers
             var user = HttpContext.User;
             var currentPodManager = await _userManager.GetUserAsync(user);
 
-            if (currentPodManager.PodManagedId == null)   
+            if (currentPodManager.PodManagedId != podId)   
                 return BadRequest(new { Message = "You are not a manager of your pod."});
 
-            var pod = await _podsRepository.GetByIdAsync((int)currentPodManager.PodManagedId);
+            var pod = await _podsRepository.GetByIdAsync(podId);
             var userToRemove = await _userManager.FindByNameAsync(username);
 
             if (userToRemove.PodJoinedId != currentPodManager.PodManagedId)
@@ -170,8 +193,8 @@ namespace ToolShare.Api.Controllers
             var user = HttpContext.User;
             var currentPodManager = await _userManager.GetUserAsync(user);
 
-            if (currentPodManager.PodManagedId == null)   
-                return BadRequest(new { Message = "You are not a manager of your pod."});
+            if (currentPodManager.PodManagedId != podId)   
+                return BadRequest(new { Message = "You are not a manager of this pod."});
 
             var pod = await _podsRepository.GetByIdAsync(podId);
 
@@ -184,14 +207,15 @@ namespace ToolShare.Api.Controllers
 
         [HttpDelete]
         [Authorize(Roles = "PodManager")]
-        public async Task<IActionResult> DeletePod()
+        [Route("{podId}")]
+        public async Task<IActionResult> DeletePod(int podId)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
             
             var user = HttpContext.User;
             var currentPodManager = await _userManager.GetUserAsync(user);
-            var pod = currentPodManager.PodManaged;
+            var pod = await _podsRepository.GetByIdAsync(podId);
 
             if (pod.PodMembers.Any())
                 return BadRequest(new { Message = "You must remove all members from the pod before deleting, including yourself"});

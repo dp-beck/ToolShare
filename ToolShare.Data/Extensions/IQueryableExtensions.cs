@@ -17,6 +17,13 @@ namespace ToolShare.Data.Extensions
                 query = query.Include(include);
             }
             return query;
+        }
+
+        public static IQueryable<T> WhereFilter<T>(this IQueryable<T> query, Expression<Func<T, bool>> filter) 
+            where T : class
+        {
+            query = query.Where(filter);
+            return query;
         }     
     }
 }

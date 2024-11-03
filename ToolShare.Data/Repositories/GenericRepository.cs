@@ -17,7 +17,6 @@ namespace ToolShare.Data.Repositories
             _context = context;
             _dbSet = context.Set<T>();
         }
-
         public async Task<IEnumerable<T>> GetAllAsync()
         {
             return await _dbSet.ToListAsync();
@@ -32,9 +31,13 @@ namespace ToolShare.Data.Repositories
             return await _dbSet.FindAsync(id);
         }
 
-        public async Task<T> GetByIdAsyncWithIncludes(int id, params Expression<Func<T, object>>[] includes)
+        public async Task<T> GetByIdAsyncWithIncludes(int id, 
+         Expression<Func<T, bool>> filter,
+         params Expression<Func<T, object>>[] includes)
         {
-            return await _dbSet.IncludeProperties(includes).FirstOrDefaultAsync();
+            return await _dbSet.IncludeProperties(includes)
+                .WhereFilter(filter)
+                .FirstOrDefaultAsync();
         }
 
         public async Task AddAsync(T entity)
@@ -46,6 +49,11 @@ namespace ToolShare.Data.Repositories
         public async Task DeleteAsync(T entity)
         {
             _dbSet.Remove(entity);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task SaveChangesAsync()
+        {
             await _context.SaveChangesAsync();
         }
     }

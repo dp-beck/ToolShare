@@ -16,6 +16,7 @@ namespace ToolShare.Api.Profiles
             this.CreateMap<AppUser, AppUserDto>().ReverseMap();
             this.CreateMap<Pod, PodDto>().ReverseMap();
             this.CreateMap<Tool, ToolDto>().ReverseMap();
+            this.CreateMap<Tool, UpdateToolDto>().ReverseMap();
         }
     }
 }
