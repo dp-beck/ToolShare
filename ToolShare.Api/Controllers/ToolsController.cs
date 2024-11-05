@@ -36,13 +36,20 @@ namespace ToolShare.Api.Controllers
         [Authorize]
         public async Task<IActionResult> GetAllTools()
         {
-            var tools = await _toolsRepository.GetAllAsyncWithIncludes(
-                t => t.ToolOwner, t => t.ToolBorrower
-            );
+            try
+            {
+                var tools = await _toolsRepository.GetAllAsyncWithIncludes(
+                    t => t.ToolOwner, t => t.ToolBorrower!
+                );
 
-            List<ToolDto> toolDtos = _mapper.Map<List<ToolDto>>(tools);
+                List<ToolDto> toolDtos = _mapper.Map<List<ToolDto>>(tools);
 
-            return Ok(toolDtos);
+                return Ok(toolDtos);
+            }
+            catch (Exception)
+            {
+                return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
+            }
         }
 
         [HttpGet]
@@ -53,15 +60,15 @@ namespace ToolShare.Api.Controllers
             try
             {
             var tool = await _toolsRepository.GetByIdAsyncWithIncludes(toolId, t => t.ToolId == toolId,
-                t => t.ToolOwner, t => t.ToolBorrower);
+                t => t.ToolOwner, t => t.ToolBorrower!);
             
             ToolDto toolDto = _mapper.Map<ToolDto>(tool);
 
             return Ok(toolDto);   
             }
-            catch (Exception e)
+            catch (Exception )
             {
-                return BadRequest(e.Message);
+                return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
             }
         }
 
@@ -69,26 +76,29 @@ namespace ToolShare.Api.Controllers
         [Authorize(Roles = "User,PodManager")]
         public async Task<ActionResult<Tool>> CreateTool([FromBody] ToolDto toolDto)
         {
-            if (!ModelState.IsValid)
+            try
             {
-                return BadRequest(ModelState);
+                if (!ModelState.IsValid) return BadRequest(ModelState);
+                var currentUser = await _userManager.GetUserAsync(HttpContext.User);
+                
+                if (currentUser is null) return BadRequest(new { Message = "No current user is logged in."});
+
+                Tool tool = new Tool
+                {
+                    Name = toolDto.Name,
+                    Description = toolDto.Description,
+                    BorrowingPeriodInDays = toolDto.BorrowingPeriodInDays,  
+                };
+                
+                tool.ToolOwner = currentUser;
+                await _toolsRepository.AddAsync(tool);
+
+                return Ok(new { Message = "Tool created successfully."});
             }
-
-            var user = HttpContext.User;
-            var appUser = await _userManager.GetUserAsync(user);
-
-            Tool tool = new Tool
+            catch (Exception)
             {
-                Name = toolDto.Name,
-                Description = toolDto.Description,
-                BorrowingPeriodInDays = toolDto.BorrowingPeriodInDays,  
-            };
-
-            tool.ToolOwner = appUser;
-
-            await _toolsRepository.AddAsync(tool);
-
-            return CreatedAtAction(nameof(CreateTool), new { toolId = tool.ToolId }, tool);
+                return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
+            }
         }
 
         [HttpPut]
@@ -101,15 +111,21 @@ namespace ToolShare.Api.Controllers
                 var oldTool = await _toolsRepository.GetByIdAsync(toolId);
                 if (oldTool == null) return NotFound("Could not find tool with this id.");
                 
+                var currentUser = await _userManager.GetUserAsync(HttpContext.User);
+                if (currentUser is null) return NotFound("Could not find current user.");
+
+                if (oldTool.OwnerId != currentUser.Id)
+                return BadRequest(new {Message = "You are not the owner of this tool."});
+            
                 _mapper.Map(updateToolDto, oldTool);
 
                 await _toolsRepository.SaveChangesAsync();
 
-                return Ok(new {MEssage = "Tool Updated Successfully"});
+                return Ok(new {Message = "Tool Updated Successfully"});
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                return BadRequest(e.Message);
+                return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
             }
         }
 
@@ -120,42 +136,58 @@ namespace ToolShare.Api.Controllers
         {
             try 
             {
-                Tool toolBorrowed = await _toolsRepository.GetByIdAsync(toolId);
-                AppUser ToolBorrower = await _userManager.FindByNameAsync(toolBorrowerUserName);
+                var toolBorrowed = await _toolsRepository.GetByIdAsync(toolId);
+                if (toolBorrowed == null) return NotFound("Could not find tool with this id.");
 
+                var ToolBorrower = await _userManager.FindByNameAsync(toolBorrowerUserName);
+                if (ToolBorrower == null) return NotFound("Could not find tool with this id.");
+
+                var currentUser = await _userManager.GetUserAsync(HttpContext.User);
+                if (currentUser is null) return NotFound("Could not find current user.");
+
+                if (toolBorrowed.OwnerId != currentUser.Id)
+                    return BadRequest(new {Message = "You are not the owner of this tool."});
+            
                 toolBorrowed.ToolBorrower = ToolBorrower;
                 toolBorrowed.ToolStatus = ToolStatus.CurrentlyBorrowed;
 
-                _toolsRepository.SaveChangesAsync();
+                await _toolsRepository.SaveChangesAsync();
 
-                return Ok(new {Message = "Tool successfully lent"});
+                return Ok(new {Message = "Tool successfully lent."});
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                return BadRequest(e.Message);
+                return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
             }
         }
 
-                [HttpPut]
+        [HttpPut]
         [Authorize(Roles = "User,PodManager")]
         [Route("{toolId}/returntool")]
         public async Task<IActionResult> ReturnTool(int toolId)
         {
             try 
             {
-                Tool toolBorrowed = await _toolsRepository.GetByIdAsync(toolId);
+                var toolBorrowed = await _toolsRepository.GetByIdAsync(toolId);
+                if (toolBorrowed == null) return NotFound("Could not find tool with this id.");
 
+                var currentUser = await _userManager.GetUserAsync(HttpContext.User);
+                if (currentUser is null) return NotFound("Could not find current user.");
+
+                if (toolBorrowed.OwnerId != currentUser.Id)
+                return BadRequest(new {Message = "You are not the owner of this tool."});
+            
                 toolBorrowed.ToolBorrower = null;
                 toolBorrowed.BorrowerId = null;
                 toolBorrowed.ToolStatus = ToolStatus.AvailableForBorrowing;
 
-                _toolsRepository.SaveChangesAsync();
+                await _toolsRepository.SaveChangesAsync();
 
-                return Ok(new {Message = "Tool successfully returned"});
+                return Ok(new {Message = "Tool successfully returned."});
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                return BadRequest(e.Message);
+                return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
             }
         }
 
@@ -164,21 +196,25 @@ namespace ToolShare.Api.Controllers
         [Route("{toolId}")]
         public async Task<ActionResult> DeleteTool(int toolId)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-            
-            var user = HttpContext.User;
-            var currentUser = await _userManager.GetUserAsync(user);
-            
-            var tool = await _toolsRepository.GetByIdAsync(toolId);
+            try
+            {
+                var tool = await _toolsRepository.GetByIdAsync(toolId);
+                if (tool is null) return NotFound("Could not find tool with this id.");
 
-            if (tool.OwnerId != currentUser.Id)
-                return BadRequest(new {Message = "You are not the owner of this tool."});
-            
-            await _toolsRepository.DeleteAsync(tool);
+                var currentUser = await _userManager.GetUserAsync(HttpContext.User);
+                if (currentUser is null) return NotFound("Could not find current user.");
 
-            return Ok(new {Message = "Tool successfully deleted"});
+                if (tool.OwnerId != currentUser.Id)
+                    return BadRequest(new { Message = "You are not the owner of this tool." });
 
+                await _toolsRepository.DeleteAsync(tool);
+
+                return Ok(new { Message = "Tool successfully deleted" });
+            }
+            catch (Exception)
+            {
+                return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
+            }
         }
 
     }

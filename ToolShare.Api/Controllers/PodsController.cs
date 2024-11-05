@@ -50,25 +50,26 @@ namespace ToolShare.Api.Controllers
 
         [HttpGet]
         [Authorize(Roles = "User,PodManager")]
-        [Route("{podId}")]
-        public async Task<IActionResult> GetPodById(int podId)
+        [Route("{podId:int}")]
+        public async Task<IActionResult> FindPodById(int podId)
         {
             try
             {
                 var pod = await _podsRepository.GetByIdAsync(podId);
+                if (pod is null) return BadRequest(new {Message = "No pod with that Id exists."});
 
-                var user = HttpContext.User;
-                var appUser = await _userManager.GetUserAsync(user);
+                var currentUser = await _userManager.GetUserAsync(HttpContext.User);
+                if (currentUser is null) return BadRequest(new { Message = "No current user is logged in."});
 
-                if (pod.PodId != appUser.PodJoinedId)
+                if (pod.PodId != currentUser.PodJoinedId) 
                     return BadRequest(new {Message = "You are not a member of this pod."});
 
                 PodDto podDto = _mapper.Map<PodDto>(pod);
                 return Ok(podDto);
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                return BadRequest(e.Message);
+                return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
             }
         }
 
@@ -80,19 +81,20 @@ namespace ToolShare.Api.Controllers
             try
             {
                 var pod = await _podsRepository.FindPodByName(podName);
+                if (pod is null) return BadRequest(new {Message = "No pod with that name exists."});
 
-                var user = HttpContext.User;
-                var appUser = await _userManager.GetUserAsync(user);
+                var currentUser = await _userManager.GetUserAsync(HttpContext.User);
+                if (currentUser is null) return BadRequest(new { Message = "No current user is logged in."});
 
-                if (pod.PodId != appUser.PodJoinedId)
+                if (pod.PodId != currentUser.PodJoinedId)
                     return BadRequest(new {Message = "You are not a member of this pod."});
 
                 PodDto podDto = _mapper.Map<PodDto>(pod);
                 return Ok(podDto);
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                return BadRequest(e.Message);
+                return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
             }
         }
 
@@ -100,86 +102,103 @@ namespace ToolShare.Api.Controllers
         [Authorize(Roles = "NoPodUser")]
         public async Task<IActionResult> InitializeNewPod([FromBody] PodDto podDto)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-            
-            var user = HttpContext.User;
-            var appUser = await _userManager.GetUserAsync(user);
-
-            Pod pod = new Pod
+            try
             {
-                Name = podDto.Name
-            };
-
-            pod.PodMembers.Add(appUser);
-            pod.podManager = appUser;
-
-            await _userManager.AddToRoleAsync(appUser, "PodManager");
-            await _userManager.RemoveFromRoleAsync(appUser, "NoPodUser");
-
-            await _podsRepository.AddAsync(pod);
+                if (!ModelState.IsValid)
+                    return BadRequest(ModelState);
             
-            return CreatedAtAction(nameof(InitializeNewPod), new { podId = pod.PodId }, pod);
+                var currentUser = await _userManager.GetUserAsync(HttpContext.User);
+                if (currentUser is null) return BadRequest(new { Message = "No current user is logged in."});
+
+                Pod pod = new Pod
+                {
+                    Name = podDto.Name
+                };
+
+                pod.PodMembers.Add(currentUser);
+                pod.podManager = currentUser;
+
+                await _userManager.AddToRoleAsync(currentUser, "PodManager");
+                await _userManager.RemoveFromRoleAsync(currentUser, "NoPodUser");
+
+                await _podsRepository.AddAsync(pod);
+            
+                return Ok(new { Message = "Pod created successfully."});
+            }
+            catch (Exception)
+            {
+                return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
+            }
         }
 
         [HttpPut]
         [Authorize(Roles = "PodManager")]
-        [Route("{podId}/adduser")]
+        [Route("{podId}/add-user")]
         public async Task<IActionResult> AddUserToPod(int podId, [FromBody] string username)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-            
-            var user = HttpContext.User;
-            var currentPodManager = await _userManager.GetUserAsync(user);
+            try
+            {
+                var currentPodManager = await _userManager.GetUserAsync(HttpContext.User);
+                if (currentPodManager is null) return BadRequest(new { Message = "No current user is logged in." });
 
-            if (currentPodManager.PodManagedId != podId)   
-                return BadRequest(new { Message = "You are not a manager of this pod."});
+                if (currentPodManager.PodManagedId != podId) return BadRequest(new { Message = "You are not a manager of this pod." });
 
-            var pod = await _podsRepository.GetByIdAsync(podId);
-            var userToAdd = await _userManager.FindByNameAsync(username);
+                var pod = await _podsRepository.GetByIdAsync(podId);
+                if (pod is null) return BadRequest(new { Message = "No pod found" });
 
-            if (userToAdd.PodJoined is not null)
-                return BadRequest(new {Message = "User already a member of a pod."});
-            
-            await _userManager.RemoveFromRoleAsync(userToAdd, "NoPodUser");
-            await _userManager.AddToRoleAsync(userToAdd, "User");
+                var userToAdd = await _userManager.FindByNameAsync(username);
+                if (userToAdd is null) return BadRequest(new { Message = "The user to add was not found." });
 
-            await _podsRepository.AddUserToPod(userToAdd, pod);
+                if (userToAdd.PodJoined is not null) return BadRequest(new { Message = "User already a member of a pod." });
 
-            return Ok(new { Message = "User added to pod." });
+                await _userManager.RemoveFromRoleAsync(userToAdd, "NoPodUser");
+                await _userManager.AddToRoleAsync(userToAdd, "User");
+
+                await _podsRepository.AddUserToPod(userToAdd, pod);
+
+                return Ok(new { Message = "User added to pod." });
+            }
+            catch (Exception)
+            {
+                return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
+            }
         }
-
 
         [HttpPut]
         [Authorize(Roles = "PodManager")]
         [Route("{podId}/removeuser")]
         public async Task<IActionResult> RemoveUserFromPod(int podId, [FromBody] string username)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-            
-            var user = HttpContext.User;
-            var currentPodManager = await _userManager.GetUserAsync(user);
-
-            if (currentPodManager.PodManagedId != podId)   
-                return BadRequest(new { Message = "You are not a manager of your pod."});
-
-            var pod = await _podsRepository.GetByIdAsync(podId);
-            var userToRemove = await _userManager.FindByNameAsync(username);
-
-            if (userToRemove.PodJoinedId != currentPodManager.PodManagedId)
-                return BadRequest(new {Message = "This user is not a member of your pod"});
-            
-            if (pod.podManager.Id != userToRemove.Id)
+            try
             {
-                await _userManager.RemoveFromRoleAsync(userToRemove, "User");
-                await _userManager.AddToRoleAsync(userToRemove, "NoPodUser");
-            }
-            
-            await _podsRepository.RemoveUserFromPod(userToRemove, pod);
+                var currentPodManager = await _userManager.GetUserAsync(HttpContext.User);
+                if (currentPodManager is null) return BadRequest(new { Message = "No current user is logged in." });
 
-            return Ok(new { Message = "User removed from pod." });
+                if (currentPodManager.PodManagedId != podId)   
+                    return BadRequest(new { Message = "You are not a manager of your pod."});
+
+                var pod = await _podsRepository.GetByIdAsync(podId);
+                var userToRemove = await _userManager.FindByNameAsync(username);
+                
+                if (userToRemove is null) return BadRequest(new { Message = "This user does not exist."});
+
+                if (userToRemove.PodJoinedId != currentPodManager.PodManagedId)
+                    return BadRequest(new {Message = "This user is not a member of your pod"});
+            
+                if (pod.podManager.Id != userToRemove.Id)
+                {
+                    await _userManager.RemoveFromRoleAsync(userToRemove, "User");
+                    await _userManager.AddToRoleAsync(userToRemove, "NoPodUser");
+                }
+
+                await _podsRepository.RemoveUserFromPod(userToRemove, pod);
+
+                return Ok(new { Message = "User removed from pod." });
+            }
+            catch (Exception)
+            {
+                return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
+            }   
         }
 
         [HttpPut]
@@ -187,22 +206,27 @@ namespace ToolShare.Api.Controllers
         [Route("{podId}/updatename")]
         public async Task<IActionResult> UpdatePodName(int podId, [FromBody] string newName)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-            
-            var user = HttpContext.User;
-            var currentPodManager = await _userManager.GetUserAsync(user);
+            try
+            {
+                if (!ModelState.IsValid) return BadRequest(ModelState);
+                
+                var currentPodManager = await _userManager.GetUserAsync(HttpContext.User);
+                if (currentPodManager is null) return BadRequest(new { Message = "No current user is logged in." });
 
-            if (currentPodManager.PodManagedId != podId)   
-                return BadRequest(new { Message = "You are not a manager of this pod."});
+                if (currentPodManager.PodManagedId != podId)   
+                    return BadRequest(new { Message = "You are not a manager of your pod."});
 
-            var pod = await _podsRepository.GetByIdAsync(podId);
+                var pod = await _podsRepository.GetByIdAsync(podId);
 
-            if (pod is null)
-                return BadRequest(new {Message ="No pod located with that id"});
+                if (pod is null) return BadRequest(new {Message ="No pod located with that id"});
 
-            await _podsRepository.UpdateName(newName, pod);
-            return Ok(new {Message = "Pod name changed."});
+                await _podsRepository.UpdateName(newName, pod);
+                return Ok(new {Message = "Pod name changed."});
+            }
+            catch (Exception)
+            {
+                return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");               
+            }
         }
 
         [HttpDelete]
@@ -210,22 +234,33 @@ namespace ToolShare.Api.Controllers
         [Route("{podId}")]
         public async Task<IActionResult> DeletePod(int podId)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+            try
+            {
+                if (!ModelState.IsValid) return BadRequest(ModelState);
+                var currentPodManager = await _userManager.GetUserAsync(HttpContext.User);
+                if (currentPodManager is null) return BadRequest(new { Message = "No current user is logged in." });
+                
+                if (currentPodManager.PodManagedId != podId)   
+                    return BadRequest(new { Message = "You are not a manager of your pod."});
             
-            var user = HttpContext.User;
-            var currentPodManager = await _userManager.GetUserAsync(user);
-            var pod = await _podsRepository.GetByIdAsync(podId);
+                var pod = await _podsRepository.GetByIdAsync(podId);
+                if (pod is null) return BadRequest(new {Message ="No pod located with that id"});
 
-            if (pod.PodMembers.Any())
-                return BadRequest(new { Message = "You must remove all members from the pod before deleting, including yourself"});
-
-            await _userManager.RemoveFromRoleAsync(currentPodManager, "PodManager");
-            await _userManager.AddToRoleAsync(currentPodManager, "NoPodUser");
+                if (pod.PodMembers.Any())
+                    return BadRequest(new { Message = "You must remove all members from the pod before deleting, including yourself"});
+                
+                await _userManager.RemoveFromRoleAsync(currentPodManager, "PodManager");
+                await _userManager.AddToRoleAsync(currentPodManager, "NoPodUser");
             
-            await _podsRepository.DeleteAsync(currentPodManager.PodManaged);
+                await _podsRepository.DeleteAsync(currentPodManager.PodManaged);
 
-            return Ok(new {Message = "Pod sucessfully deleted."});
+                return Ok(new {Message = "Pod sucessfully deleted."});
+            }
+            catch (Exception)
+            {
+                return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");               
+            }
+             
         }
     }
 }
