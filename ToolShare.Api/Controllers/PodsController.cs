@@ -178,8 +178,9 @@ namespace ToolShare.Api.Controllers
                     return BadRequest(new { Message = "You are not a manager of your pod."});
 
                 var pod = await _podsRepository.GetByIdAsync(podId);
-                var userToRemove = await _userManager.FindByNameAsync(username);
+                if (pod is null) return NotFound("Pod not found");
                 
+                var userToRemove = await _userManager.FindByNameAsync(username);
                 if (userToRemove is null) return BadRequest(new { Message = "This user does not exist."});
 
                 if (userToRemove.PodJoinedId != currentPodManager.PodManagedId)
@@ -252,7 +253,7 @@ namespace ToolShare.Api.Controllers
                 await _userManager.RemoveFromRoleAsync(currentPodManager, "PodManager");
                 await _userManager.AddToRoleAsync(currentPodManager, "NoPodUser");
             
-                await _podsRepository.DeleteAsync(currentPodManager.PodManaged);
+                await _podsRepository.DeleteAsync(pod);
 
                 return Ok(new {Message = "Pod sucessfully deleted."});
             }

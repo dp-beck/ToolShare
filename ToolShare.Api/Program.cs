@@ -2,6 +2,7 @@ using System.Reflection;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using ToolShare.Api;
 using ToolShare.Data;
 using ToolShare.Data.Models;
 using ToolShare.Data.Repositories;
@@ -80,8 +81,10 @@ using (var scope = app.Services.CreateScope())
 if (app.Environment.IsDevelopment())
 {
     // Seed the Database
-    // await using var scope = app.Services.CreateAsyncScope();
-    // await SeedData.InitializeAsync(scope.ServiceProvider);
+    await using var scope = app.Services.CreateAsyncScope();
+    await SeedData.InitializeUsersAsync(scope.ServiceProvider);
+    await SeedData.InitializePodsAsync(scope.ServiceProvider);
+    await SeedData.InitializeToolsAsync(scope.ServiceProvider);
     
     app.UseOpenApi();
     app.UseSwaggerUI();
