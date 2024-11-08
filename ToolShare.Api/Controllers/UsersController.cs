@@ -127,8 +127,9 @@ namespace ToolShare.Api.Controllers
         [HttpGet]
         [Route("current-user/roles")]
         [Authorize]
-        public IResult GetRoles(ClaimsPrincipal user)
+        public IResult GetRoles()
         {
+            var user = HttpContext.User;
             try
             {
                 if (user.Identity is not null && user.Identity.IsAuthenticated)
