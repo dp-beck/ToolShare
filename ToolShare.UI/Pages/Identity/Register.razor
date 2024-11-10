@@ -1,9 +1,10 @@
 @page "/register"
+@layout EmptyLayout
 @using ToolShare.UI.Identity
 @attribute [AllowAnonymous]
 @inject IAccountManagement Acct
 
-<PageTitle>Register</PageTitle>
+<PageTitle>Tool Share - Register</PageTitle>
 
 <h1>Register</h1>
 
@@ -32,13 +33,37 @@
                     <label for="email">
                         Email:
                     </label>
-                    <input autofocus autocomplete="on" required id="email" name="emailInput" placeholder="Enter your email address" type="email" @bind-value="email" />
+                    <input autofocus autocomplete="on" required id="email" name="emailInput" placeholder="Enter your email address" type="email" @bind-value="registrationInfo.Email" />
+                </div>
+                <div>
+                    <label for="username">
+                        Username:
+                    </label>
+                    <input autofocus autocomplete="on" required id="username" name="usernameInput" placeholder="Enter your username" type="string" @bind-value="registrationInfo.UserName" />
+                </div>
+                <div>
+                    <label for="firstName">
+                        First Name:
+                    </label>
+                    <input autofocus autocomplete="on" required id="firstName" name="firstNameInput" placeholder="Enter your first name" type="string" @bind-value="registrationInfo.FirstName" />
+                </div>
+                <div>
+                    <label for="lastName">
+                        Last Name:
+                    </label>
+                    <input autofocus autocomplete="on" required id="lastName" name="lastNameInput" placeholder="Enter your last name" type="string" @bind-value="registrationInfo.LastName" />
+                </div>
+                <div>
+                    <label for="aboutMe">
+                        About Me:
+                    </label>
+                    <textarea autofocus autocomplete="on" required id="aboutMe" name="aboutMeInput" placeholder="Tell us about yourself" type="string" @bind="registrationInfo.AboutMe" />
                 </div>
                 <div>
                     <label for="password">
                         Password:
                     </label>
-                    <input required id="password" name="passwordInput" placeholder="Enter your password" type="password" @bind-value="password" /><br />
+                    <input required id="password" name="passwordInput" placeholder="Enter your password" type="password" @bind-value="registrationInfo.Password" /><br />
                 </div>
                 <div>
                     <label for="confirmPassword">
@@ -55,9 +80,17 @@
 </AuthorizeView>
 
 @code {
-    private bool success, errors;
-    private string email = string.Empty;
-    private string password = string.Empty;
+    private bool success, errors; 
+    private RegistrationInfo? registrationInfo = new RegistrationInfo
+    {
+        UserName = string.Empty,
+        Email = string.Empty,
+        FirstName = string.Empty,
+        LastName = string.Empty,
+        AboutMe = string.Empty,
+        Password = string.Empty
+    };
+
     private string confirmPassword = string.Empty;
     private string[] errorList = [];
 
@@ -66,7 +99,7 @@
         success = errors = false;
         errorList = [];
 
-        if (string.IsNullOrWhiteSpace(email))
+        if (string.IsNullOrWhiteSpace(registrationInfo.Email))
         {
             errors = true;
             errorList = ["Email is required."];
@@ -74,7 +107,7 @@
             return;
         }
 
-        if (string.IsNullOrWhiteSpace(password))
+        if (string.IsNullOrWhiteSpace(registrationInfo.Password))
         {
             errors = true;
             errorList = ["Password is required."];
@@ -90,7 +123,7 @@
             return;
         }
 
-        if (password != confirmPassword)
+        if (registrationInfo.Password != confirmPassword)
         {
             errors = true;
             errorList = ["Passwords don't match."];
@@ -98,12 +131,18 @@
             return;
         }
 
-        var result = await Acct.RegisterAsync(email, password);
+        var result = await Acct.RegisterAsync(registrationInfo);
 
         if (result.Succeeded)
         {
             success = true;
-            email = password = confirmPassword = string.Empty;
+            registrationInfo.Email = 
+            registrationInfo.Password =
+            registrationInfo.UserName =
+            registrationInfo.FirstName =
+            registrationInfo.LastName =
+            registrationInfo.AboutMe = 
+            confirmPassword = string.Empty;
         }
         else
         {

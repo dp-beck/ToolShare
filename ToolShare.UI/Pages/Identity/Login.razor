@@ -1,17 +1,27 @@
 @page "/login"
+@layout EmptyLayout
 @using ToolShare.UI.Identity
 @attribute [AllowAnonymous]
 @inject IAccountManagement Acct
 
-<PageTitle>Login</PageTitle>
+<PageTitle>Tool Share - Log in or Sign Up</PageTitle>
 
-<h1>Login</h1>
+<h1>Welcome to Tool Share!</h1>
 
+<img src="images/logo.png" alt="logo" style="width: 100px;">
+
+<p> An app for making it possible to share your tools with family and friends.
+    Say goodbye to misplacing your tools by keeping track of who has what
+    and for how long.
+</p>
 <AuthorizeView>
     <Authorized>
-        <div class="alert alert-success">You're logged in as @context.User.Identity?.Name.</div>
+        <HomeRedirect />
     </Authorized>
     <NotAuthorized>
+        <div>
+            <p> Welcome back! Sign in to get started! </p>
+        </div>
         @if (errors)
         {
             @foreach (var error in errorList)
@@ -22,7 +32,7 @@
         <div class="flex-outer">
             <div>
                 <label for="username">
-                    Email:
+                    Username:
                 </label>
                 <input required id="username" name="usernameInput" placeholder="Enter your username" type="string" @bind-value="username" />
             </div>
@@ -36,6 +46,7 @@
                 <button class="btn btn-primary" @onclick="DoLoginAsync">Login</button>
             </div>
         </div>
+        <p>Not signed up yet? Head on over to the <NavLink href="register"> Registration Page! </NavLink> </p>
     </NotAuthorized>
 </AuthorizeView>
 

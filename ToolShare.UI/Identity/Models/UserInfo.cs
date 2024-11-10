@@ -24,5 +24,11 @@ namespace ToolShare.UI.Identity.Models
         /// The list of claims for the user.
         /// </summary>
         public Dictionary<string, string> Claims { get; set; } = [];
+
+        public string userName { get; set; } = string.Empty;
+        public string FirstName { get; set; } = string.Empty;
+        public string LastName { get; set; } = string.Empty;
+        public string AboutMe { get; set; } = string.Empty;
+        public string ProfilePhotoUrl { get; set; } = string.Empty;
     }
 }

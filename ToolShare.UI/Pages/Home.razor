@@ -1,7 +1,17 @@
 ﻿@page "/"
 
-<PageTitle>Home</PageTitle>
+<PageTitle>Tool Share - Home</PageTitle>
 
-<h1>Hello, world!</h1>
+<AuthorizeView Roles="NoPodUser">
+    <h1>Welcome to Tool Share!</h1>
+    <p>You have not been added to a pod yet. See the pods that have been created so far below.
+        Send the manager an email requesting to be added to their pod! Alternatively, go ahead
+        and fill out the Create Pod form below to start your own pod!
+    </p>
 
-Welcome to Tool Share!
+    <h2>Pods</h2>
+
+    <h2>Start a new pod!</h2>
+
+
+</AuthorizeView>

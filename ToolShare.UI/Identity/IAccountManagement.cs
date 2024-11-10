@@ -28,12 +28,9 @@ namespace ToolShare.UI.Identity
         /// <summary>
         /// Registration service.
         /// </summary>
-        /// <param name="email">User's email.</param>
-        /// <param name="password">User's password.</param>
+        /// <param name="registrationInfo">Information Needed to Register</param>
         /// <returns>The result of the request serialized to <see cref="FormResult"/>.</returns>
-        public Task<FormResult> RegisterAsync(string email, string password);
-
-            // NOTE TO DO: Will likely change this to take in a Registration DTO
+        public Task<FormResult> RegisterAsync(RegistrationInfo registrationInfo);
 
         public Task<bool> CheckAuthenticatedAsync();   
     }

@@ -51,7 +51,7 @@ namespace ToolShare.UI.Identity
         /// <param name="password">The user's password.</param>
         /// <returns>The result serialized to a <see cref="FormResult"/>.
         /// </returns>
-        public async Task<FormResult> RegisterAsync(string email, string password)
+        public async Task<FormResult> RegisterAsync(RegistrationInfo registrationInfo)
         {
             string[] defaultDetail = [ "An unknown error prevented registration from succeeding." ];
 
@@ -59,11 +59,7 @@ namespace ToolShare.UI.Identity
             {
                 // make the request
                 var result = await httpClient.PostAsJsonAsync(
-                    "register", new
-                    {
-                        email,
-                        password
-                    });
+                    "api/users/register", registrationInfo);
 
                 // successful?
                 if (result.IsSuccessStatusCode)
@@ -179,7 +175,7 @@ namespace ToolShare.UI.Identity
                     // in this example app, name and email are the same
                     var claims = new List<Claim>
                     {
-                        new(ClaimTypes.Name, userInfo.Email),
+                        new(ClaimTypes.Name, userInfo.userName),
                         new(ClaimTypes.Email, userInfo.Email),
                     };
 
