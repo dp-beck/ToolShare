@@ -4,12 +4,9 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.Extensions.DependencyInjection;
 using ToolShare.UI;
 using ToolShare.UI.Identity;
-
-/* TO DO:
-1. Add Code for Cookie Handler
-2. Add Code for CookieAuthStateProvider
-3. Add Code for IAccountManagement Interface
-*/
+using ToolShare.UI.Services;
+using ToolShare.Data.Models;
+using System.Reflection;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
@@ -21,6 +18,8 @@ builder.Services.AddTransient<CookieHandler>();
 // set up authorization
 builder.Services.AddAuthorizationCore();
 
+builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
+
 // register the custom state provider
 builder.Services.AddScoped<AuthenticationStateProvider, CookieAuthenticationStateProvider>();
 
@@ -28,7 +27,10 @@ builder.Services.AddScoped<AuthenticationStateProvider, CookieAuthenticationStat
 builder.Services.AddScoped(
     sp => (IAccountManagement)sp.GetRequiredService<AuthenticationStateProvider>());
 
-builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
+builder.Services.AddHttpClient<IPodsDataService, PodsDataService>(
+    "PodsApi",
+    opt => opt.BaseAddress = new Uri(builder.Configuration["BackendUrl"] ?? "https://localhost:5001"))
+    .AddHttpMessageHandler<CookieHandler>();
 
 // configure client for auth interactions
 builder.Services.AddHttpClient(

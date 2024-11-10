@@ -9,8 +9,36 @@
         and fill out the Create Pod form below to start your own pod!
     </p>
 
+    <img src="images/ToolShareLogo.png" alt="" srcset="">
+
     <h2>Pods</h2>
 
+        @if (Pods == null)
+        {
+            <p><em>Loading...</em></p>
+        } else
+        {
+            <table>
+            <thead>
+                <tr>
+                    <th>Pod Name</th>
+                    <th>Pod Manager</th>
+                    <th>Contact Email</th>
+                </tr>
+            </thead>
+            <tbody>
+            
+            @foreach (var pod in Pods)
+            {
+                <tr>
+                    <td>@pod.Name</td>
+                    <td>@pod.podManager.UserName</td>
+                    <td>@pod.podManager.Email</td>
+                </tr>
+            }
+                </tbody>
+            </table>
+        }
     <h2>Start a new pod!</h2>
 
 

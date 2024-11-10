@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ToolShare.Api.Dtos;
-using ToolShare.Data;
 using ToolShare.Data.Models;
 using ToolShare.Data.Repositories;
 

@@ -4,11 +4,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using ToolShare.Data.Models;
 
-namespace ToolShare.UI.Models
+namespace ToolShare.UI.DTOs
 {
-    public class Pod
+    public class PodDTO
     {
-        public string? Name { get; set; }  
+        public string Name { get; set; }  
         public AppUser podManager { get; set; }
         public ICollection<AppUser> PodMembers { get; set; } = new List<AppUser>();
     }
