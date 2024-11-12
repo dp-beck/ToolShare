@@ -2,12 +2,15 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http.Json;
+using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Text.Unicode;
 using System.Threading.Tasks;
 using AutoMapper;
 using ToolShare.Data.Models;
 using ToolShare.UI.DTOs;
+using ToolShare.UI.Identity.Models;
 
 namespace ToolShare.UI.Services
 {
@@ -47,6 +50,22 @@ namespace ToolShare.UI.Services
 
 
             return podDTOs;
+
+        }
+
+        public async Task<PodDTO?> InitializeNewPod(PodDTO podDTO)
+        {
+            var podJson = 
+                new StringContent(JsonSerializer.Serialize(podDTO), Encoding.UTF8, "application/json");
+
+            var response = await _httpClient.PostAsync("api/pods", podJson);
+
+            if (response.IsSuccessStatusCode)
+            {
+                return await JsonSerializer.DeserializeAsync<PodDTO>(await response.Content.ReadAsStreamAsync());
+            }
+            
+            return null;
 
         }
     }

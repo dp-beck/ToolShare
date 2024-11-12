@@ -119,6 +119,7 @@ namespace ToolShare.Api.Controllers
                 pod.podManager = currentUser;
 
                 await _userManager.AddToRoleAsync(currentUser, "PodManager");
+                await _userManager.AddToRoleAsync(currentUser, "User");
                 await _userManager.RemoveFromRoleAsync(currentUser, "NoPodUser");
 
                 await _podsRepository.AddAsync(pod);

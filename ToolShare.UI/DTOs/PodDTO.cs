@@ -9,7 +9,7 @@ namespace ToolShare.UI.DTOs
     public class PodDTO
     {
         public string Name { get; set; }  
-        public AppUser podManager { get; set; }
-        public ICollection<AppUser> PodMembers { get; set; } = new List<AppUser>();
+        public AppUser? podManager { get; set; }
+        public ICollection<AppUser>? PodMembers { get; set; } = new List<AppUser>();
     }
 }

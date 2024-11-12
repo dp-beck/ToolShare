@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using ToolShare.Data.Models;
 using ToolShare.UI.DTOs;
+using ToolShare.UI.Identity.Models;
 
 namespace ToolShare.UI.Services
 {
@@ -11,6 +12,7 @@ namespace ToolShare.UI.Services
     {
         public Task<IEnumerable<PodDTO>> GetAllPods();
         public Task<Pod> GetPodDetails();
+        public Task<PodDTO> InitializeNewPod(PodDTO podDTO);
 
     }
 }

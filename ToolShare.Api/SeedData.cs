@@ -74,7 +74,7 @@ namespace ToolShare.Api
                 UserName = "oliviasmith",
                 NormalizedUserName = "OLIVIASMITH",
                 Email = "olivia@protonmail.com",
-                NormalizedEmail = "OLIVIA@PROTONMAIL<.COM",
+                NormalizedEmail = "OLIVIA@PROTONMAIL.COM",
                 FirstName = "Olivia",
                 LastName = "Rodrigo",
                 AboutMe = "Hey, you know me!",
@@ -100,13 +100,14 @@ namespace ToolShare.Api
                 UserName = "jonjon",
                 NormalizedUserName = "JONJON",
                 Email = "jondonaldson@att.net",
-                NormalizedEmail = "JONDONALDSON@att.net",
+                NormalizedEmail = "JONDONALDSON@ATT.NET",
                 FirstName = "Jon",
                 LastName = "Donaldson",
                 AboutMe = "Everyone likes me!",
                 ProfilePhotoUrl = "https://res.cloudinary.com/dzsqoueki/image/upload/w_1000,c_fill,ar_1:1,g_auto,r_max,bo_5px_solid_red,b_rgb:262c35/v1730826604/FakeProfilePhoto1.jpg",
                 RoleList = ["NoPodUser"]
-            }
+            },
+
         ];
         
         public static async Task InitializeUsersAsync(IServiceProvider serviceProvider)

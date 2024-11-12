@@ -48,7 +48,9 @@ namespace ToolShare.Data
                 .HasForeignKey<AppUser>(pm => pm.PodManagedId)
                 .OnDelete(DeleteBehavior.Cascade);
             
+            modelBuilder.Entity<Pod>()
+                .HasIndex(p => p.Name)
+                .IsUnique();
         }
-
     }
 }

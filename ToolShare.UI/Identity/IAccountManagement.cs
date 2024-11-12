@@ -33,5 +33,7 @@ namespace ToolShare.UI.Identity
         public Task<FormResult> RegisterAsync(RegistrationInfo registrationInfo);
 
         public Task<bool> CheckAuthenticatedAsync();   
+
+        public void RefreshAuthenticationState();
     }
 }

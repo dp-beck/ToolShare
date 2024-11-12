@@ -7,6 +7,7 @@ using ToolShare.UI.Identity;
 using ToolShare.UI.Services;
 using ToolShare.Data.Models;
 using System.Reflection;
+using ToolShare.UI.Identity.Models;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
@@ -26,6 +27,8 @@ builder.Services.AddScoped<AuthenticationStateProvider, CookieAuthenticationStat
 // register the account management interface
 builder.Services.AddScoped(
     sp => (IAccountManagement)sp.GetRequiredService<AuthenticationStateProvider>());
+
+builder.Services.AddSingleton<UserInfo>();
 
 builder.Services.AddHttpClient<IPodsDataService, PodsDataService>(
     "PodsApi",

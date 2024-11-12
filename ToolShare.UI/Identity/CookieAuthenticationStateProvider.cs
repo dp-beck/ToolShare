@@ -234,6 +234,11 @@ namespace ToolShare.UI.Identity
             return authenticated;
         }
 
+        public void RefreshAuthenticationState()
+        {
+            NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
+        }
+
         public class RoleClaim
         {
             public string? Issuer { get; set; }

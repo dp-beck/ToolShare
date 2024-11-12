@@ -8,7 +8,7 @@ namespace ToolShare.Api.Dtos
     public class PodDto
     {
         public string Name { get; set; }
-        public AppUserDto PodManager { get; set; }
-        public List<AppUserDto> PodMembers { get; set; }
+        public AppUserDto? PodManager { get; set; }
+        public List<AppUserDto>? PodMembers { get; set; }
     }
 }
