@@ -68,7 +68,7 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-    string[] roles = ["NoPodUser", "User", "PodManager"];
+    string[] roles = ["NoPodUser", "User", "PodManager", "Administrator"];
 
     foreach (var role in roles)
     {

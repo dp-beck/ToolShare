@@ -6,7 +6,9 @@ using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Http;
 using ToolShare.UI.Identity.Models;
 
 namespace ToolShare.UI.Identity
@@ -172,7 +174,6 @@ namespace ToolShare.UI.Identity
 
                 if (userInfo != null)
                 {
-                    // in this example app, name and email are the same
                     var claims = new List<Claim>
                     {
                         new(ClaimTypes.Name, userInfo.userName),
@@ -220,6 +221,8 @@ namespace ToolShare.UI.Identity
             return new AuthenticationState(user);
         }
 
+        
+
         public async Task LogoutAsync()
         {
             const string Empty = "{}";
@@ -232,11 +235,6 @@ namespace ToolShare.UI.Identity
         {
             await GetAuthenticationStateAsync();
             return authenticated;
-        }
-
-        public void RefreshAuthenticationState()
-        {
-            NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
         }
 
         public class RoleClaim

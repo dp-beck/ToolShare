@@ -31,7 +31,7 @@ namespace ToolShare.Api.Controllers
         }
 
         [HttpGet]
-        [Authorize]
+  //      [Authorize(Roles ="Administrator")]
         public async Task<IActionResult> GetAllPods()
         {
             try
@@ -41,6 +41,26 @@ namespace ToolShare.Api.Controllers
                 List<PodDto> podDtos = _mapper.Map<List<PodDto>>(pods);
                 
                 return Ok(podDtos);
+            } 
+            catch (Exception)
+            {
+                return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
+            }
+        }
+
+
+        [HttpGet]
+//      [Authorize(Roles ="NoPodUser")]
+        [Route("pod-list-for-nopoduser")]
+        public async Task<IActionResult> GetAllPodsLimitedInfoForNoPodUser()
+        {
+            try
+            {
+                var pods = await _podsRepository.GetAllAsyncWithIncludes(p => p.podManager);
+
+                var limitedPodDTOs = _mapper.Map<List<LimitedPodInfoDTO>>(pods);
+                
+                return Ok(limitedPodDTOs);
             } 
             catch (Exception)
             {

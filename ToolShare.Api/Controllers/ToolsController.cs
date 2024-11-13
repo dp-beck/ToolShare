@@ -32,7 +32,7 @@ namespace ToolShare.Api.Controllers
         }
 
         [HttpGet]
-        [Authorize]
+        [Authorize(Roles ="Administrator")]
         public async Task<IActionResult> GetAllTools()
         {
             try

@@ -108,6 +108,19 @@ namespace ToolShare.Api
                 RoleList = ["NoPodUser"]
             },
 
+            new SeedUser()
+            {
+                UserName = "admin",
+                NormalizedUserName = "ADMIN",
+                Email = "beckdp01@gmail.com",
+                NormalizedEmail = "BECKDP01@GMAIL.COM",
+                FirstName = "Admin",
+                LastName = "Admin",
+                AboutMe = "Administrative Account",
+                ProfilePhotoUrl = "https://res.cloudinary.com/dzsqoueki/image/upload/w_1000,c_fill,ar_1:1,g_auto,r_max,bo_5px_solid_red,b_rgb:262c35/v1730826604/FakeProfilePhoto2.jpg",
+                RoleList = ["Administrator"]
+            }
+
         ];
         
         public static async Task InitializeUsersAsync(IServiceProvider serviceProvider)

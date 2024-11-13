@@ -34,6 +34,5 @@ namespace ToolShare.UI.Identity
 
         public Task<bool> CheckAuthenticatedAsync();   
 
-        public void RefreshAuthenticationState();
     }
 }

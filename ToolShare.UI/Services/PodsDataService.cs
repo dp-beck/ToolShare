@@ -53,7 +53,20 @@ namespace ToolShare.UI.Services
 
         }
 
-        public async Task<PodDTO?> InitializeNewPod(PodDTO podDTO)
+        public async Task<IEnumerable<LimitedPodInfoDTO>> GetAllPodsLimitedInfoForNoPodUser()
+        {
+
+            var podsResponse = await _httpClient.GetAsync("api/pods/pod-list-for-nopoduser");
+
+            podsResponse.EnsureSuccessStatusCode();
+
+            var podsJson = await podsResponse.Content.ReadAsStringAsync();
+            var podsInfo = JsonSerializer.Deserialize<IEnumerable<LimitedPodInfoDTO>>(podsJson, jsonSerializerOptions);
+
+            return podsInfo;
+        }
+
+        public async Task<PodDTO> InitializeNewPod(PodDTO podDTO)
         {
             var podJson = 
                 new StringContent(JsonSerializer.Serialize(podDTO), Encoding.UTF8, "application/json");
@@ -62,6 +75,7 @@ namespace ToolShare.UI.Services
 
             if (response.IsSuccessStatusCode)
             {
+                
                 return await JsonSerializer.DeserializeAsync<PodDTO>(await response.Content.ReadAsStreamAsync());
             }
             

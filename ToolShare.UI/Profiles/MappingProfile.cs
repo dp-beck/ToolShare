@@ -17,6 +17,15 @@ namespace ToolShare.UI.Profiles
             this.CreateMap<Pod, PodDTO>().ReverseMap();
             this.CreateMap<Tool, ToolDTO>().ReverseMap();
             this.CreateMap<Tool, UpdateToolDTO>().ReverseMap();
+            this.CreateMap<Pod, LimitedPodInfoDTO>()
+                .ForMember(
+                    dest => dest.PodManagerName, 
+                    opt => opt.MapFrom(src => src.podManager.UserName))
+                .ForMember(
+                    dest => dest.PodManagerEmail, 
+                    opt => opt.MapFrom(src => src.podManager.Email))
+                .ReverseMap();
+
         } 
     }
 }

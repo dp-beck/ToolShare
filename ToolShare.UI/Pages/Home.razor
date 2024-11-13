@@ -1,5 +1,7 @@
 ﻿@page "/"
 @using ToolShare.UI.Identity
+@using Microsoft.AspNetCore.Components.QuickGrid
+
 @inject IAccountManagement Acct
 
 <PageTitle>Tool Share - Home</PageTitle>
@@ -32,8 +34,8 @@
             {
                 <tr>
                     <td>@pod.Name</td>
-                    <td>@pod.podManager.UserName</td>
-                    <td>@pod.podManager.Email</td>
+                    <td>@pod.PodManagerName</td>
+                    <td>@pod.PodManagerEmail</td>
                 </tr>
             }
                 </tbody>
@@ -65,10 +67,23 @@
         }
     }
 
-    
-
 </AuthorizeView>
 
 <AuthorizeView Roles="User">
-    <p>User</p>
+    <div>
+        <a href="">All Tools</a>
+        <a href="">Available Tools</a>
+        <a href="">Your Tools</a>
+    </div>
+
+    <p>
+        <input type="search" @bind="nameFilter" @bind:event="oninput" />
+    </p>
+
+    <QuickGrid class="table" Items="filteredTools" Pagination="pagination" >
+        <PropertyColumn Property="tool => tool.Name" Sortable="true" />
+        <PropertyColumn Property="tool => tool.Description" />
+        <PropertyColumn Property="tool => tool.BorrowingPeriodInDays" />
+    </QuickGrid>
+    <Paginator State="pagination" />
 </AuthorizeView>
