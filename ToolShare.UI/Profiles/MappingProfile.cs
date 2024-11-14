@@ -13,7 +13,15 @@ namespace ToolShare.UI.Profiles
     {
         public MappingProfile()
         {
-            this.CreateMap<AppUser, AppUserDTO>().ReverseMap();
+            this.CreateMap<AppUser, AppUserDTO>()
+                .ForMember(
+                    dest => dest.PodJoinedName,
+                    opt => opt.MapFrom(src => src.PodJoined.Name))
+                .ForMember(
+                    dest => dest.PodManagedName,
+                    opt => opt.MapFrom(src => src.PodManaged.Name))
+                .ReverseMap();
+                
             this.CreateMap<Pod, PodDTO>().ReverseMap();
             this.CreateMap<Tool, ToolDTO>().ReverseMap();
             this.CreateMap<Tool, UpdateToolDTO>().ReverseMap();

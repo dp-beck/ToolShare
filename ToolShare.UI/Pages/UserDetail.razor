@@ -1,8 +1,15 @@
-@page "/userdetail/{UserId}"
+@page "/current-user"
 
-<h1 class="page-title">Details for @User.UserName</h1>
+<h1 class="page-title">Details for @userInfo.UserName</h1>
 
-<p>First Name: @User.FirstName</p>
-<p>Last Name: @User.LastName</p>
-<p>Email: @User.Email</p>
-<p>About Me: @User.AboutMe</p>
+<img src="@userInfo.ProfilePhotoUrl" 
+     alt="Profile photo of user"
+     width="150px"
+     />
+
+<p>First Name: @userInfo.FirstName</p>
+<p>Last Name: @userInfo.LastName</p>
+<p>Email: @userInfo.Email</p>
+<p>About Me: @userInfo.AboutMe</p>
+<p>Pod Joined: @userInfo.PodJoinedName </p>
+<p>Pod Managed: @userInfo.PodManagedName</p>

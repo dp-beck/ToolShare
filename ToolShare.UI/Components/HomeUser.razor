@@ -1,0 +1,17 @@
+<p>@userInfo.FirstName</p>
+<div>
+    <a href="">All Tools</a>
+    <a href="">Available Tools</a>
+    <a href="">Your Tools</a>
+</div>
+
+<p>
+    <input type="search" @bind="nameFilter" @bind:event="oninput"/>
+</p>
+
+<QuickGrid class="table" Items="filteredTools" Pagination="pagination">
+    <PropertyColumn Property="tool => tool.Name" Sortable="true"/>
+    <PropertyColumn Property="tool => tool.Description"/>
+    <PropertyColumn Property="tool => tool.BorrowingPeriodInDays"/>
+</QuickGrid>
+<Paginator State="pagination"/>

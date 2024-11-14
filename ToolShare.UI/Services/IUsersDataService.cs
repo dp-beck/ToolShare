@@ -9,5 +9,6 @@ namespace ToolShare.UI.Services
 {
     public interface IUsersDataService
     {
+        public Task<AppUserDTO> GetCurrentUser();
     }
 }

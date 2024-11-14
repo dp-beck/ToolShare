@@ -15,11 +15,11 @@
     and for how long.
 </p>
 <AuthorizeView>
-    <Authorized>
-        <HomeRedirect />
-    </Authorized>
-    <NotAuthorized>
-        <div>
+     <Authorized>
+         <HomeRedirect />
+     </Authorized>
+     <NotAuthorized>
+        <div> 
             <p> Welcome back! Sign in to get started! </p>
         </div>
         @if (errors)
@@ -56,7 +56,7 @@
     private string password = string.Empty;
     private string[] errorList = [];
 
-    public async Task DoLoginAsync()
+    private async Task DoLoginAsync()
     {
         success = errors = false;
         errorList = [];

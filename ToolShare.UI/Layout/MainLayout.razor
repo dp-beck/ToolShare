@@ -9,15 +9,36 @@
         <div class="top-row px-4">
             <AuthorizeView>
                 <Authorized>
-                    Logged in as @context.User.Identity.Name
-                    <a href="logout"><span class="bi bi-door-closed-fill" aria-hidden="true" style="vertical-align:middle"></span> Logout</a>
+                    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+                        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                            <span class="navbar-toggler-icon"></span>
+                        </button>
+
+                        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                            <ul class="navbar-nav mr-auto">
+                                <li class="nav-item active">
+                                    <a class="nav-link" href="/">Home</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="current-user">Manage User Details</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="logout">Logout</a>
+                                </li>
+                            </ul>
+                        </div>
+
+                    </nav>
+                    
                 </Authorized>
 
             </AuthorizeView>
         </div>
         
-        <article class="content px-4">
-            @Body
-        </article>
+        <CascadingValue Value="UserInfo">
+            <article class="content px-4">
+                @Body
+            </article>    
+        </CascadingValue>
     </main>
 </div>
