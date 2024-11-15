@@ -43,5 +43,19 @@ namespace ToolShare.UI.Services
 
             return userInfo;
         }
+
+        public async Task<String> UpdateCurrentUser(UserInfoUpdateDto userInfoUpdateDto)
+        {
+            try
+            {
+                var response = await _httpClient.PutAsJsonAsync("api/users/current-user/update", userInfoUpdateDto);
+                response.EnsureSuccessStatusCode();
+                return "Success";
+            }
+            catch (Exception e)
+            { 
+                return e.Message;
+            }
+        }
     }
 }

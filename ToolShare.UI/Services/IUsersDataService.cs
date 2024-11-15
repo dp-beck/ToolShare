@@ -10,5 +10,6 @@ namespace ToolShare.UI.Services
     public interface IUsersDataService
     {
         public Task<AppUserDTO> GetCurrentUser();
+        public Task<String> UpdateCurrentUser(UserInfoUpdateDto userInfoUpdateDto);
     }
 }

@@ -1,15 +1,69 @@
 @page "/current-user"
+@using ToolShare.UI.DTOs
 
-<h1 class="page-title">Details for @userInfo.UserName</h1>
+@if (!_isLoading)
+{
+    <h1 class="page-title">Details for @userInfo.UserName</h1>
 
-<img src="@userInfo.ProfilePhotoUrl" 
-     alt="Profile photo of user"
-     width="150px"
-     />
+    <img src="@userInfo.ProfilePhotoUrl" 
+         alt="Profile photo of user"
+         width="150px"
+         style="border-radius: 100%"/>
 
-<p>First Name: @userInfo.FirstName</p>
-<p>Last Name: @userInfo.LastName</p>
-<p>Email: @userInfo.Email</p>
-<p>About Me: @userInfo.AboutMe</p>
-<p>Pod Joined: @userInfo.PodJoinedName </p>
-<p>Pod Managed: @userInfo.PodManagedName</p>
+    <EditForm Model="@UserEditDTO" OnSubmit="HandleSubmit">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+        <div class="form-group row m-3">
+            <label for="UserName" class="col-sm-2 col-form-label"> UserName: </label>
+            <div class="col-sm-10">
+                <InputText class="form-control" id="UserName" @bind-Value="UserEditDTO!.UserName" />
+            </div>
+        </div>
+
+        <div class="form-group row m-3">
+            <label for="FirstName" class="col-sm-2 col-form-label"> First Name: </label>
+            <div class="col-sm-10">
+                <InputText class="form-control" id="FirstName" @bind-Value="UserEditDTO!.FirstName" />
+            </div>
+        </div>
+
+        <div class="form-group row m-3">
+            <label for="LastName" class="col-sm-2 col-form-label"> Last Name: </label>
+            <div class="col-sm-10">
+                <InputText class="form-control" id="LastName" @bind-Value="UserEditDTO!.LastName" />
+            </div>
+        </div>
+
+        <div class="form-group row m-3">
+            <label for="Email" class="col-sm-2 col-form-label"> Email: </label>
+            <div class="col-sm-10">
+                <InputText class="form-control" id="Email" @bind-Value="UserEditDTO!.Email" />
+            </div>
+        </div>
+
+        <div class="form-group row m-3">
+            <label for="AboutMe" class="col-sm-2 col-form-label"> About Me: </label>
+            <div class="col-sm-10">
+                <InputTextArea class="form-control" id="Email" @bind-Value="UserEditDTO!.AboutMe" />
+            </div>
+        </div>
+        <div class="form-group row m-3">
+            <div class="col-sm-10">
+                <button type="submit" class="btn btn-primary">Submit Changes</button>
+            </div>
+        </div>
+        
+    </EditForm>
+
+    @if (Message != String.Empty)
+    {
+        <p>@Message</p>
+    }
+
+    <h2>Pod Details</h2>
+    <p>Pod Joined: @userInfo.PodJoinedName </p>
+    <p>Pod Managed: @userInfo.PodManagedName</p>
+
+    <a href="">Change Password</a>
+    <a href="">Delete User</a>     
+}

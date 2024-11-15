@@ -258,19 +258,18 @@ namespace ToolShare.Api.Controllers
         [HttpPut]
         [Route("current-user/update")]
         [Authorize]
-        public async Task<IActionResult> UpdateUser(AppUserDto appUserDto)
+        public async Task<IActionResult> UpdateUser(UserInfoUpdateDto userInfoUpdateDto)
         {
             try
             {
                 var currentUser = await _userManager.GetUserAsync(HttpContext.User);
                 if (currentUser is null) return BadRequest(new { Message = "No current user is logged in." });
 
-                currentUser.UserName = appUserDto.UserName;
-                currentUser.AboutMe = appUserDto.AboutMe;
-                currentUser.Email = appUserDto.Email;
-                currentUser.FirstName = appUserDto.FirstName;
-                currentUser.LastName = appUserDto.LastName;
-                currentUser.ProfilePhotoUrl = appUserDto.ProfilePhotoUrl;
+                currentUser.UserName = userInfoUpdateDto.UserName;
+                currentUser.AboutMe = userInfoUpdateDto.AboutMe;
+                currentUser.Email = userInfoUpdateDto.Email;
+                currentUser.FirstName = userInfoUpdateDto.FirstName;
+                currentUser.LastName = userInfoUpdateDto.LastName;
 
                 var result = _userManager.UpdateAsync(currentUser);
                 if (result.IsCompletedSuccessfully)
