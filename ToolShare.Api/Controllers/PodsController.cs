@@ -31,7 +31,7 @@ namespace ToolShare.Api.Controllers
         }
 
         [HttpGet]
-  //      [Authorize(Roles ="Administrator")]
+        [Authorize(Roles ="Administrator")]
         public async Task<IActionResult> GetAllPods()
         {
             try
@@ -49,8 +49,8 @@ namespace ToolShare.Api.Controllers
         }
 
 
-        [HttpGet]
-//      [Authorize(Roles ="NoPodUser")]
+        [HttpGet] 
+        [Authorize(Roles ="NoPodUser")]
         [Route("pod-list-for-nopoduser")]
         public async Task<IActionResult> GetAllPodsLimitedInfoForNoPodUser()
         {

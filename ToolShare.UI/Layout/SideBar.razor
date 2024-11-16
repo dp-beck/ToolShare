@@ -7,18 +7,18 @@
     </div>
 </div>
 
+<p style="color:white">Pod Members</p>
+<ul>
+    @foreach (var user in currentPod.PodMembers)
+    {
+        <li>
+        <img src="@user.ProfilePhotoUrl" width="40px" alt="Profile Photo Icon" style="border-radius: 100%"/>
+        <p style="color:white">@user.UserName</p>
+        </li>
+    }
+</ul>
 <div class="@NavMenuCssClass nav-scrollable" @onclick="ToggleNavMenu">
     <nav class="flex-column">
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="useroverview">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> User Overview
-            </NavLink>
-        </div>
         <AuthorizeView>
             <Authorized>
                 <div class="nav-item px-3">

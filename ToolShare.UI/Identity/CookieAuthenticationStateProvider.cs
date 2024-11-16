@@ -149,7 +149,7 @@ namespace ToolShare.UI.Identity
         /// Get authentication state.
         /// </summary>
         /// <remarks>
-        /// Called by Blazor anytime and authentication-based decision needs to be made, then cached
+        /// Called by Blazor anytime an authentication-based decision needs to be made, then cached
         /// until the changed state notification is raised.
         /// </remarks>
         /// <returns>The authentication state asynchronous request.</returns>

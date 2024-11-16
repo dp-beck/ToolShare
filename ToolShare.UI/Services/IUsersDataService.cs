@@ -11,5 +11,7 @@ namespace ToolShare.UI.Services
     {
         public Task<AppUserDTO> GetCurrentUser();
         public Task<String> UpdateCurrentUser(UserInfoUpdateDto userInfoUpdateDto);
+        public Task<String> UpdatePassword(ChangePasswordDto changePasswordDto);
+        public Task<String> DeleteCurrentUser();
     }
 }

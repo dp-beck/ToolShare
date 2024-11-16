@@ -21,4 +21,14 @@
     <ProjectReference Include="..\ToolShare.Data\ToolShare.Data.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Remove="Pages\DeleteUser.cshtml" />
+    <Content Remove="Pages\UserOverview.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Pages\DeleteUser.cshtml.cs" />
+    <Compile Remove="Pages\UserOverview.cs" />
+  </ItemGroup>
+
 </Project>

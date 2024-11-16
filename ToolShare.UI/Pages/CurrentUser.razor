@@ -3,14 +3,15 @@
 
 @if (!_isLoading)
 {
-    <h1 class="page-title">Details for @userInfo.UserName</h1>
+    <h1 class="page-title">@userInfo.UserName</h1>
 
     <img src="@userInfo.ProfilePhotoUrl" 
          alt="Profile photo of user"
          width="150px"
          style="border-radius: 100%"/>
 
-    <EditForm Model="@UserEditDTO" OnSubmit="HandleSubmit">
+    <h2>User Details</h2>
+    <EditForm Model="@UserEditDTO" OnSubmit="HandleEditSubmit">
         <DataAnnotationsValidator />
         <ValidationSummary />
         <div class="form-group row m-3">
@@ -54,7 +55,33 @@
         </div>
         
     </EditForm>
-
+    
+    <h2>Change Password</h2>
+    <EditForm Model="ChangePasswordDto" OnSubmit="HandleChangePassword">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+        <div class="form-group row m-3">
+            <label for="CurrentPassword" class="col-sm-2 col-form-label"> Current Password: </label>
+            <div class="col-sm-10">
+                <InputText type="password" class="form-control" id="CurrentPassword" @bind-Value="ChangePasswordDto!.CurrentPassword" />
+            </div>
+        </div>
+    
+        <div class="form-group row m-3">
+            <label for="NewPassword" class="col-sm-2 col-form-label"> New Password: </label>
+            <div class="col-sm-10">
+                <InputText type="password" class="form-control" id="NewPassword" @bind-Value="ChangePasswordDto!.NewPassword" />
+            </div>
+        </div>
+    
+        <div class="form-group row m-3">
+            <div class="col-sm-10">
+                <button type="submit" class="btn btn-warning">Change Password</button>
+            </div>
+        </div>
+    
+    </EditForm>
+    
     @if (Message != String.Empty)
     {
         <p>@Message</p>
@@ -63,7 +90,7 @@
     <h2>Pod Details</h2>
     <p>Pod Joined: @userInfo.PodJoinedName </p>
     <p>Pod Managed: @userInfo.PodManagedName</p>
+    
+    <button type="button" class="btn btn-danger" @onclick="HandleDelete">Delete User</button>
 
-    <a href="">Change Password</a>
-    <a href="">Delete User</a>     
 }

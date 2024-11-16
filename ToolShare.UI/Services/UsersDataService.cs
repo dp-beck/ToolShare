@@ -8,6 +8,7 @@ using System.Text.Json.Serialization;
 using System.Text.Unicode;
 using System.Threading.Tasks;
 using AutoMapper;
+using Microsoft.AspNetCore.Components;
 using ToolShare.Data.Models;
 using ToolShare.UI.DTOs;
 using ToolShare.UI.Identity.Models;
@@ -56,6 +57,36 @@ namespace ToolShare.UI.Services
             { 
                 return e.Message;
             }
+        }
+
+        public async Task<string> UpdatePassword(ChangePasswordDto changePasswordDto)
+        {
+            try
+            {
+                var response = await _httpClient.PutAsJsonAsync("api/users/change-password", changePasswordDto); 
+                response.EnsureSuccessStatusCode();
+                return "Success";
+            }
+            catch (Exception e)
+            {
+                return e.Message;
+            }
+        }
+
+        public async Task<String> DeleteCurrentUser()
+        {
+            try
+            {
+                var response = await _httpClient.DeleteAsync("api/users/delete");
+                response.EnsureSuccessStatusCode();
+                return "success";
+            }
+            catch (Exception e)
+            {
+                return e.Message;
+            }
+
+
         }
     }
 }

@@ -31,9 +31,16 @@ namespace ToolShare.UI.Services
             _mapper = mapper;
         }
 
-        public Task<Pod> GetPodDetails()
+        public async Task<PodDTO> FindPodDetailsByName(string PodName)
         {
-            throw new NotImplementedException();
+            var response = await _httpClient.GetAsync($"api/Pods/{PodName}");
+            response.EnsureSuccessStatusCode();
+            var JsonResponse = await response.Content.ReadAsStringAsync();
+            var podDetails = JsonSerializer.Deserialize<Pod>(JsonResponse, jsonSerializerOptions);
+            
+            PodDTO podDto = _mapper.Map<PodDTO>(podDetails);
+
+            return podDto;
         }
 
         public async Task<IEnumerable<PodDTO>> GetAllPods()
