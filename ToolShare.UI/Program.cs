@@ -45,6 +45,12 @@ builder.Services.AddHttpClient<IPodsDataService, PodsDataService>(
      opt => opt.BaseAddress = new Uri(builder.Configuration["BackendUrl"] ?? "https://localhost:5001"))
      .AddHttpMessageHandler<CookieHandler>();
 
+// configure client for Tool Interactions
+ builder.Services.AddHttpClient<IToolsDataService, ToolsDataService>(
+         "ToolsApi",
+         opt => opt.BaseAddress = new Uri(builder.Configuration["BackendUrl"] ?? "https://localhost:5001"))
+     .AddHttpMessageHandler<CookieHandler>();
+
 // configure client for auth interactions
 builder.Services.AddHttpClient(
     "Auth",

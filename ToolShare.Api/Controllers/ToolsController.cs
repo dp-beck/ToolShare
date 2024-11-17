@@ -50,20 +50,48 @@ namespace ToolShare.Api.Controllers
                 return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
             }
         }
+        
+        [HttpGet]
+        [Authorize(Roles ="User,Manager")]
+        [Route("tools-by-pod/{podId:int}")]
+        public async Task<IActionResult> GetToolsByPod(int podId)
+        {
+            try
+            {
+                var currentUser = await _userManager.GetUserAsync(HttpContext.User);
+                
+                if (currentUser is null) return BadRequest(new { Message = "No current user is logged in."});
+                if (currentUser.PodJoinedId != podId) return BadRequest(new { Message = "You are not a member of this pod."});
+                
+                var alltools = await _toolsRepository.GetAllAsyncWithIncludes(
+                    t => t.ToolOwner);
+                
+                var tools = alltools.AsQueryable().Where(t => t.ToolOwner.PodJoinedId == podId);
+
+                List<ToolDto> toolDtos = _mapper.Map<List<ToolDto>>(tools);
+
+                return Ok(toolDtos);
+            }
+            catch (Exception)
+            {
+                return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
+            }
+        }
+
 
         [HttpGet]
         [Authorize]
-        [Route("{toolId}")]
+        [Route("{toolId:int}")]
         public async Task<IActionResult> GetToolById(int toolId)
         {
             try
             {
-            var tool = await _toolsRepository.GetByIdAsyncWithIncludes(toolId, t => t.ToolId == toolId,
-                t => t.ToolOwner, t => t.ToolBorrower!);
+                var tool = await _toolsRepository.GetByIdAsyncWithIncludes(toolId, t => t.ToolId == toolId,
+                    t => t.ToolOwner, t => t.ToolBorrower!);
             
-            ToolDto toolDto = _mapper.Map<ToolDto>(tool);
+                ToolDto toolDto = _mapper.Map<ToolDto>(tool);
 
-            return Ok(toolDto);   
+                return Ok(toolDto);   
             }
             catch (Exception )
             {
@@ -114,7 +142,7 @@ namespace ToolShare.Api.Controllers
                 if (currentUser is null) return NotFound("Could not find current user.");
 
                 if (oldTool.OwnerId != currentUser.Id)
-                return BadRequest(new {Message = "You are not the owner of this tool."});
+                    return BadRequest(new {Message = "You are not the owner of this tool."});
             
                 _mapper.Map(updateToolDto, oldTool);
 
@@ -174,7 +202,7 @@ namespace ToolShare.Api.Controllers
                 if (currentUser is null) return NotFound("Could not find current user.");
 
                 if (toolBorrowed.OwnerId != currentUser.Id)
-                return BadRequest(new {Message = "You are not the owner of this tool."});
+                    return BadRequest(new {Message = "You are not the owner of this tool."});
             
                 toolBorrowed.ToolBorrower = null;
                 toolBorrowed.BorrowerId = null;

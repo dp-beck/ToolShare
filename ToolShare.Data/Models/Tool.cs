@@ -17,6 +17,9 @@ namespace ToolShare.Data.Models
         public string? Description { get; set; }
         
         public int BorrowingPeriodInDays { get; set; }
+
+        public string? ToolPhotoUrl { get; set; }
+
         public ToolStatus ToolStatus { get; set; } = ToolStatus.AvailableForBorrowing;
         public string OwnerId { get; set; }
 

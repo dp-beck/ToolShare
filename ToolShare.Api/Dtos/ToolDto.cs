@@ -11,8 +11,12 @@ namespace ToolShare.Api.Dtos
         public string Name { get; set; }
         public string? Description { get; set; }
         public int BorrowingPeriodInDays { get; set; }
+        public string? ToolPhotoUrl { get; set; }
+
         public ToolStatus ToolStatus { get; set; }
-        public AppUserDto? ToolOwner { get; set; }
-        public AppUserDto? ToolBorrower { get; set; }
+        public string ToolOwnerName { get; set; }
+        public string ToolBorrowerName { get; set; }
+//        public AppUserDto? ToolOwner { get; set; }
+//        public AppUserDto? ToolBorrower { get; set; }
     }
 }

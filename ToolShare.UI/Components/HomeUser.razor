@@ -1,16 +1,25 @@
-<div>
-    <a href="">All Tools</a>
-    <a href="">Available Tools</a>
-    <a href="">Your Tools</a>
-</div>
+@if (!_isLoading)
+{
+    <p>You are a member of @userInfo.PodJoinedName. See any tools you want to borrow?
+        Please reach out to the tool owner via email to get started.</p>
+    <div>
+        <a @onclick="ShowAllTools">All Tools</a>
+        <a @onclick="ShowAvailableTools">Available Tools</a>
+        <a @onclick="ShowCurrentTools">Your Tools</a>
+    </div>
 
-<p>
-    <input type="search" @bind="nameFilter" @bind:event="oninput"/>
-</p>
+    <div>
+        <p>Search by Name</p>
+        <input type="search" @bind="nameFilter"/>
+        <button @onclick="FilterTools">Search</button>
+    </div>
 
-<QuickGrid class="table" Items="filteredTools" Pagination="pagination">
-    <PropertyColumn Property="tool => tool.Name" Sortable="true"/>
-    <PropertyColumn Property="tool => tool.Description"/>
-    <PropertyColumn Property="tool => tool.BorrowingPeriodInDays"/>
-</QuickGrid>
-<Paginator State="pagination"/>
+     <QuickGrid class="table" Items="filteredTools" Pagination="pagination">
+         <PropertyColumn Property="tool => tool.Name" Sortable="true"/>
+         <PropertyColumn Property="tool => tool.Description"/>
+         <PropertyColumn Property="tool => tool.BorrowingPeriodInDays" Title="Borrowing Period (Days)"/>
+         <PropertyColumn Property="tool => tool.ToolStatus" Title="Availability"/>
+         <PropertyColumn Property="tool => tool.ToolOwnerName" Title="Tool Owner"/>
+     </QuickGrid>
+     <Paginator State="pagination"/>
+}

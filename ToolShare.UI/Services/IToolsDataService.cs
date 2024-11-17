@@ -9,6 +9,7 @@ namespace ToolShare.UI.Services
     public interface IToolsDataService
     {
         public Task<IEnumerable<ToolDTO>> GetAllTools();
+        public Task<IQueryable<ToolDTO>> GetToolsByPod(int podId);
 
     }
 }

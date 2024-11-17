@@ -26,7 +26,14 @@ namespace ToolShare.Api.Profiles
                     opt => opt.MapFrom(src => src.podManager.Email))
                 .ReverseMap();
 
-            this.CreateMap<Tool, ToolDto>().ReverseMap();
+            this.CreateMap<Tool, ToolDto>()
+                .ForMember(
+                    dest => dest.ToolOwnerName,
+                    opt => opt.MapFrom(src => src.ToolOwner.UserName))
+                .ForMember(
+                    dest => dest.ToolBorrowerName,
+                    opt => opt.MapFrom(src => src.ToolBorrower.UserName))
+                .ReverseMap();
             
             this.CreateMap<Tool, UpdateToolDto>().ReverseMap();
         }
