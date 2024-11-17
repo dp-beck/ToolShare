@@ -12,8 +12,10 @@
     @foreach (var user in currentPod.PodMembers)
     {
         <li>
-        <img src="@user.ProfilePhotoUrl" width="40px" alt="Profile Photo Icon" style="border-radius: 100%"/>
-        <p style="color:white">@user.UserName</p>
+            <img src="@user.ProfilePhotoUrl" width="40px" alt="Profile Photo Icon" style="border-radius: 100%"/>
+            <NavLink class="nav-link" href="@($"user-detail/{user.UserName}")">
+                <span style="color:white">@user.UserName</span>    
+            </NavLink>
         </li>
     }
 </ul>

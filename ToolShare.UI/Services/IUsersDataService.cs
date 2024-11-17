@@ -10,6 +10,7 @@ namespace ToolShare.UI.Services
     public interface IUsersDataService
     {
         public Task<AppUserDTO> GetCurrentUser();
+        public Task<AppUserDTO> FindUserByUsername(string username);
         public Task<String> UpdateCurrentUser(UserInfoUpdateDto userInfoUpdateDto);
         public Task<String> UpdatePassword(ChangePasswordDto changePasswordDto);
         public Task<String> DeleteCurrentUser();

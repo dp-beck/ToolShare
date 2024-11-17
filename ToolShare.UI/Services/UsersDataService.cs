@@ -45,6 +45,16 @@ namespace ToolShare.UI.Services
             return userInfo;
         }
 
+        public async Task<AppUserDTO> FindUserByUsername(string username)
+        {
+            var response = await _httpClient.GetAsync($"api/users/{username}");
+            response.EnsureSuccessStatusCode();
+            var JsonResponse = await response.Content.ReadAsStringAsync();
+            var appUser = JsonSerializer.Deserialize<AppUserDTO>(JsonResponse, jsonSerializerOptions);
+            var userInfo = _mapper.Map<AppUserDTO>(appUser);
+            return userInfo;
+        }
+
         public async Task<String> UpdateCurrentUser(UserInfoUpdateDto userInfoUpdateDto)
         {
             try

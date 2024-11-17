@@ -1,0 +1,16 @@
+@page "/user-detail/{Username}"
+@if (!_isLoading)
+{
+    <h3>User Detail: @Username</h3>
+    
+    <img src="@UserInfo.ProfilePhotoUrl" 
+         alt="Profile photo of user"
+         width="150px"
+         style="border-radius: 100%"/>
+     
+    <p>First Name: @UserInfo.FirstName</p>
+    <p>Last Name: @UserInfo.LastName</p>
+    <p>Email: @UserInfo.Email</p>
+    <p>About Me: @UserInfo.AboutMe</p>
+     
+}
