@@ -212,28 +212,32 @@ namespace ToolShare.Api
                 {   
                     Name = "Honda Walk Behind Lawnmower",
                     Description = "A self-propelled walk behind lawnmower that works great.",
-                    BorrowingPeriodInDays = 7
+                    BorrowingPeriodInDays = 7,
+                    ToolPhotoUrl = "https://res.cloudinary.com/dzsqoueki/image/upload/w_1000,ar_1:1,c_fill,g_auto,e_art:hokusai/v1731874629/naomi-o-hare-ziu7At0z4CE-unsplash_bzzfdg.jpg"
                 },
 
                 new Tool() 
                 {   
                     Name = "Scott's Push Reel Mower",
                     Description = "A push reel mower that is appropriate for smaller yards. Just need to keep blades sharp.",
-                    BorrowingPeriodInDays = 14
+                    BorrowingPeriodInDays = 14,
+                    ToolPhotoUrl = "https://res.cloudinary.com/dzsqoueki/image/upload/w_1000,ar_1:1,c_fill,g_auto,e_art:hokusai/v1731874629/naomi-o-hare-ziu7At0z4CE-unsplash_bzzfdg.jpg"
                 },
 
                 new Tool() 
                 {   
                     Name = "Ryobi Leaf Blower",
                     Description = "A cordless leaf blower.",
-                    BorrowingPeriodInDays = 7
+                    BorrowingPeriodInDays = 7,
+                    ToolPhotoUrl = "https://res.cloudinary.com/dzsqoueki/image/upload/w_1000,ar_1:1,c_fill,g_auto,e_art:hokusai/v1731874629/naomi-o-hare-ziu7At0z4CE-unsplash_bzzfdg.jpg"
                 },
 
                 new Tool() 
                 {   
                     Name = "Dewalt Lead Blower",
                     Description = "A leaf blower. NOTE: Not battery operated; needs to be plugged in",
-                    BorrowingPeriodInDays = 21
+                    BorrowingPeriodInDays = 21,
+                    ToolPhotoUrl = "https://res.cloudinary.com/dzsqoueki/image/upload/w_1000,ar_1:1,c_fill,g_auto,e_art:hokusai/v1731874629/naomi-o-hare-ziu7At0z4CE-unsplash_bzzfdg.jpg"
                 },
 
 
@@ -241,7 +245,8 @@ namespace ToolShare.Api
                 {   
                     Name = "Ladder (22 Ft.)",
                     Description = "A 22 ft. long aluminum ladder",
-                    BorrowingPeriodInDays = 30
+                    BorrowingPeriodInDays = 30,
+                    ToolPhotoUrl = "https://res.cloudinary.com/dzsqoueki/image/upload/w_1000,ar_1:1,c_fill,g_auto,e_art:hokusai/v1731874629/naomi-o-hare-ziu7At0z4CE-unsplash_bzzfdg.jpg"
                 },
 
 
@@ -249,49 +254,56 @@ namespace ToolShare.Api
                 {   
                     Name = "Dewalt Brad Nailer",
                     Description = "18 Gauge; Cordless",
-                    BorrowingPeriodInDays = 14
+                    BorrowingPeriodInDays = 14,
+                    ToolPhotoUrl = "https://res.cloudinary.com/dzsqoueki/image/upload/w_1000,ar_1:1,c_fill,g_auto,e_art:hokusai/v1731874629/naomi-o-hare-ziu7At0z4CE-unsplash_bzzfdg.jpg"
                 },
                 
                 new Tool() 
                 {   
                     Name = "Ridgid Framing Nailer",
                     Description = "8 nails per second Includes: Swivel Connect, No-Mar Pad, Oil, and Wrench",
-                    BorrowingPeriodInDays = 14
+                    BorrowingPeriodInDays = 14,
+                    ToolPhotoUrl = "https://res.cloudinary.com/dzsqoueki/image/upload/w_1000,ar_1:1,c_fill,g_auto,e_art:hokusai/v1731874629/naomi-o-hare-ziu7At0z4CE-unsplash_bzzfdg.jpg"
                 },
                 
                 new Tool() 
                 {   
                     Name = "Tarps",
                     Description = "Tarps for painting. I have six of  them.",
-                    BorrowingPeriodInDays = 180
+                    BorrowingPeriodInDays = 180,
+                    ToolPhotoUrl = "https://res.cloudinary.com/dzsqoueki/image/upload/w_1000,ar_1:1,c_fill,g_auto,e_art:hokusai/v1731874629/naomi-o-hare-ziu7At0z4CE-unsplash_bzzfdg.jpg"
                 },
                 
                 new Tool() 
                 {   
                     Name = "Graco Paint Sprayer",
                     Description = "Cordless, handheld, and airless sprayer.",
-                    BorrowingPeriodInDays = 7
+                    BorrowingPeriodInDays = 7,
+                    ToolPhotoUrl = "https://res.cloudinary.com/dzsqoueki/image/upload/w_1000,ar_1:1,c_fill,g_auto,e_art:hokusai/v1731874629/naomi-o-hare-ziu7At0z4CE-unsplash_bzzfdg.jpg"
                 },
 
                     new Tool() 
                 {   
                     Name = "Shopvac Wet/Dry Vacuum",
                     Description = "A bit old, but still works great",
-                    BorrowingPeriodInDays = 7
+                    BorrowingPeriodInDays = 7,
+                    ToolPhotoUrl = "https://res.cloudinary.com/dzsqoueki/image/upload/w_1000,ar_1:1,c_fill,g_auto,e_art:hokusai/v1731874629/naomi-o-hare-ziu7At0z4CE-unsplash_bzzfdg.jpg"
                 },
 
                 new Tool() 
                 {   
                     Name = "Shovel",
                     Description = "It's just a shovel....",
-                    BorrowingPeriodInDays = 7
+                    BorrowingPeriodInDays = 7,
+                    ToolPhotoUrl = "https://res.cloudinary.com/dzsqoueki/image/upload/w_1000,ar_1:1,c_fill,g_auto,e_art:hokusai/v1731874629/naomi-o-hare-ziu7At0z4CE-unsplash_bzzfdg.jpg"
                 },
 
                     new Tool() 
                 {   
                     Name = "Hammer",
                     Description = "It's just a hammer...",
-                    BorrowingPeriodInDays = 7
+                    BorrowingPeriodInDays = 7,
+                    ToolPhotoUrl = "https://res.cloudinary.com/dzsqoueki/image/upload/w_1000,ar_1:1,c_fill,g_auto,e_art:hokusai/v1731874629/naomi-o-hare-ziu7At0z4CE-unsplash_bzzfdg.jpg"
                 },
 
             ];

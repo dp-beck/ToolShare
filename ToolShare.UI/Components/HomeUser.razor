@@ -14,12 +14,17 @@
         <button @onclick="FilterTools">Search</button>
     </div>
 
-     <QuickGrid class="table" Items="filteredTools" Pagination="pagination">
-         <PropertyColumn Property="tool => tool.Name" Sortable="true"/>
-         <PropertyColumn Property="tool => tool.Description"/>
-         <PropertyColumn Property="tool => tool.BorrowingPeriodInDays" Title="Borrowing Period (Days)"/>
-         <PropertyColumn Property="tool => tool.ToolStatus" Title="Availability"/>
-         <PropertyColumn Property="tool => tool.ToolOwnerName" Title="Tool Owner"/>
-     </QuickGrid>
+    <QuickGrid class="table" Items="filteredTools" Pagination="pagination">
+        <TemplateColumn Context="tool" Title="Photo">
+            <img src="@tool.ToolPhotoUrl" alt ="picture of the tool" width="50px"/>
+        </TemplateColumn>
+        <TemplateColumn Context="tool" Title="Name" >
+            <a class="nav-link" href="tool-detail/@tool.ToolId">@tool.Name</a>
+        </TemplateColumn>
+        <PropertyColumn Property="tool => tool.Description"/>
+        <PropertyColumn Property="tool => tool.BorrowingPeriodInDays" Title="Borrowing Period (Days)"/>
+        <PropertyColumn Property="tool => tool.ToolStatus" Title="Availability"/>
+        <PropertyColumn Property="tool => tool.ToolOwnerName" Title="Tool Owner"/>
+    </QuickGrid>
      <Paginator State="pagination"/>
 }

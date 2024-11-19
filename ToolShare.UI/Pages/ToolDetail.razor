@@ -1,0 +1,13 @@
+@page "/tool-detail/{toolId:int}"
+@if(!_isLoading)
+{
+    <h3>@Tool.Name</h3>
+    
+    <img src="@Tool.ToolPhotoUrl" alt="Photo of Tool" width="100px"/>
+    <p>Tool Description: @Tool.Description</p>
+    <p>Borrowing Period (Days): @Tool.BorrowingPeriodInDays</p>
+    <p>Tool Status: @Tool.ToolStatus</p>
+    <p>Tool Owner: @Tool.ToolOwnerName</p>
+    <p> Tool Borrower: @Tool.ToolBorrowerName</p>
+
+}

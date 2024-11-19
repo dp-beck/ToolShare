@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
@@ -42,6 +43,32 @@ namespace ToolShare.UI.Services
             var toolsInfo = JsonSerializer.Deserialize<IEnumerable<ToolDTO>>(toolsJson, jsonSerializerOptions).AsQueryable();
 
             return toolsInfo;
+        }
+
+        public async Task<ToolDTO> CreateTool(ToolDTO tool)
+        {
+            var toolJson = 
+                new StringContent(JsonSerializer.Serialize(tool), Encoding.UTF8, "application/json");
+
+            var response = await _httpClient.PostAsync("api/tools", toolJson);
+
+            if (response.IsSuccessStatusCode)
+            {
+                
+                return await JsonSerializer.DeserializeAsync<ToolDTO>(await response.Content.ReadAsStreamAsync());
+            }
+            
+            return null;
+        }
+
+        public async Task<ToolDTO> FindToolById(int toolId)
+        {
+            var response = await _httpClient.GetAsync($"api/tools/{toolId}");
+            response.EnsureSuccessStatusCode();
+            var JsonResponse = await response.Content.ReadAsStringAsync();
+            var toolDetails = JsonSerializer.Deserialize<ToolDTO>(JsonResponse, jsonSerializerOptions);
+            
+            return toolDetails;
         }
     }
 }
