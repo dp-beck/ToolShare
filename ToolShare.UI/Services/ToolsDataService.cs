@@ -1,12 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using AutoMapper;
 using ToolShare.Data.Models;
+using ToolShare.UI.Dtos;
 using ToolShare.UI.DTOs;
 
 namespace ToolShare.UI.Services
@@ -69,6 +71,20 @@ namespace ToolShare.UI.Services
             var toolDetails = JsonSerializer.Deserialize<ToolDTO>(JsonResponse, jsonSerializerOptions);
             
             return toolDetails;
+        }
+
+        public async Task<String> UpdateTool(int toolId, UpdateToolDTO updateToolDto)
+        {
+            try
+            {
+                var response = await _httpClient.PutAsJsonAsync($"api/tools/{toolId}", updateToolDto);
+                response.EnsureSuccessStatusCode();
+                return "Success";
+            }
+            catch (Exception e)
+            { 
+                return e.Message;
+            }
         }
     }
 }

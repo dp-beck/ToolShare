@@ -35,6 +35,12 @@ namespace ToolShare.Data
                 .WithOne(t => t.ToolBorrower)
                 .HasForeignKey(t => t.BorrowerId)
                 .OnDelete(DeleteBehavior.Cascade);
+            
+            modelBuilder.Entity<AppUser>()
+                .HasMany(a => a.ToolsRequested)
+                .WithOne(t => t.ToolRequester)
+                .HasForeignKey(t => t.RequesterId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Pod>()
                 .HasMany(p => p.PodMembers)

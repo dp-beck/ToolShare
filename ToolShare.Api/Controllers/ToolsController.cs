@@ -176,7 +176,7 @@ namespace ToolShare.Api.Controllers
                     return BadRequest(new {Message = "You are not the owner of this tool."});
             
                 toolBorrowed.ToolBorrower = ToolBorrower;
-                toolBorrowed.ToolStatus = ToolStatus.CurrentlyBorrowed;
+                toolBorrowed.ToolStatus = ToolStatus.Borrowed;
 
                 await _toolsRepository.SaveChangesAsync();
 
@@ -206,7 +206,7 @@ namespace ToolShare.Api.Controllers
             
                 toolBorrowed.ToolBorrower = null;
                 toolBorrowed.BorrowerId = null;
-                toolBorrowed.ToolStatus = ToolStatus.AvailableForBorrowing;
+                toolBorrowed.ToolStatus = ToolStatus.Available;
 
                 await _toolsRepository.SaveChangesAsync();
 

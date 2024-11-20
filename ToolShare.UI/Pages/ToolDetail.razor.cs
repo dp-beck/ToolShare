@@ -1,4 +1,6 @@
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Forms;
+using ToolShare.UI.Dtos;
 using ToolShare.UI.DTOs;
 using ToolShare.UI.Services;
 
@@ -8,6 +10,9 @@ public partial class ToolDetail : ComponentBase
 {
     private bool _isLoading {get;set;} = true;
     public ToolDTO Tool { get; set; }
+    public UpdateToolDTO UpdateToolDTO { get; set; }
+    private EditContext? editContext;
+    private String Message {get;set;} = String.Empty;
     [Parameter]
     public int ToolId { get; set; }
     
@@ -17,6 +22,14 @@ public partial class ToolDetail : ComponentBase
     protected override async Task OnInitializedAsync()
     {
         Tool = await ToolsDataService.FindToolById(ToolId);
+        
+        UpdateToolDTO = new UpdateToolDTO()
+        {
+            Name = Tool.Name,
+            Description = Tool.Description,
+            BorrowingPeriodInDays = Tool.BorrowingPeriodInDays
+        };
+        
         _isLoading = false;
     }
     
@@ -25,5 +38,11 @@ public partial class ToolDetail : ComponentBase
         _isLoading = true;
         Tool = await ToolsDataService.FindToolById(ToolId);
         _isLoading = false;
+    }
+
+    private async Task<String> HandleEditSubmit()
+    {
+        Message = await ToolsDataService.UpdateTool(ToolId, UpdateToolDTO);
+        return Message;
     }
 }

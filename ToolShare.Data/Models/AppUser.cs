@@ -12,6 +12,7 @@ public class AppUser : IdentityUser
     public DateTime CreatedAt { get; } = DateTime.Now;
     public ICollection<Tool> ToolsOwned { get; set; } = new List<Tool>();
     public ICollection<Tool> ToolsBorrowed { get; set; } = new List<Tool>();
+    public ICollection<Tool> ToolsRequested { get; set; } = new List<Tool>();
     public int? PodJoinedId { get; set; }
     public Pod? PodJoined { get; set; }
     public int? PodManagedId { get; set; }

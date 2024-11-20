@@ -20,7 +20,7 @@ namespace ToolShare.Data.Models
 
         public string? ToolPhotoUrl { get; set; }
 
-        public ToolStatus ToolStatus { get; set; } = ToolStatus.AvailableForBorrowing;
+        public ToolStatus ToolStatus { get; set; } = ToolStatus.Available;
         public string OwnerId { get; set; }
 
         [Required]
@@ -29,6 +29,8 @@ namespace ToolShare.Data.Models
         public string? BorrowerId { get; set; }
         
         public AppUser? ToolBorrower { get; set; }
+        public string? RequesterId { get; set; }
+        public AppUser? ToolRequester { get; set; }
         
         public DateTime CreatedAt { get; set; }
         public DateOnly DateDue { get; set; }

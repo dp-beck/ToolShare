@@ -31,7 +31,7 @@ public partial class HomeUser : ComponentBase
         allTools = await ToolsDataService.GetToolsByPod(userInfo.PodJoinedId);
         filteredTools = allTools;
         currentUserTools = allTools.Where(t => t.ToolOwnerName == userInfo.UserName);
-        availableTools = allTools.Where(t => t.ToolStatus == ToolStatus.AvailableForBorrowing);
+        availableTools = allTools.Where(t => t.ToolStatus == ToolStatus.Available);
         _isLoading = false;
     }
 
