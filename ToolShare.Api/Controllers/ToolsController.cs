@@ -155,10 +155,36 @@ namespace ToolShare.Api.Controllers
                 return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
             }
         }
-
+        
         [HttpPut]
         [Authorize(Roles = "User,PodManager")]
-        [Route("{toolId}/lendtool")]
+        [Route("{toolId}/request-tool")]
+        public async Task<IActionResult> RequestTool(int toolId)
+        {
+            try 
+            {
+                var toolRequested = await _toolsRepository.GetByIdAsync(toolId);
+                if (toolRequested == null) return NotFound("Could not find tool with this id.");
+                
+                var currentUser = await _userManager.GetUserAsync(HttpContext.User);
+                if (currentUser is null) return NotFound("Could not find current user.");
+                
+                toolRequested.ToolRequester = currentUser;
+                toolRequested.ToolStatus = ToolStatus.Requested;
+
+                await _toolsRepository.SaveChangesAsync();
+
+                return Ok(new {Message = "Tool successfully requested."});
+            }
+            catch (Exception)
+            {
+                return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
+            }
+        }
+        
+        [HttpPut]
+        [Authorize(Roles = "User,PodManager")]
+        [Route("{toolId}/lend-tool")]
         public async Task<IActionResult> LendTool(int toolId, [FromBody] string toolBorrowerUserName)
         {
             try 
@@ -190,7 +216,7 @@ namespace ToolShare.Api.Controllers
 
         [HttpPut]
         [Authorize(Roles = "User,PodManager")]
-        [Route("{toolId}/returntool")]
+        [Route("{toolId}/return-tool")]
         public async Task<IActionResult> ReturnTool(int toolId)
         {
             try 

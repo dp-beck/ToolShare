@@ -9,6 +9,7 @@ namespace ToolShare.UI.Components;
 
 public partial class HomeUser : ComponentBase
 {
+    private string Message { get; set; } = String.Empty;
     private bool _isLoading { get; set; } = true;
     private AppUserDTO userInfo {get;set;}
     private string nameFilter = string.Empty;
@@ -34,6 +35,16 @@ public partial class HomeUser : ComponentBase
         availableTools = allTools.Where(t => t.ToolStatus == ToolStatus.Available);
         _isLoading = false;
     }
+
+    private async Task<String> HandleRequestClick(int toolId)
+    {
+        Message = await ToolsDataService.RequestTool(toolId);
+        allTools = await ToolsDataService.GetToolsByPod(userInfo.PodJoinedId);
+        filteredTools = allTools;
+        currentUserTools = allTools.Where(t => t.ToolOwnerName == userInfo.UserName);
+        availableTools = allTools.Where(t => t.ToolStatus == ToolStatus.Available);        
+        return Message;
+    } 
 
     private void ShowCurrentTools()
     {

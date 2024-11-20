@@ -86,5 +86,21 @@ namespace ToolShare.UI.Services
                 return e.Message;
             }
         }
+
+        public async Task<string> RequestTool(int toolId)
+        {
+            try
+            {
+                var request = new HttpRequestMessage(HttpMethod.Put, $"api/tools/{toolId}/request-tool");
+                using var response = await _httpClient.SendAsync(request);
+                response.EnsureSuccessStatusCode();
+                return "Success";
+            }
+            catch (Exception e)
+            {
+              return e.Message;
+            }
+
+        }
     }
 }

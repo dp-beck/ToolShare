@@ -21,10 +21,17 @@
         <TemplateColumn Context="tool" Title="Name" >
             <a class="nav-link" href="tool-detail/@tool.ToolId">@tool.Name</a>
         </TemplateColumn>
-        <PropertyColumn Property="tool => tool.Description"/>
-        <PropertyColumn Property="tool => tool.BorrowingPeriodInDays" Title="Borrowing Period (Days)"/>
-        <PropertyColumn Property="tool => tool.ToolStatus" Title="Availability"/>
         <PropertyColumn Property="tool => tool.ToolOwnerName" Title="Tool Owner"/>
+        <PropertyColumn Property="tool => tool.BorrowingPeriodInDays" Title="Loan Period"/>
+        <PropertyColumn Property="tool => tool.ToolStatus" Title="Availability"/>
+        <TemplateColumn Context="tool" Title="">
+            <button @onclick="async () => await HandleRequestClick(tool.ToolId)">Request?</button>
+        </TemplateColumn>
     </QuickGrid>
-     <Paginator State="pagination"/>
+    <Paginator State="pagination"/>
+    
+    @if (Message != String.Empty)
+    {
+        <p>@Message</p>
+    }
 }

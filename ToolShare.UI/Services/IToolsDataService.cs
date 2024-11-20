@@ -14,6 +14,7 @@ namespace ToolShare.UI.Services
         public Task<ToolDTO> CreateTool(ToolDTO tool);
         public Task<ToolDTO> FindToolById(int toolId);
         public Task<String> UpdateTool(int toolId, UpdateToolDTO updateToolDto);
+        public Task<String> RequestTool(int toolId);
 
     }
 }
