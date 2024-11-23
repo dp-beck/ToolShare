@@ -109,7 +109,7 @@ namespace ToolShare.UI.Services
             }
         }
 
-        public async Task<string> RequestTool(int toolId)
+        public async Task<String> RequestTool(int toolId)
         {
             try
             {
@@ -125,7 +125,7 @@ namespace ToolShare.UI.Services
 
         }
 
-        public async Task<string> LendTool(int toolId)
+        public async Task<String> LendTool(int toolId)
         {
             try
             {
@@ -140,7 +140,38 @@ namespace ToolShare.UI.Services
             }
         }
 
-        public async Task<string> DeleteTool(int toolId)
+        public async Task<string> RequestToolReturn(int toolId)
+        {
+            try
+            {
+                var request = new HttpRequestMessage(HttpMethod.Put, $"api/tools/{toolId}/request-tool-return");
+                using var response = await _httpClient.SendAsync(request);
+                response.EnsureSuccessStatusCode();
+                return "Success";
+            }
+            catch (Exception e)
+            {
+                return e.Message;
+            }        
+        }
+
+        public async Task<string> AcceptToolReturned(int toolId)
+        {
+            try
+            {
+                var request = new HttpRequestMessage(HttpMethod.Put, $"api/tools/{toolId}/accept-tool-return");
+                using var response = await _httpClient.SendAsync(request);
+                response.EnsureSuccessStatusCode();
+                return "Success";
+            }
+            catch (Exception e)
+            {
+                return e.Message;
+            }
+            
+        }
+
+        public async Task<String> DeleteTool(int toolId)
         {
             try
             {

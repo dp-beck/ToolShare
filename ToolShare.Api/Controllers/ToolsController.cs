@@ -252,8 +252,8 @@ namespace ToolShare.Api.Controllers
 
         [HttpPut]
         [Authorize(Roles = "User,PodManager")]
-        [Route("{toolId}/return-tool")]
-        public async Task<IActionResult> ReturnTool(int toolId)
+        [Route("{toolId}/accept-tool-return")]
+        public async Task<IActionResult> AcceptToolReturn(int toolId)
         {
             try 
             {
@@ -272,7 +272,35 @@ namespace ToolShare.Api.Controllers
 
                 await _toolsRepository.SaveChangesAsync();
 
-                return Ok(new {Message = "Tool successfully returned."});
+                return Ok(new {Message = "Tool return accepted successfully."});
+            }
+            catch (Exception)
+            {
+                return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
+            }
+        }
+        
+        [HttpPut]
+        [Authorize(Roles = "User,PodManager")]
+        [Route("{toolId}/request-tool-return")]
+        public async Task<IActionResult> RequestToolReturn(int toolId)
+        {
+            try 
+            {
+                var toolBorrowed = await _toolsRepository.GetByIdAsync(toolId);
+                if (toolBorrowed == null) return NotFound("Could not find tool with this id.");
+
+                var currentUser = await _userManager.GetUserAsync(HttpContext.User);
+                if (currentUser is null) return NotFound("Could not find current user.");
+
+                if (toolBorrowed.OwnerId != currentUser.Id)
+                    return BadRequest(new {Message = "You are not the owner of this tool."});
+                
+                toolBorrowed.ToolStatus = ToolStatus.ReturnPending;
+
+                await _toolsRepository.SaveChangesAsync();
+
+                return Ok(new {Message = "Tool return request successful."});
             }
             catch (Exception)
             {
@@ -280,6 +308,7 @@ namespace ToolShare.Api.Controllers
             }
         }
 
+        
         [HttpDelete]
         [Authorize(Roles = "User,PodManager")]
         [Route("{toolId}")]
