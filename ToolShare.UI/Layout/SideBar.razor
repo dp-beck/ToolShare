@@ -21,6 +21,7 @@
 </ul>
 <div class="@NavMenuCssClass nav-scrollable" @onclick="ToggleNavMenu">
     <nav class="flex-column">
+        
         <AuthorizeView Roles="User">
             <Authorized>
                 <div class="nav-item px-3">
@@ -31,6 +32,16 @@
                 <div class="nav-item px-3">
                     <NavLink class="nav-link" href="manage-tools">
                         <span class="bi bi-gear-fill-nav-menu" aria-hidden="true"></span> Manage Tools
+                    </NavLink>
+                </div>
+            </Authorized>
+        </AuthorizeView>
+        
+        <AuthorizeView Roles="PodManager">
+            <Authorized>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="manage-pod">
+                        <span class="bi bi-gear-fill-nav-menu" aria-hidden="true"></span> Manage Pod
                     </NavLink>
                 </div>
             </Authorized>
