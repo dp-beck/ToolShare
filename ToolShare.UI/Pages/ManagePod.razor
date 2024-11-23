@@ -1,0 +1,41 @@
+@page "/manage-pod/{podName}"
+
+@if (!_isLoading)
+{
+    <h3>Manage Pod: @Pod.Name</h3>
+
+    <p>Hi @Pod.podManager.UserName, you are the manager of this pod. You can change pod name, add new pod members, remove users from pod transfer management to another user, or delete the pod.</p>
+
+    <h4>Pod Details</h4>
+
+    <h5>Pod Name</h5>
+    <EditForm Model="@NewPodName" OnSubmit="HandleEditSubmit">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+        <div class="form-group row m-3">
+            <label for="PodName" class="col-sm-2 col-form-label"> Name: </label>
+            <div class="col-sm-10">
+                <InputText class="form-control" id="PodName" @bind-Value="NewPodName" />
+            </div>
+        </div>
+        
+        <div class="form-group row m-3">
+            <div class="col-sm-10">
+                <button type="submit" class="btn btn-primary">Submit Changes</button>
+            </div>
+        </div>
+
+    </EditForm>
+    <h5>Add User to Pod</h5>
+    <p>Make this a Grid of NoPodUsers with Photo, Username, First Name, Last Name, Button to Add to Pod</p>
+
+    <h5>Pod Members</h5>
+    <p>Make this a Grid of Pod Members with Photo, Username, First Name, Last Name, Button to Remove from Pod</p>
+
+    <h5>Pod Manager</h5>
+    <p>Make this a drop down menu of pod members, selecting will change the manager
+        Require another button press to make it happen </p>
+
+    <h5>Delete Button</h5>
+    <p>Note! You cannot delete your pod until you have removed all other users from the pod.</p>
+}

@@ -89,5 +89,19 @@ namespace ToolShare.UI.Services
             return null;
 
         }
+
+        public async Task<string> UpdatePodName(int podId, string NewPodName)
+        {
+            try
+            {
+                var response = await _httpClient.PutAsJsonAsync($"api/pods/{podId}/updatename", NewPodName);
+                response.EnsureSuccessStatusCode();
+                return "Success";
+            }
+            catch (Exception e)
+            { 
+                return e.Message;
+            }
+        }
     }
 }
