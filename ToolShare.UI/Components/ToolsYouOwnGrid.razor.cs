@@ -7,11 +7,9 @@ namespace ToolShare.UI.Components;
 
 public partial class ToolsYouOwnGrid : ComponentBase
 {
-     private bool _isLoading { get; set; } = true;
     private string Message { get; set; } = string.Empty;
     private AppUserDTO userInfo {get;set;}
     private IQueryable<ToolDTO> ToolsOwnedQueryable { get; set; }
-    private IQueryable<ToolDTO> ToolsBorrowedQueryable { get; set; } 
     private string nameFilter = string.Empty;
     private string statusFilter = string.Empty;
     private PaginationState pagination = new PaginationState { ItemsPerPage = 5 };
@@ -43,8 +41,6 @@ public partial class ToolsYouOwnGrid : ComponentBase
     {
         userInfo = await UsersDataService.GetCurrentUser();
         ToolsOwnedQueryable = await ToolsDataService.GetToolsOwnedByUser(userInfo.UserName);
-        ToolsBorrowedQueryable = await ToolsDataService.GetToolsBorrowedByUser(userInfo.UserName);
-        _isLoading = false;
     }
    
     private async Task HandleAcceptClick(int toolId)

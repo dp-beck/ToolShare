@@ -1,5 +1,21 @@
-<h3>ToolsYouBorrowedGrid</h3>
-
-@code {
-    
-}
+<QuickGrid class="table" Items="@filteredBorrowedTools" Pagination="@pagination">
+    <TemplateColumn Context="tool" Title="Photo">
+        <img src="@tool.ToolPhotoUrl" alt ="picture of the tool" width="50px"/>
+    </TemplateColumn>
+    <PropertyColumn Property="tool => tool.Name" Title="Name" Sortable="true">
+        <ColumnOptions>
+            <div class="search-box">
+                <input type="search" autofocus @bind="nameFilter" @bind:event="oninput" placeholder="Tool name..." />
+            </div>
+        </ColumnOptions>
+    </PropertyColumn>
+    <PropertyColumn Property="tool => tool.ToolOwnerName" Title="Owner"/>
+    <PropertyColumn Property="tool => tool.BorrowingPeriodInDays" Title="Loan Period"/>
+    <TemplateColumn Context="tool" Title="Details" >
+        <a class="nav-link" href="tool-detail/@tool.ToolId">Click Here</a>
+    </TemplateColumn>
+    <TemplateColumn Context="tool" Title="Actions">
+        <button @onclick="async () => await HandleRequestReturnClick(tool.ToolId)">Return</button>
+    </TemplateColumn>
+</QuickGrid>
+<Paginator State="pagination"/>
