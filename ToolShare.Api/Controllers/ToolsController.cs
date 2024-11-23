@@ -78,7 +78,43 @@ namespace ToolShare.Api.Controllers
             }
         }
 
+        [HttpGet]
+        [Authorize(Roles = "User,Manager")]
+        [Route("tools-by-user-owned/{username}")]
+        public async Task<IActionResult> GetToolsOwnedByUser(string username)
+        {
+            try
+            {
+                var tools = await _toolsRepository.GetToolsOwnedByUsername(username);
+                
+                List<ToolDto> toolDtos = _mapper.Map<List<ToolDto>>(tools);
+                
+                return Ok(toolDtos);
+            }
+            catch (Exception)
+            {
+                return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
+            }
+        }
 
+        [HttpGet]
+        [Authorize(Roles ="User,Manager")]
+        [Route("tools-by-user-borrowed/{username}")]
+        public async Task<IActionResult> GetToolsBorrowedByUser(string username)
+        {
+            try
+            {
+                var tools = await _toolsRepository.GetToolsBorrowedByUsername(username);
+                
+                List<ToolDto> toolDtos = _mapper.Map<List<ToolDto>>(tools);
+                
+                return Ok(toolDtos);
+            }
+            catch (Exception)
+            {
+                return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
+            }
+        }
         [HttpGet]
         [Authorize]
         [Route("{toolId:int}")]
@@ -185,23 +221,23 @@ namespace ToolShare.Api.Controllers
         [HttpPut]
         [Authorize(Roles = "User,PodManager")]
         [Route("{toolId}/lend-tool")]
-        public async Task<IActionResult> LendTool(int toolId, [FromBody] string toolBorrowerUserName)
+        public async Task<IActionResult> LendTool(int toolId)
         {
             try 
             {
                 var toolBorrowed = await _toolsRepository.GetByIdAsync(toolId);
                 if (toolBorrowed == null) return NotFound("Could not find tool with this id.");
-
-                var ToolBorrower = await _userManager.FindByNameAsync(toolBorrowerUserName);
-                if (ToolBorrower == null) return NotFound("Could not find tool with this id.");
-
+                
                 var currentUser = await _userManager.GetUserAsync(HttpContext.User);
                 if (currentUser is null) return NotFound("Could not find current user.");
+                
+                if (toolBorrowed.ToolRequester is null) return BadRequest(new {Message = "No one has requested this tool."});
 
                 if (toolBorrowed.OwnerId != currentUser.Id)
                     return BadRequest(new {Message = "You are not the owner of this tool."});
             
-                toolBorrowed.ToolBorrower = ToolBorrower;
+                toolBorrowed.ToolBorrower = toolBorrowed.ToolRequester;
+                toolBorrowed.ToolRequester = null;
                 toolBorrowed.ToolStatus = ToolStatus.Borrowed;
 
                 await _toolsRepository.SaveChangesAsync();
@@ -259,6 +295,9 @@ namespace ToolShare.Api.Controllers
 
                 if (tool.OwnerId != currentUser.Id)
                     return BadRequest(new { Message = "You are not the owner of this tool." });
+                
+                if (tool.ToolBorrower != null)
+                   return BadRequest(new { Message = "You cannot remove a tool that is currently borrowed." }); 
 
                 await _toolsRepository.DeleteAsync(tool);
 

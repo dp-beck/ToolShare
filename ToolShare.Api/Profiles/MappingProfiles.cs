@@ -33,6 +33,9 @@ namespace ToolShare.Api.Profiles
                 .ForMember(
                     dest => dest.ToolBorrowerName,
                     opt => opt.MapFrom(src => src.ToolBorrower.UserName))
+                .ForMember(
+                    dest => dest.ToolRequesterName,
+                    opt => opt.MapFrom(src => src.ToolRequester.UserName))
                 .ReverseMap();
             
             this.CreateMap<Tool, UpdateToolDto>().ReverseMap();

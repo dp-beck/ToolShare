@@ -47,6 +47,28 @@ namespace ToolShare.UI.Services
             return toolsInfo;
         }
 
+        public async Task<IQueryable<ToolDTO>> GetToolsOwnedByUser(string username)
+        {
+            var response = await _httpClient.GetAsync($"api/tools/tools-by-user-owned/{username}");
+            
+            response.EnsureSuccessStatusCode();
+            
+            var toolsJson = await response.Content.ReadAsStringAsync();
+            var toolsInfo = JsonSerializer.Deserialize<IEnumerable<ToolDTO>>(toolsJson, jsonSerializerOptions).AsQueryable();
+            return toolsInfo;
+        }
+
+        public async Task<IQueryable<ToolDTO>> GetToolsBorrowedByUser(string username)
+        {
+            var response = await _httpClient.GetAsync($"api/tools/tools-by-user-borrowed/{username}");
+            
+            response.EnsureSuccessStatusCode();
+            
+            var toolsJson = await response.Content.ReadAsStringAsync();
+            var toolsInfo = JsonSerializer.Deserialize<IEnumerable<ToolDTO>>(toolsJson, jsonSerializerOptions).AsQueryable();
+            return toolsInfo;
+        }
+        
         public async Task<ToolDTO> CreateTool(ToolDTO tool)
         {
             var toolJson = 
@@ -101,6 +123,35 @@ namespace ToolShare.UI.Services
               return e.Message;
             }
 
+        }
+
+        public async Task<string> LendTool(int toolId)
+        {
+            try
+            {
+                var request = new HttpRequestMessage(HttpMethod.Put, $"api/tools/{toolId}/lend-tool");
+                using var response = await _httpClient.SendAsync(request);
+                response.EnsureSuccessStatusCode();
+                return "Success";
+            }
+            catch (Exception e)
+            {
+                return e.Message;
+            }
+        }
+
+        public async Task<string> DeleteTool(int toolId)
+        {
+            try
+            {
+                var response = await _httpClient.DeleteAsync($"api/tools/{toolId}");
+                response.EnsureSuccessStatusCode();
+                return "Success";
+            }
+            catch (Exception e)
+            {
+                return e.Message;
+            }
         }
     }
 }

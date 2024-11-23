@@ -21,5 +21,22 @@ namespace ToolShare.Data.Repositories
         }
 
 
+        public async Task<IEnumerable<Tool>> GetToolsOwnedByUsername(string username)
+        {
+            return await _context.Tools.Where(t => t.ToolOwner.UserName == username)
+                .Include(t=>t.ToolOwner)
+                .Include(t => t.ToolBorrower)
+                .Include(t => t.ToolRequester)
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<Tool>> GetToolsBorrowedByUsername(string username)
+        {
+            return await _context.Tools.Where(t => t.ToolBorrower.UserName == username)
+                .Include(t=>t.ToolOwner)
+                .Include(t => t.ToolBorrower)
+                .Include(t => t.ToolRequester)
+                .ToListAsync();
+        }
     }
 }

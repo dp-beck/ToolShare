@@ -17,6 +17,7 @@ namespace ToolShare.Api.Dtos
         public ToolStatus ToolStatus { get; set; }
         public string? ToolOwnerName { get; set; }
         public string? ToolBorrowerName { get; set; }
+        public string? ToolRequesterName { get; set; }
 
     }
 }
