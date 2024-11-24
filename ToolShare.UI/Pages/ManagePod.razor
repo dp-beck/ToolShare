@@ -1,4 +1,4 @@
-@page "/manage-pod/{podName}"
+@page "/manage-pod/{podId:int}"
 
 @if (!_isLoading)
 {
@@ -28,6 +28,9 @@
     </EditForm>
     <h5>Add User to Pod</h5>
     <p>Make this a Grid of NoPodUsers with Photo, Username, First Name, Last Name, Button to Add to Pod</p>
+    <QuickGrid class="table" Items="@NoPodUsers">
+        <PropertyColumn Property="NoPodUser => NoPodUser.UserName"></PropertyColumn>
+    </QuickGrid>
 
     <h5>Pod Members</h5>
     <p>Make this a Grid of Pod Members with Photo, Username, First Name, Last Name, Button to Remove from Pod</p>

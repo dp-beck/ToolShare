@@ -55,6 +55,15 @@ namespace ToolShare.UI.Services
             return userInfo;
         }
 
+        public async Task<IQueryable<AppUserDTO>> GetNoPodUsers()
+        {
+            var response = await _httpClient.GetAsync("api/users/users-without-pods");
+            response.EnsureSuccessStatusCode();
+            var JsonResponse = await response.Content.ReadAsStringAsync();
+            var NoPodUsers = JsonSerializer.Deserialize<IQueryable<AppUserDTO>>(JsonResponse, jsonSerializerOptions);
+            return NoPodUsers;
+        }
+
         public async Task<String> UpdateCurrentUser(UserInfoUpdateDto userInfoUpdateDto)
         {
             try

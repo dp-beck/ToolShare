@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Components;
 using ToolShare.Data.Models;
+using ToolShare.UI.Components;
 using ToolShare.UI.DTOs;
 using ToolShare.UI.Services;
 
@@ -11,22 +12,26 @@ public partial class ManagePod : ComponentBase
     private string? Message { get; set; }
     public PodDTO Pod { get; set; }
     public string NewPodName { get; set; } = string.Empty;
-    
+    private IQueryable<AppUserDTO> NoPodUsers { get; set; }
     [Parameter]
-    public string podName { get; set; }
+    public int podId { get; set; }
     [Inject]
     public required IPodsDataService PodsDataService { get; set; }
+    [Inject]
+    public required IUsersDataService UsersDataService { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        Pod = await PodsDataService.FindPodDetailsByName(podName);
+        Pod = await PodsDataService.FindPodDetailsById(podId);
         NewPodName = Pod.Name;
+        NoPodUsers = await UsersDataService.GetNoPodUsers();
         _isLoading = false;
     }
 
     public async Task<String> HandleEditSubmit()
     {
         Message = await PodsDataService.UpdatePodName(Pod.PodId, NewPodName);
+        await OnInitializedAsync();
         return Message;    
     }
 }
