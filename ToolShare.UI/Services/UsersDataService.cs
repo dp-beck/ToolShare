@@ -60,7 +60,8 @@ namespace ToolShare.UI.Services
             var response = await _httpClient.GetAsync("api/users/users-without-pods");
             response.EnsureSuccessStatusCode();
             var JsonResponse = await response.Content.ReadAsStringAsync();
-            var NoPodUsers = JsonSerializer.Deserialize<IQueryable<AppUserDTO>>(JsonResponse, jsonSerializerOptions);
+            var NoPodUsers = JsonSerializer.Deserialize<IEnumerable<AppUserDTO>>(JsonResponse, jsonSerializerOptions).AsQueryable();
+
             return NoPodUsers;
         }
 

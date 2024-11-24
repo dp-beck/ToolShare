@@ -17,6 +17,6 @@ namespace ToolShare.UI.Services
 
         public Task<PodDTO> InitializeNewPod(PodDTO podDTO);
         public Task<String> UpdatePodName(int podId, string NewPodName);
-
+        public Task<String> AddUser(int podId, string username);
     }
 }

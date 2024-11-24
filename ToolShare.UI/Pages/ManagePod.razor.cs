@@ -34,4 +34,12 @@ public partial class ManagePod : ComponentBase
         await OnInitializedAsync();
         return Message;    
     }
+
+    private async Task<String> HandleAddUserClick(string username)
+    {
+        Message = await PodsDataService.AddUser(Pod.PodId, username);
+        await OnInitializedAsync();
+        // TO DO: Tell the Sidebar to Update as well
+        return Message;    
+    }
 }

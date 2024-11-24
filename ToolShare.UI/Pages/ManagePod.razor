@@ -29,7 +29,17 @@
     <h5>Add User to Pod</h5>
     <p>Make this a Grid of NoPodUsers with Photo, Username, First Name, Last Name, Button to Add to Pod</p>
     <QuickGrid class="table" Items="@NoPodUsers">
-        <PropertyColumn Property="NoPodUser => NoPodUser.UserName"></PropertyColumn>
+        <TemplateColumn Context="NoPodUser" Title="Photo">
+            <img src="@NoPodUser.ProfilePhotoUrl" alt ="picture of the user" width="50px"/>
+        </TemplateColumn>
+        <TemplateColumn Context="NoPodUser" Title="UserName" >
+            <a class="nav-link" href="user-detail/@NoPodUser.UserName">@NoPodUser.UserName</a>
+        </TemplateColumn>
+        <PropertyColumn Property="NoPodUser => NoPodUser.FirstName" Title="First Name"></PropertyColumn>
+        <PropertyColumn Property="NoPodUser => NoPodUser.LastName" Title="Last Name"></PropertyColumn>
+        <TemplateColumn Context="NoPodUser" Title="">
+            <button @onclick="async () => await HandleAddUserClick(NoPodUser.UserName)">Add?</button>
+        </TemplateColumn>
     </QuickGrid>
 
     <h5>Pod Members</h5>

@@ -115,5 +115,19 @@ namespace ToolShare.UI.Services
                 return e.Message;
             }
         }
+
+        public async Task<string> AddUser(int podId, string username)
+        {
+            try
+            {
+                var response = await _httpClient.PutAsJsonAsync($"api/pods/{podId}/add-user", username);
+                response.EnsureSuccessStatusCode();
+                return "Success";
+            }
+            catch (Exception e)
+            { 
+                return e.Message;
+            }        
+        }
     }
 }

@@ -57,19 +57,19 @@ namespace ToolShare.Api.Controllers
         {
             try
             {
-            var appUser = await _userManager.GetUserAsync(HttpContext.User);
-            if (appUser is null) return BadRequest(new {Message = "No current user is logged in."});
+                var appUser = await _userManager.GetUserAsync(HttpContext.User);
+                if (appUser is null) return BadRequest(new {Message = "No current user is logged in."});
         
-            var appUserId = await _userManager.GetUserIdAsync(appUser);
-            var currentUser = _userManager.Users
-                .Include(u => u.PodJoined)
-                .Include(u => u.PodManaged)
-                .Include(u => u.ToolsOwned)
-                .FirstOrDefault(x => x.Id == appUserId);
+                var appUserId = await _userManager.GetUserIdAsync(appUser);
+                var currentUser = _userManager.Users
+                    .Include(u => u.PodJoined)
+                    .Include(u => u.PodManaged)
+                    .Include(u => u.ToolsOwned)
+                    .FirstOrDefault(x => x.Id == appUserId);
             
-            AppUserDto appUserDto = _mapper.Map<AppUserDto>(currentUser);
+                AppUserDto appUserDto = _mapper.Map<AppUserDto>(currentUser);
                         
-            return Ok(appUserDto);
+                return Ok(appUserDto);
             } catch (Exception)
             {
                 return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
