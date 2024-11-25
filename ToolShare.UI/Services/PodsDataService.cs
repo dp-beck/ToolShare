@@ -129,5 +129,47 @@ namespace ToolShare.UI.Services
                 return e.Message;
             }        
         }
+
+        public async Task<string> RemoveUser(int podId, string username)
+        {
+            try
+            {
+                var response = await _httpClient.PutAsJsonAsync($"api/pods/{podId}/remove-user", username);
+                response.EnsureSuccessStatusCode();
+                return "Success";
+            }
+            catch (Exception e)
+            {
+                return e.Message;
+            }
+        }
+
+        public async Task<string> ChangeManager(int podId, string username)
+        {
+            try
+            {
+                var response = await _httpClient.PutAsJsonAsync($"api/pods/{podId}/change-pod-manager", username);
+                response.EnsureSuccessStatusCode();
+                return "Success";
+            }
+            catch (Exception e)
+            {
+                return e.Message;
+            }        
+        }
+
+        public async Task<string> DeletePod(int podId)
+        {
+            try
+            {
+                var response = await _httpClient.DeleteAsync("api/pods/delete/{podId}");
+                response.EnsureSuccessStatusCode();
+                return "success";
+            }
+            catch (Exception e)
+            {
+                return e.Message;
+            }
+        }
     }
 }

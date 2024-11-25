@@ -40,6 +40,12 @@ namespace ToolShare.Data.Repositories
             await _context.SaveChangesAsync();
         }
 
+        public async Task ChangeManager(AppUser appUser, Pod pod)
+        {
+            pod.podManager = appUser;
+            await _context.SaveChangesAsync();
+        }
+
         public async Task<Pod> FindPodByName(string podName)
         {
             return await _context.Pods

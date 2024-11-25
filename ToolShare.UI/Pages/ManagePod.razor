@@ -1,14 +1,13 @@
 @page "/manage-pod/{podId:int}"
+@using AutoMapper.Execution
 
 @if (!_isLoading)
 {
     <h3>Manage Pod: @Pod.Name</h3>
 
     <p>Hi @Pod.podManager.UserName, you are the manager of this pod. You can change pod name, add new pod members, remove users from pod transfer management to another user, or delete the pod.</p>
-
-    <h4>Pod Details</h4>
-
-    <h5>Pod Name</h5>
+    
+    <h4>Change Pod Name</h4>
     <EditForm Model="@NewPodName" OnSubmit="HandleEditSubmit">
         <DataAnnotationsValidator />
         <ValidationSummary />
@@ -26,8 +25,9 @@
         </div>
 
     </EditForm>
-    <h5>Add User to Pod</h5>
-    <p>Make this a Grid of NoPodUsers with Photo, Username, First Name, Last Name, Button to Add to Pod</p>
+    
+    <h4>Add User to Pod</h4>
+    
     <QuickGrid class="table" Items="@NoPodUsers">
         <TemplateColumn Context="NoPodUser" Title="Photo">
             <img src="@NoPodUser.ProfilePhotoUrl" alt ="picture of the user" width="50px"/>
@@ -42,13 +42,48 @@
         </TemplateColumn>
     </QuickGrid>
 
-    <h5>Pod Members</h5>
+    <h4>Remove Pod Members</h4>
     <p>Make this a Grid of Pod Members with Photo, Username, First Name, Last Name, Button to Remove from Pod</p>
-
-    <h5>Pod Manager</h5>
+    <QuickGrid class="table" Items="@Pod.PodMembers.AsQueryable()">
+        <TemplateColumn Context="PodMember" Title="Photo">
+            <img src="@PodMember.ProfilePhotoUrl" alt ="picture of the user" width="50px"/>
+        </TemplateColumn>
+        <TemplateColumn Context="PodMember" Title="UserName" >
+            <a class="nav-link" href="user-detail/@PodMember.UserName">@PodMember.UserName</a>
+        </TemplateColumn>
+        <PropertyColumn Property="PodMember => PodMember.FirstName" Title="First Name"></PropertyColumn>
+        <PropertyColumn Property="PodMember => PodMember.LastName" Title="Last Name"></PropertyColumn>
+        <TemplateColumn Context="PodMember" Title="">
+            <button @onclick="async () => await HandleRemoveMemberClick(PodMember.UserName)">Delete?</button>
+        </TemplateColumn>
+    </QuickGrid>
+    
+    <h4>Choose a new Pod Manager</h4>
     <p>Make this a drop down menu of pod members, selecting will change the manager
         Require another button press to make it happen </p>
+    
+    <EditForm Model="@NewPodManagerName" OnSubmit="HandleChangeManagerClick">
+        <div class="form-group row m-3">
+            <label for="NewPodManager" class="col-sm-2 col-form-label"> Choose New Pod Manager: </label>
+            <div class="col-sm-10">
+                <InputSelect class="form-control" id="NewPodManager" @bind-Value="NewPodManagerName">
+                    @foreach (var member in Pod.PodMembers)
+                    {
+                        <option value="@member.UserName">@member.UserName</option>
+                    }
+                </InputSelect>
+            </div>
+        </div>
+        
+        <div class="form-group row m-3">
+            <div class="col-sm-10">
+                <button type="submit" class="btn btn-primary">Submit Changes</button>
+            </div>
+        </div>
 
-    <h5>Delete Button</h5>
+    </EditForm>
+    <h4>Delete Pod</h4>
     <p>Note! You cannot delete your pod until you have removed all other users from the pod.</p>
+    <button type="button" class="btn btn-danger" @onclick="HandleDelete">Delete Pod</button>
+
 }

@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Http.Extensions;
 using ToolShare.Data.Models;
 using ToolShare.UI.Components;
 using ToolShare.UI.DTOs;
@@ -12,18 +13,23 @@ public partial class ManagePod : ComponentBase
     private string? Message { get; set; }
     public PodDTO Pod { get; set; }
     public string NewPodName { get; set; } = string.Empty;
+    public string NewPodManagerName { get; set; } = string.Empty;
     private IQueryable<AppUserDTO> NoPodUsers { get; set; }
+    
     [Parameter]
     public int podId { get; set; }
     [Inject]
     public required IPodsDataService PodsDataService { get; set; }
     [Inject]
     public required IUsersDataService UsersDataService { get; set; }
+    [Inject]
+    public NavigationManager NavigationManager { get; set; } = null!;
 
     protected override async Task OnInitializedAsync()
     {
         Pod = await PodsDataService.FindPodDetailsById(podId);
         NewPodName = Pod.Name;
+        NewPodManagerName = Pod.podManager.UserName;
         NoPodUsers = await UsersDataService.GetNoPodUsers();
         _isLoading = false;
     }
@@ -38,8 +44,32 @@ public partial class ManagePod : ComponentBase
     private async Task<String> HandleAddUserClick(string username)
     {
         Message = await PodsDataService.AddUser(Pod.PodId, username);
-        await OnInitializedAsync();
-        // TO DO: Tell the Sidebar to Update as well
+        NavigationManager.NavigateTo(NavigationManager.Uri, forceLoad: true);
         return Message;    
+    }
+
+    private async Task<String> HandleRemoveMemberClick(string username)
+    {
+        Message = await PodsDataService.RemoveUser(Pod.PodId, username);
+        NavigationManager.NavigateTo(NavigationManager.Uri, forceLoad: true);
+        return Message;
+    }
+
+    private async Task<string> HandleChangeManagerClick()
+    {
+        Message = await PodsDataService.ChangeManager(Pod.PodId, NewPodManagerName);
+        NavigationManager.NavigateTo("", forceLoad: true);
+        return Message;
+    }
+
+    private async Task HandleDelete()
+    {
+        Message = await UsersDataService.DeleteCurrentUser();
+
+        if (Message == "success")
+        {
+            NavigationManager.NavigateTo("", forceLoad: true);
+        }
+
     }
 }
