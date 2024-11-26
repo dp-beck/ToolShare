@@ -150,7 +150,8 @@ namespace ToolShare.Api.Controllers
                 {
                     Name = toolDto.Name,
                     Description = toolDto.Description,
-                    BorrowingPeriodInDays = toolDto.BorrowingPeriodInDays,  
+                    BorrowingPeriodInDays = toolDto.BorrowingPeriodInDays,
+                    ToolPhotoUrl = toolDto.ToolPhotoUrl
                 };
                 
                 tool.ToolOwner = currentUser;

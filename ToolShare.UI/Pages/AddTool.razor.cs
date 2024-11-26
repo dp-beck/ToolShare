@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 using ToolShare.UI.DTOs;
 using ToolShare.UI.Services;
-
 namespace ToolShare.UI.Pages;
 
 public partial class AddTool : ComponentBase
@@ -11,8 +11,10 @@ public partial class AddTool : ComponentBase
     private bool error;
     private string Message = string.Empty;
     private string StatusClass = string.Empty;
+    private string PhotoUploadMessage = string.Empty;
     [Inject]
     public required IToolsDataService ToolsDataService { get; set; }
+    [Inject] public required IJSRuntime JS { get; set; }
     
     private async Task HandleValidSubmit()
     {
@@ -36,5 +38,14 @@ public partial class AddTool : ComponentBase
     private void HandleInvalidSubmit()
     {
         return;
+    }
+    
+    private async Task openWidget()
+    {
+        ToolDto.ToolPhotoUrl = await JS.InvokeAsync<string>("openWidget");
+        if (!string.IsNullOrEmpty(ToolDto.ToolPhotoUrl))
+        {
+            PhotoUploadMessage = "Photo successfully uploaded!";
+        }
     }
 }
