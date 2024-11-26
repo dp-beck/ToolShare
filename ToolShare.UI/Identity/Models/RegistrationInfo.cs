@@ -18,5 +18,6 @@ namespace ToolShare.UI.Identity.Models
         public string? LastName { get; set; }
         public required string Password { get; set; }
         public string? AboutMe { get; set; }
+        public string? ProfilePhotoUrl { get; set; }
     }
 }

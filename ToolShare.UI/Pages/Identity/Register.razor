@@ -60,6 +60,14 @@
                     <textarea autofocus autocomplete="on" required id="aboutMe" name="aboutMeInput" placeholder="Tell us about yourself" type="string" @bind="registrationInfo.AboutMe" />
                 </div>
                 <div>
+                    <label for="profilePhotoUrl">
+                        Profile Photo:
+                    </label>
+                    <button type="button" @onclick="openWidget">Upload Image</button>
+                    <input type="hidden" id="profilePhotoUrl" name="profilePhotoUrl" @bind="registrationInfo.ProfilePhotoUrl" />
+                    <p>@PhotoUploadMessage</p>
+                </div>
+                <div>
                     <label for="password">
                         Password:
                     </label>
@@ -80,7 +88,8 @@
 </AuthorizeView>
 
 @code {
-    private bool success, errors; 
+    private bool success, errors;
+    private string PhotoUploadMessage { get; set; } = string.Empty;
     private RegistrationInfo? registrationInfo = new RegistrationInfo
     {
         UserName = string.Empty,
@@ -88,11 +97,13 @@
         FirstName = string.Empty,
         LastName = string.Empty,
         AboutMe = string.Empty,
-        Password = string.Empty
+        Password = string.Empty,
+        ProfilePhotoUrl = string.Empty
     };
 
     private string confirmPassword = string.Empty;
     private string[] errorList = [];
+    [Inject] public required IJSRuntime JS { get; set; }
 
     public async Task DoRegisterAsync()
     {
@@ -142,12 +153,22 @@
             registrationInfo.FirstName =
             registrationInfo.LastName =
             registrationInfo.AboutMe = 
+            registrationInfo.ProfilePhotoUrl =
             confirmPassword = string.Empty;
         }
         else
         {
             errors = true;
             errorList = result.ErrorList;
+        }
+    }
+    
+    private async Task openWidget()
+    {
+        registrationInfo.ProfilePhotoUrl = await JS.InvokeAsync<string>("openWidget");
+        if (!string.IsNullOrEmpty(registrationInfo.ProfilePhotoUrl))
+        {
+            PhotoUploadMessage = "Photo successfully uploaded!";
         }
     }
 }

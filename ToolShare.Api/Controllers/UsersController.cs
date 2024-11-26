@@ -171,6 +171,7 @@ namespace ToolShare.Api.Controllers
                 FirstName = registrationDto.FirstName,
                 LastName = registrationDto.LastName,
                 AboutMe = registrationDto.AboutMe,
+                ProfilePhotoUrl = registrationDto.ProfilePhotoUrl
                 };
 
                 var result = await _userManager.CreateAsync(user, registrationDto.Password);
