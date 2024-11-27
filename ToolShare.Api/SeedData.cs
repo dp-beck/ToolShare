@@ -166,29 +166,33 @@ namespace ToolShare.Api
             {
                 return;
             }
-            Pod[] seedPods =  
-            [
-                new Pod() { Name = "SmithPod"},
-                new Pod() { Name = "JonesPod"},
-            ];
-
+            
             AppUser? tomsmithUser = await context.Users.FirstOrDefaultAsync(u => u.UserName == "tomsmith");
             AppUser? teddybear5User = await context.Users.FirstOrDefaultAsync(u => u.UserName == "teddybear5");
             AppUser? oliviasmithUser = await context.Users.FirstOrDefaultAsync(u => u.UserName == "oliviasmith");
-
-            seedPods[0].PodMembers.Add(tomsmithUser);
-            seedPods[0].podManager = tomsmithUser;
-
-            seedPods[0].PodMembers.Add(teddybear5User);
-            seedPods[0].PodMembers.Add(oliviasmithUser);
-
             AppUser? fredjonesUser = await context.Users.FirstOrDefaultAsync(u => u.UserName == "fredjones");
             AppUser? wendy123User = await context.Users.FirstOrDefaultAsync(u => u.UserName == "wendy123");
             AppUser? hungryhippo325 = await context.Users.FirstOrDefaultAsync(u => u.UserName == "hungryhippo325");
-
+            
+            Pod[] seedPods =  
+            [
+                new Pod()
+                {
+                    Name = "SmithPod",
+                    PodManager = tomsmithUser,
+                },
+                new Pod()
+                {
+                    Name = "JonesPod",
+                    PodManager = fredjonesUser
+                },
+            ];
+            
+            seedPods[0].PodMembers.Add(tomsmithUser);
+            seedPods[0].PodMembers.Add(teddybear5User);
+            seedPods[0].PodMembers.Add(oliviasmithUser);
+            
             seedPods[1].PodMembers.Add(fredjonesUser);
-            seedPods[1].podManager = fredjonesUser;
-
             seedPods[1].PodMembers.Add(wendy123User);
             seedPods[1].PodMembers.Add(hungryhippo325);
 
@@ -205,7 +209,15 @@ namespace ToolShare.Api
             {
                 return;
             }
-
+            
+            // Get Users
+            AppUser? tomsmithUser = await context.Users.FirstOrDefaultAsync(u => u.UserName == "tomsmith");
+            AppUser? teddybear5User = await context.Users.FirstOrDefaultAsync(u => u.UserName == "teddybear5");
+            AppUser? oliviasmithUser = await context.Users.FirstOrDefaultAsync(u => u.UserName == "oliviasmith");
+            AppUser? fredjonesUser = await context.Users.FirstOrDefaultAsync(u => u.UserName == "fredjones");
+            AppUser? wendy123User = await context.Users.FirstOrDefaultAsync(u => u.UserName == "wendy123");
+            AppUser? hungryhippo325User = await context.Users.FirstOrDefaultAsync(u => u.UserName == "hungryhippo325");
+            
             Tool[] seedTools =  
             [
                 new Tool() 
@@ -213,7 +225,8 @@ namespace ToolShare.Api
                     Name = "Honda Walk Behind Lawnmower",
                     Description = "A self-propelled walk behind lawnmower that works great.",
                     BorrowingPeriodInDays = 7,
-                    ToolPhotoUrl = "https://res.cloudinary.com/dzsqoueki/image/upload/w_1000,ar_1:1,c_fill,g_auto,e_art:hokusai/v1731874629/naomi-o-hare-ziu7At0z4CE-unsplash_bzzfdg.jpg"
+                    ToolPhotoUrl = "https://res.cloudinary.com/dzsqoueki/image/upload/w_1000,ar_1:1,c_fill,g_auto,e_art:hokusai/v1731874629/naomi-o-hare-ziu7At0z4CE-unsplash_bzzfdg.jpg",
+                    ToolOwner = tomsmithUser
                 },
 
                 new Tool() 
@@ -221,7 +234,8 @@ namespace ToolShare.Api
                     Name = "Scott's Push Reel Mower",
                     Description = "A push reel mower that is appropriate for smaller yards. Just need to keep blades sharp.",
                     BorrowingPeriodInDays = 14,
-                    ToolPhotoUrl = "https://res.cloudinary.com/dzsqoueki/image/upload/w_1000,ar_1:1,c_fill,g_auto,e_art:hokusai/v1731874629/naomi-o-hare-ziu7At0z4CE-unsplash_bzzfdg.jpg"
+                    ToolPhotoUrl = "https://res.cloudinary.com/dzsqoueki/image/upload/w_1000,ar_1:1,c_fill,g_auto,e_art:hokusai/v1731874629/naomi-o-hare-ziu7At0z4CE-unsplash_bzzfdg.jpg",
+                    ToolOwner = tomsmithUser
                 },
 
                 new Tool() 
@@ -229,7 +243,8 @@ namespace ToolShare.Api
                     Name = "Ryobi Leaf Blower",
                     Description = "A cordless leaf blower.",
                     BorrowingPeriodInDays = 7,
-                    ToolPhotoUrl = "https://res.cloudinary.com/dzsqoueki/image/upload/w_1000,ar_1:1,c_fill,g_auto,e_art:hokusai/v1731874629/naomi-o-hare-ziu7At0z4CE-unsplash_bzzfdg.jpg"
+                    ToolPhotoUrl = "https://res.cloudinary.com/dzsqoueki/image/upload/w_1000,ar_1:1,c_fill,g_auto,e_art:hokusai/v1731874629/naomi-o-hare-ziu7At0z4CE-unsplash_bzzfdg.jpg",
+                    ToolOwner = teddybear5User
                 },
 
                 new Tool() 
@@ -237,7 +252,8 @@ namespace ToolShare.Api
                     Name = "Dewalt Lead Blower",
                     Description = "A leaf blower. NOTE: Not battery operated; needs to be plugged in",
                     BorrowingPeriodInDays = 21,
-                    ToolPhotoUrl = "https://res.cloudinary.com/dzsqoueki/image/upload/w_1000,ar_1:1,c_fill,g_auto,e_art:hokusai/v1731874629/naomi-o-hare-ziu7At0z4CE-unsplash_bzzfdg.jpg"
+                    ToolPhotoUrl = "https://res.cloudinary.com/dzsqoueki/image/upload/w_1000,ar_1:1,c_fill,g_auto,e_art:hokusai/v1731874629/naomi-o-hare-ziu7At0z4CE-unsplash_bzzfdg.jpg",
+                    ToolOwner = teddybear5User
                 },
 
 
@@ -246,7 +262,8 @@ namespace ToolShare.Api
                     Name = "Ladder (22 Ft.)",
                     Description = "A 22 ft. long aluminum ladder",
                     BorrowingPeriodInDays = 30,
-                    ToolPhotoUrl = "https://res.cloudinary.com/dzsqoueki/image/upload/w_1000,ar_1:1,c_fill,g_auto,e_art:hokusai/v1731874629/naomi-o-hare-ziu7At0z4CE-unsplash_bzzfdg.jpg"
+                    ToolPhotoUrl = "https://res.cloudinary.com/dzsqoueki/image/upload/w_1000,ar_1:1,c_fill,g_auto,e_art:hokusai/v1731874629/naomi-o-hare-ziu7At0z4CE-unsplash_bzzfdg.jpg",
+                    ToolOwner = oliviasmithUser
                 },
 
 
@@ -255,7 +272,8 @@ namespace ToolShare.Api
                     Name = "Dewalt Brad Nailer",
                     Description = "18 Gauge; Cordless",
                     BorrowingPeriodInDays = 14,
-                    ToolPhotoUrl = "https://res.cloudinary.com/dzsqoueki/image/upload/w_1000,ar_1:1,c_fill,g_auto,e_art:hokusai/v1731874629/naomi-o-hare-ziu7At0z4CE-unsplash_bzzfdg.jpg"
+                    ToolPhotoUrl = "https://res.cloudinary.com/dzsqoueki/image/upload/w_1000,ar_1:1,c_fill,g_auto,e_art:hokusai/v1731874629/naomi-o-hare-ziu7At0z4CE-unsplash_bzzfdg.jpg",
+                    ToolOwner = oliviasmithUser
                 },
                 
                 new Tool() 
@@ -263,7 +281,8 @@ namespace ToolShare.Api
                     Name = "Ridgid Framing Nailer",
                     Description = "8 nails per second Includes: Swivel Connect, No-Mar Pad, Oil, and Wrench",
                     BorrowingPeriodInDays = 14,
-                    ToolPhotoUrl = "https://res.cloudinary.com/dzsqoueki/image/upload/w_1000,ar_1:1,c_fill,g_auto,e_art:hokusai/v1731874629/naomi-o-hare-ziu7At0z4CE-unsplash_bzzfdg.jpg"
+                    ToolPhotoUrl = "https://res.cloudinary.com/dzsqoueki/image/upload/w_1000,ar_1:1,c_fill,g_auto,e_art:hokusai/v1731874629/naomi-o-hare-ziu7At0z4CE-unsplash_bzzfdg.jpg",
+                    ToolOwner = fredjonesUser
                 },
                 
                 new Tool() 
@@ -271,7 +290,8 @@ namespace ToolShare.Api
                     Name = "Tarps",
                     Description = "Tarps for painting. I have six of  them.",
                     BorrowingPeriodInDays = 180,
-                    ToolPhotoUrl = "https://res.cloudinary.com/dzsqoueki/image/upload/w_1000,ar_1:1,c_fill,g_auto,e_art:hokusai/v1731874629/naomi-o-hare-ziu7At0z4CE-unsplash_bzzfdg.jpg"
+                    ToolPhotoUrl = "https://res.cloudinary.com/dzsqoueki/image/upload/w_1000,ar_1:1,c_fill,g_auto,e_art:hokusai/v1731874629/naomi-o-hare-ziu7At0z4CE-unsplash_bzzfdg.jpg",
+                    ToolOwner = fredjonesUser
                 },
                 
                 new Tool() 
@@ -279,7 +299,8 @@ namespace ToolShare.Api
                     Name = "Graco Paint Sprayer",
                     Description = "Cordless, handheld, and airless sprayer.",
                     BorrowingPeriodInDays = 7,
-                    ToolPhotoUrl = "https://res.cloudinary.com/dzsqoueki/image/upload/w_1000,ar_1:1,c_fill,g_auto,e_art:hokusai/v1731874629/naomi-o-hare-ziu7At0z4CE-unsplash_bzzfdg.jpg"
+                    ToolPhotoUrl = "https://res.cloudinary.com/dzsqoueki/image/upload/w_1000,ar_1:1,c_fill,g_auto,e_art:hokusai/v1731874629/naomi-o-hare-ziu7At0z4CE-unsplash_bzzfdg.jpg",
+                    ToolOwner = wendy123User
                 },
 
                     new Tool() 
@@ -287,7 +308,8 @@ namespace ToolShare.Api
                     Name = "Shopvac Wet/Dry Vacuum",
                     Description = "A bit old, but still works great",
                     BorrowingPeriodInDays = 7,
-                    ToolPhotoUrl = "https://res.cloudinary.com/dzsqoueki/image/upload/w_1000,ar_1:1,c_fill,g_auto,e_art:hokusai/v1731874629/naomi-o-hare-ziu7At0z4CE-unsplash_bzzfdg.jpg"
+                    ToolPhotoUrl = "https://res.cloudinary.com/dzsqoueki/image/upload/w_1000,ar_1:1,c_fill,g_auto,e_art:hokusai/v1731874629/naomi-o-hare-ziu7At0z4CE-unsplash_bzzfdg.jpg",
+                    ToolOwner = wendy123User
                 },
 
                 new Tool() 
@@ -295,7 +317,8 @@ namespace ToolShare.Api
                     Name = "Shovel",
                     Description = "It's just a shovel....",
                     BorrowingPeriodInDays = 7,
-                    ToolPhotoUrl = "https://res.cloudinary.com/dzsqoueki/image/upload/w_1000,ar_1:1,c_fill,g_auto,e_art:hokusai/v1731874629/naomi-o-hare-ziu7At0z4CE-unsplash_bzzfdg.jpg"
+                    ToolPhotoUrl = "https://res.cloudinary.com/dzsqoueki/image/upload/w_1000,ar_1:1,c_fill,g_auto,e_art:hokusai/v1731874629/naomi-o-hare-ziu7At0z4CE-unsplash_bzzfdg.jpg",
+                    ToolOwner = hungryhippo325User
                 },
 
                     new Tool() 
@@ -303,33 +326,12 @@ namespace ToolShare.Api
                     Name = "Hammer",
                     Description = "It's just a hammer...",
                     BorrowingPeriodInDays = 7,
-                    ToolPhotoUrl = "https://res.cloudinary.com/dzsqoueki/image/upload/w_1000,ar_1:1,c_fill,g_auto,e_art:hokusai/v1731874629/naomi-o-hare-ziu7At0z4CE-unsplash_bzzfdg.jpg"
+                    ToolPhotoUrl = "https://res.cloudinary.com/dzsqoueki/image/upload/w_1000,ar_1:1,c_fill,g_auto,e_art:hokusai/v1731874629/naomi-o-hare-ziu7At0z4CE-unsplash_bzzfdg.jpg",
+                    ToolOwner = hungryhippo325User
                 },
 
             ];
-
-            // Get Users
-            AppUser? tomsmithUser = await context.Users.FirstOrDefaultAsync(u => u.UserName == "tomsmith");
-            AppUser? teddybear5User = await context.Users.FirstOrDefaultAsync(u => u.UserName == "teddybear5");
-            AppUser? oliviasmithUser = await context.Users.FirstOrDefaultAsync(u => u.UserName == "oliviasmith");
-            AppUser? fredjonesUser = await context.Users.FirstOrDefaultAsync(u => u.UserName == "fredjones");
-            AppUser? wendy123User = await context.Users.FirstOrDefaultAsync(u => u.UserName == "wendy123");
-            AppUser? hungryhippo325User = await context.Users.FirstOrDefaultAsync(u => u.UserName == "hungryhippo325");
-
-            // Add tools to users
-            tomsmithUser.ToolsOwned.Add(seedTools[0]);
-            tomsmithUser.ToolsOwned.Add(seedTools[1]);
-            teddybear5User.ToolsOwned.Add(seedTools[2]);
-            teddybear5User.ToolsOwned.Add(seedTools[3]);
-            oliviasmithUser.ToolsOwned.Add(seedTools[4]);
-            oliviasmithUser.ToolsOwned.Add(seedTools[5]);
-            fredjonesUser.ToolsOwned.Add(seedTools[6]);
-            fredjonesUser.ToolsOwned.Add(seedTools[7]);
-            wendy123User.ToolsOwned.Add(seedTools[8]);
-            wendy123User.ToolsOwned.Add(seedTools[9]);
-            hungryhippo325User.ToolsOwned.Add(seedTools[10]);
-            hungryhippo325User.ToolsOwned.Add(seedTools[11]);
-
+            
             await context.Tools.AddRangeAsync(seedTools);
 
             await context.SaveChangesAsync();

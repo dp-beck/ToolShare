@@ -5,7 +5,6 @@ namespace ToolShare.Data.Models
         Available,
         Borrowed,
         Requested,
-        Late,
         ReturnPending
     }
 }

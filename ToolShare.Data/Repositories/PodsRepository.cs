@@ -42,7 +42,7 @@ namespace ToolShare.Data.Repositories
 
         public async Task ChangeManager(AppUser appUser, Pod pod)
         {
-            pod.podManager = appUser;
+            pod.PodManager = appUser;
             await _context.SaveChangesAsync();
         }
 
@@ -51,7 +51,7 @@ namespace ToolShare.Data.Repositories
             return await _context.Pods
                 .Include(p => p.PodMembers)
                 .ThenInclude(u => u.ToolsOwned)
-                .Include(p => p.podManager)
+                .Include(p => p.PodManager)
                 .ThenInclude(u => u.ToolsOwned)
                 .FirstOrDefaultAsync(p => p.Name == podName);   
         }

@@ -151,10 +151,10 @@ namespace ToolShare.Api.Controllers
                     Name = toolDto.Name,
                     Description = toolDto.Description,
                     BorrowingPeriodInDays = toolDto.BorrowingPeriodInDays,
-                    ToolPhotoUrl = toolDto.ToolPhotoUrl
+                    ToolPhotoUrl = toolDto.ToolPhotoUrl,
+                    ToolOwner = currentUser,
                 };
                 
-                tool.ToolOwner = currentUser;
                 await _toolsRepository.AddAsync(tool);
 
                 return Ok(new { Message = "Tool created successfully."});

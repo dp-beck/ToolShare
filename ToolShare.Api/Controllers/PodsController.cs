@@ -56,7 +56,7 @@ namespace ToolShare.Api.Controllers
         {
             try
             {
-                var pods = await _podsRepository.GetAllAsyncWithIncludes(p => p.podManager);
+                var pods = await _podsRepository.GetAllAsyncWithIncludes(p => p.PodManager);
 
                 var limitedPodDTOs = _mapper.Map<List<LimitedPodInfoDTO>>(pods);
                 
@@ -78,7 +78,7 @@ namespace ToolShare.Api.Controllers
                 var pod = await _podsRepository.GetByIdAsyncWithIncludes(podId, 
                     p => p.PodId == podId, 
                     p => p.PodMembers,
-                    p => p.podManager);
+                    p => p.PodManager);
                 
                 if (pod is null) return BadRequest(new {Message = "No pod with that Id exists."});
 
@@ -136,11 +136,11 @@ namespace ToolShare.Api.Controllers
 
                 Pod pod = new Pod
                 {
-                    Name = podDto.Name
+                    Name = podDto.Name,
+                    PodManager = currentUser
                 };
 
                 pod.PodMembers.Add(currentUser);
-                pod.podManager = currentUser;
 
                 await _userManager.AddToRoleAsync(currentUser, "PodManager");
                 await _userManager.AddToRoleAsync(currentUser, "User");
@@ -211,7 +211,7 @@ namespace ToolShare.Api.Controllers
                 if (userToRemove.PodJoinedId != currentPodManager.PodManagedId)
                     return BadRequest(new {Message = "This user is not a member of your pod"});
             
-                if (pod.podManager.Id != userToRemove.Id)
+                if (pod.PodManager.Id != userToRemove.Id)
                 {
                     await _userManager.RemoveFromRoleAsync(userToRemove, "User");
                     await _userManager.AddToRoleAsync(userToRemove, "NoPodUser");

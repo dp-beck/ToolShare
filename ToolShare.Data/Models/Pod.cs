@@ -1,8 +1,4 @@
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace ToolShare.Data.Models
 {
@@ -10,8 +6,12 @@ namespace ToolShare.Data.Models
     {
         [Key]
         public int PodId { get; set; }
-        public string? Name { get; set; }  
-        public AppUser podManager { get; set; }
+        
+        [StringLength(50)]
+        public required string Name { get; set; }  
+        
+        public required AppUser PodManager { get; set; }
+        
         public ICollection<AppUser> PodMembers { get; set; } = new List<AppUser>();
     }
 }

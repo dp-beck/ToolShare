@@ -42,6 +42,10 @@ namespace ToolShare.Data
                 .HasForeignKey(t => t.RequesterId)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            modelBuilder.Entity<AppUser>()
+                .Property(a => a.ProfilePhotoUrl)
+                .HasDefaultValue("https://res.cloudinary.com/dzsqoueki/image/upload/w_1000,c_fill,ar_1:1,g_auto,r_max,bo_5px_solid_red,b_rgb:262c35/v1731154587/blank-profile-picture-973460_1280_pxrhwm.png");
+
             modelBuilder.Entity<Pod>()
                 .HasMany(p => p.PodMembers)
                 .WithOne(a => a.PodJoined)
@@ -49,7 +53,7 @@ namespace ToolShare.Data
                 .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Pod>()
-                .HasOne(p => p.podManager)
+                .HasOne(p => p.PodManager)
                 .WithOne(pm => pm.PodManaged)
                 .HasForeignKey<AppUser>(pm => pm.PodManagedId)
                 .OnDelete(DeleteBehavior.Cascade);
@@ -57,6 +61,10 @@ namespace ToolShare.Data
             modelBuilder.Entity<Pod>()
                 .HasIndex(p => p.Name)
                 .IsUnique();
+            
+            modelBuilder.Entity<Tool>()
+                .Property(a => a.ToolPhotoUrl)
+                .HasDefaultValue("https://res.cloudinary.com/dzsqoueki/image/upload/w_1000,ar_1:1,c_fill,g_auto,e_art:hokusai/v1732729454/screwdriver-1294338_1280_e5qlme.png");
         }
     }
 }

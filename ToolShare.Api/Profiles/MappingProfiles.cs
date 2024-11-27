@@ -20,10 +20,10 @@ namespace ToolShare.Api.Profiles
             this.CreateMap<Pod, LimitedPodInfoDTO>()
                 .ForMember(
                     dest => dest.PodManagerName, 
-                    opt => opt.MapFrom(src => src.podManager.UserName))
+                    opt => opt.MapFrom(src => src.PodManager.UserName))
                 .ForMember(
                     dest => dest.PodManagerEmail, 
-                    opt => opt.MapFrom(src => src.podManager.Email))
+                    opt => opt.MapFrom(src => src.PodManager.Email))
                 .ReverseMap();
 
             this.CreateMap<Tool, ToolDto>()
