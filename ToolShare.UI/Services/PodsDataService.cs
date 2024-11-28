@@ -36,11 +36,9 @@ namespace ToolShare.UI.Services
             var response = await _httpClient.GetAsync($"api/Pods/{PodName}");
             response.EnsureSuccessStatusCode();
             var JsonResponse = await response.Content.ReadAsStringAsync();
-            var podDetails = JsonSerializer.Deserialize<Pod>(JsonResponse, jsonSerializerOptions);
+            var podDetails = JsonSerializer.Deserialize<PodDTO>(JsonResponse, jsonSerializerOptions);
             
-            PodDTO podDto = _mapper.Map<PodDTO>(podDetails);
-
-            return podDto;
+            return podDetails;
         }
         
         public async Task<PodDTO> FindPodDetailsById(int podId)

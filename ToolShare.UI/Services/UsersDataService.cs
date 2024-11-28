@@ -38,10 +38,7 @@ namespace ToolShare.UI.Services
             var response = await _httpClient.GetAsync("api/users/current-user");
             response.EnsureSuccessStatusCode();
             var JsonResponse = await response.Content.ReadAsStringAsync();
-            var appUser = JsonSerializer.Deserialize<AppUser>(JsonResponse, jsonSerializerOptions);
-            
-            var userInfo = _mapper.Map<AppUserDTO>(appUser);
-
+            var userInfo = JsonSerializer.Deserialize<AppUserDTO>(JsonResponse, jsonSerializerOptions);
             return userInfo;
         }
 

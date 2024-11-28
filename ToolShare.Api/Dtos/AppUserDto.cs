@@ -15,6 +15,7 @@ namespace ToolShare.Api.Dtos
         public string LastName { get; set; }
         public string AboutMe { get; set; }
         public string ProfilePhotoUrl { get; set; }
+        public string PodJoinedName { get; set; }
         public int PodJoinedId { get; set; }
         public PodDto PodJoined { get; set; }
         public int PodManagedId { get; set; }
