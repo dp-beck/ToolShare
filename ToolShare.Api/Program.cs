@@ -23,7 +23,8 @@ builder.Services.AddAuthorizationBuilder();
 // Add Identity and Opt in to API Endpoints
 builder.Services.AddIdentityCore<AppUser>()
     .AddRoles<IdentityRole>()
-    .AddEntityFrameworkStores<ApplicationDbContext>();
+    .AddEntityFrameworkStores<ApplicationDbContext>()
+    .AddApiEndpoints();
 
 builder.Services.ConfigureApplicationCookie(options =>
 {
@@ -34,6 +35,7 @@ builder.Services.ConfigureApplicationCookie(options =>
         return Task.CompletedTask;
     };
 });
+    
 
 // Add a CORS Policy
 builder.Services.AddCors(
@@ -74,6 +76,7 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
+// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     // Seed the Database
