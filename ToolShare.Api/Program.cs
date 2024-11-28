@@ -1,7 +1,6 @@
 using System.Reflection;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using ToolShare.Api;
 using ToolShare.Data;
 using ToolShare.Data.Models;
@@ -24,8 +23,7 @@ builder.Services.AddAuthorizationBuilder();
 // Add Identity and Opt in to API Endpoints
 builder.Services.AddIdentityCore<AppUser>()
     .AddRoles<IdentityRole>()
-    .AddEntityFrameworkStores<ApplicationDbContext>()
-    .AddApiEndpoints();
+    .AddEntityFrameworkStores<ApplicationDbContext>();
 
 builder.Services.ConfigureApplicationCookie(options =>
 {
@@ -36,7 +34,6 @@ builder.Services.ConfigureApplicationCookie(options =>
         return Task.CompletedTask;
     };
 });
-    
 
 // Add a CORS Policy
 builder.Services.AddCors(
@@ -64,7 +61,7 @@ builder.Services.AddScoped<IPodsRepository, PodsRepository>();
 
 var app = builder.Build();
 
-// Coonfigure Roles for Authorization
+// Configure Roles for Authorization
 using (var scope = app.Services.CreateScope())
 {
     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
@@ -77,7 +74,6 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     // Seed the Database
