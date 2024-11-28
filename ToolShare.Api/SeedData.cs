@@ -174,7 +174,7 @@ namespace ToolShare.Api
             AppUser? wendy123User = await context.Users.FirstOrDefaultAsync(u => u.UserName == "wendy123");
             AppUser? hungryhippo325 = await context.Users.FirstOrDefaultAsync(u => u.UserName == "hungryhippo325");
             
-            Pod[] seedPods =  
+            Pod?[] seedPods =  
             [
                 new Pod()
                 {

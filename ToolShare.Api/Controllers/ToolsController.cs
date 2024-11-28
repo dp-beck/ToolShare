@@ -37,7 +37,7 @@ namespace ToolShare.Api.Controllers
         {
             try
             {
-                var tools = await _toolsRepository.GetAllAsyncWithIncludes(
+                var tools = await _toolsRepository.GetAllWithIncludes(
                     t => t.ToolOwner, t => t.ToolBorrower!
                 );
 
@@ -63,7 +63,7 @@ namespace ToolShare.Api.Controllers
                 if (currentUser is null) return BadRequest(new { Message = "No current user is logged in."});
                 if (currentUser.PodJoinedId != podId) return BadRequest(new { Message = "You are not a member of this pod."});
                 
-                var alltools = await _toolsRepository.GetAllAsyncWithIncludes(
+                var alltools = await _toolsRepository.GetAllWithIncludes(
                     t => t.ToolOwner);
                 
                 var tools = alltools.AsQueryable().Where(t => t.ToolOwner.PodJoinedId == podId);
@@ -85,7 +85,7 @@ namespace ToolShare.Api.Controllers
         {
             try
             {
-                var tools = await _toolsRepository.GetToolsOwnedByUsername(username);
+                var tools = await _toolsRepository.FindToolsOwnedByUsername(username);
                 
                 List<ToolDto> toolDtos = _mapper.Map<List<ToolDto>>(tools);
                 
@@ -104,7 +104,7 @@ namespace ToolShare.Api.Controllers
         {
             try
             {
-                var tools = await _toolsRepository.GetToolsBorrowedByUsername(username);
+                var tools = await _toolsRepository.FindToolsBorrowedByUsername(username);
                 
                 List<ToolDto> toolDtos = _mapper.Map<List<ToolDto>>(tools);
                 
@@ -122,7 +122,7 @@ namespace ToolShare.Api.Controllers
         {
             try
             {
-                var tool = await _toolsRepository.GetByIdAsyncWithIncludes(toolId, t => t.ToolId == toolId,
+                var tool = await _toolsRepository.FindByIdWithIncludes(toolId, t => t.ToolId == toolId,
                     t => t.ToolOwner, t => t.ToolBorrower!);
             
                 ToolDto toolDto = _mapper.Map<ToolDto>(tool);
@@ -155,7 +155,7 @@ namespace ToolShare.Api.Controllers
                     ToolOwner = currentUser,
                 };
                 
-                await _toolsRepository.AddAsync(tool);
+                await _toolsRepository.Add(tool);
 
                 return Ok(new { Message = "Tool created successfully."});
             }
@@ -172,7 +172,7 @@ namespace ToolShare.Api.Controllers
         {
             try
             {
-                var oldTool = await _toolsRepository.GetByIdAsync(toolId);
+                var oldTool = await _toolsRepository.FindById(toolId);
                 if (oldTool == null) return NotFound("Could not find tool with this id.");
                 
                 var currentUser = await _userManager.GetUserAsync(HttpContext.User);
@@ -183,7 +183,7 @@ namespace ToolShare.Api.Controllers
             
                 _mapper.Map(updateToolDto, oldTool);
 
-                await _toolsRepository.SaveChangesAsync();
+                await _toolsRepository.SaveChanges();
 
                 return Ok(new {Message = "Tool Updated Successfully"});
             }
@@ -200,7 +200,7 @@ namespace ToolShare.Api.Controllers
         {
             try 
             {
-                var toolRequested = await _toolsRepository.GetByIdAsync(toolId);
+                var toolRequested = await _toolsRepository.FindById(toolId);
                 if (toolRequested == null) return NotFound("Could not find tool with this id.");
                 
                 var currentUser = await _userManager.GetUserAsync(HttpContext.User);
@@ -209,7 +209,7 @@ namespace ToolShare.Api.Controllers
                 toolRequested.ToolRequester = currentUser;
                 toolRequested.ToolStatus = ToolStatus.Requested;
 
-                await _toolsRepository.SaveChangesAsync();
+                await _toolsRepository.SaveChanges();
 
                 return Ok(new {Message = "Tool successfully requested."});
             }
@@ -226,7 +226,7 @@ namespace ToolShare.Api.Controllers
         {
             try 
             {
-                var toolBorrowed = await _toolsRepository.GetByIdAsync(toolId);
+                var toolBorrowed = await _toolsRepository.FindById(toolId);
                 if (toolBorrowed == null) return NotFound("Could not find tool with this id.");
                 
                 var currentUser = await _userManager.GetUserAsync(HttpContext.User);
@@ -241,7 +241,7 @@ namespace ToolShare.Api.Controllers
                 toolBorrowed.ToolRequester = null;
                 toolBorrowed.ToolStatus = ToolStatus.Borrowed;
 
-                await _toolsRepository.SaveChangesAsync();
+                await _toolsRepository.SaveChanges();
 
                 return Ok(new {Message = "Tool successfully lent."});
             }
@@ -258,7 +258,7 @@ namespace ToolShare.Api.Controllers
         {
             try 
             {
-                var toolBorrowed = await _toolsRepository.GetByIdAsync(toolId);
+                var toolBorrowed = await _toolsRepository.FindById(toolId);
                 if (toolBorrowed == null) return NotFound("Could not find tool with this id.");
 
                 var currentUser = await _userManager.GetUserAsync(HttpContext.User);
@@ -271,7 +271,7 @@ namespace ToolShare.Api.Controllers
                 toolBorrowed.BorrowerId = null;
                 toolBorrowed.ToolStatus = ToolStatus.Available;
 
-                await _toolsRepository.SaveChangesAsync();
+                await _toolsRepository.SaveChanges();
 
                 return Ok(new {Message = "Tool return accepted successfully."});
             }
@@ -288,7 +288,7 @@ namespace ToolShare.Api.Controllers
         {
             try 
             {
-                var toolBorrowed = await _toolsRepository.GetByIdAsync(toolId);
+                var toolBorrowed = await _toolsRepository.FindById(toolId);
                 if (toolBorrowed == null) return NotFound("Could not find tool with this id.");
 
                 var currentUser = await _userManager.GetUserAsync(HttpContext.User);
@@ -299,7 +299,7 @@ namespace ToolShare.Api.Controllers
                 
                 toolBorrowed.ToolStatus = ToolStatus.ReturnPending;
 
-                await _toolsRepository.SaveChangesAsync();
+                await _toolsRepository.SaveChanges();
 
                 return Ok(new {Message = "Tool return request successful."});
             }
@@ -317,7 +317,7 @@ namespace ToolShare.Api.Controllers
         {
             try
             {
-                var tool = await _toolsRepository.GetByIdAsync(toolId);
+                var tool = await _toolsRepository.FindById(toolId);
                 if (tool is null) return NotFound("Could not find tool with this id.");
 
                 var currentUser = await _userManager.GetUserAsync(HttpContext.User);
@@ -329,7 +329,7 @@ namespace ToolShare.Api.Controllers
                 if (tool.ToolBorrower != null)
                    return BadRequest(new { Message = "You cannot remove a tool that is currently borrowed." }); 
 
-                await _toolsRepository.DeleteAsync(tool);
+                await _toolsRepository.Delete(tool);
 
                 return Ok(new { Message = "Tool successfully deleted" });
             }

@@ -16,7 +16,7 @@ namespace ToolShare.Data.Extensions
         }
 
         public static IQueryable<T> WhereFilter<T>(this IQueryable<T> query, Expression<Func<T, bool>> filter) 
-            where T : class
+            where T : class?
         {
             query = query.Where(filter);
             return query;

@@ -1,25 +1,15 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using ToolShare.Data.Models;
-using ToolShare.Data.Repositories;
 
 namespace ToolShare.Data.Repositories
 {
     public class PodsRepository : GenericRepository<Pod>, IPodsRepository
     {
         private readonly ApplicationDbContext _context;
-        private readonly UserManager<AppUser> _userManager;
 
-        public PodsRepository(ApplicationDbContext context,
-            UserManager<AppUser> userManager) : base(context)
+        public PodsRepository(ApplicationDbContext context) : base(context)
         {
             _context = context;
-            _userManager = userManager;
         }
 
         public async Task AddUserToPod(AppUser appUser, Pod pod)
@@ -46,7 +36,7 @@ namespace ToolShare.Data.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task<Pod> FindPodByName(string podName)
+        public async Task<Pod?> FindPodByName(string podName)
         {
             return await _context.Pods
                 .Include(p => p.PodMembers)

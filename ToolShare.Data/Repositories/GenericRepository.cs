@@ -1,14 +1,10 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
-using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using ToolShare.Data.Extensions;
 
 namespace ToolShare.Data.Repositories
 {
-    public class GenericRepository<T> : IRepository<T> where T : class
+    public class GenericRepository<T> : IGenericRepository<T> where T : class
     {
         private readonly ApplicationDbContext _context;
         private readonly DbSet<T> _dbSet;
@@ -18,22 +14,23 @@ namespace ToolShare.Data.Repositories
             _dbSet = context.Set<T>();
         }
         
-        public async Task<IEnumerable<T>> GetAllAsync()
+        public async Task<IEnumerable<T>> GetAll()
         {
             return await _dbSet.ToListAsync();
         }
-        public async Task<IEnumerable<T>> GetAllAsyncWithIncludes(params Expression<Func<T, object>>[] includes)
+        
+        public async Task<IEnumerable<T>> GetAllWithIncludes(params Expression<Func<T, object>>[] includes)
         {
             return await _dbSet.IncludeProperties(includes).ToListAsync();
         }
 
-        public async Task<T?> GetByIdAsync(int id)
+        public async Task<T?> FindById(int id)
         {
             return await _dbSet.FindAsync(id);
         }
 
-        public async Task<T> GetByIdAsyncWithIncludes(int id, 
-         Expression<Func<T, bool>> filter,
+        public async Task<T?> FindByIdWithIncludes(int id, 
+         Expression<Func<T?, bool>> filter,
          params Expression<Func<T, object>>[] includes)
         {
             return await _dbSet.IncludeProperties(includes)
@@ -41,19 +38,19 @@ namespace ToolShare.Data.Repositories
                 .FirstOrDefaultAsync();
         }
 
-        public async Task AddAsync(T entity)
+        public async Task Add(T entity)
         {
             _dbSet.Add(entity);
             await _context.SaveChangesAsync();
         }
 
-        public async Task DeleteAsync(T entity)
+        public async Task Delete(T entity)
         {
             _dbSet.Remove(entity);
             await _context.SaveChangesAsync();
         }
 
-        public async Task SaveChangesAsync()
+        public async Task SaveChanges()
         {
             await _context.SaveChangesAsync();
         }
