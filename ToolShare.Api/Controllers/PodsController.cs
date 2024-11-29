@@ -1,12 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 using ToolShare.Api.Dtos;
 using ToolShare.Data.Models;
 using ToolShare.Data.Repositories;
@@ -58,13 +53,13 @@ namespace ToolShare.Api.Controllers
             {
                 var pods = await _podsRepository.GetAllWithIncludes(p => p.PodManager);
 
-                var limitedPodDTOs = _mapper.Map<List<LimitedPodInfoDTO>>(pods);
+                var limitedPodInfoDtos = _mapper.Map<List<LimitedPodInfoDto>>(pods);
                 
-                return Ok(limitedPodDTOs);
+                return Ok(limitedPodInfoDtos);
             } 
             catch (Exception)
             {
-                return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
+                return StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
             }
         }
 
@@ -76,14 +71,14 @@ namespace ToolShare.Api.Controllers
             try
             {
                 var pod = await _podsRepository.FindByIdWithIncludes(podId, 
-                    p => p.PodId == podId, 
+                    p => p != null && p.PodId == podId, 
                     p => p.PodMembers,
                     p => p.PodManager);
                 
                 if (pod is null) return BadRequest(new {Message = "No pod with that Id exists."});
 
                 var currentUser = await _userManager.GetUserAsync(HttpContext.User);
-                if (currentUser is null) return BadRequest(new { Message = "No current user is logged in."});
+                if (currentUser is null) return BadRequest(new { Message = "No current user located."});
 
                 if (pod.PodId != currentUser.PodJoinedId) 
                     return BadRequest(new {Message = "You are not a member of this pod."});
@@ -93,14 +88,14 @@ namespace ToolShare.Api.Controllers
             }
             catch (Exception)
             {
-                return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
+                return StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
             }
         }
 
         [HttpGet]
         [Authorize(Roles = "User,PodManager")]
         [Route("{podName}")]
-        public async Task<IActionResult> FindPodInfoByPodName(string podName)
+        public async Task<IActionResult> FindPodByName(string podName)
         {
             try
             {
@@ -108,7 +103,7 @@ namespace ToolShare.Api.Controllers
                 if (pod is null) return BadRequest(new {Message = "No pod with that name exists."});
 
                 var currentUser = await _userManager.GetUserAsync(HttpContext.User);
-                if (currentUser is null) return BadRequest(new { Message = "No current user is logged in."});
+                if (currentUser is null) return BadRequest(new { Message = "No current user located."});
 
                 if (pod.PodId != currentUser.PodJoinedId)
                     return BadRequest(new {Message = "You are not a member of this pod."});
@@ -118,25 +113,25 @@ namespace ToolShare.Api.Controllers
             }
             catch (Exception)
             {
-                return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
+                return StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
             }
         }
 
         [HttpPost]
         [Authorize(Roles = "NoPodUser")]
-        public async Task<IActionResult> InitializeNewPod([FromBody] PodDto podDto)
+        public async Task<IActionResult> InitializeNewPod([FromBody] string podName)
         {
             try
             {
-                if (!ModelState.IsValid)
-                    return BadRequest(ModelState);
-            
+                if (podName.Length > 50)
+                    return BadRequest(new { Message = "Pod name must be less than 50 characters."});
+                
                 var currentUser = await _userManager.GetUserAsync(HttpContext.User);
-                if (currentUser is null) return BadRequest(new { Message = "No current user is logged in."});
+                if (currentUser is null) return BadRequest(new { Message = "No current user located."});
 
                 Pod pod = new Pod
                 {
-                    Name = podDto.Name,
+                    Name = podName,
                     PodManager = currentUser
                 };
 
@@ -152,7 +147,7 @@ namespace ToolShare.Api.Controllers
             }
             catch (Exception)
             {
-                return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
+                return StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
             }
         }
 
@@ -164,17 +159,17 @@ namespace ToolShare.Api.Controllers
             try
             {
                 var currentPodManager = await _userManager.GetUserAsync(HttpContext.User);
-                if (currentPodManager is null) return BadRequest(new { Message = "No current user is logged in." });
+                if (currentPodManager is null) return BadRequest(new { Message = "No current user located." });
 
                 if (currentPodManager.PodManagedId != podId) return BadRequest(new { Message = "You are not a manager of this pod." });
 
                 var pod = await _podsRepository.FindById(podId);
-                if (pod is null) return BadRequest(new { Message = "No pod found" });
+                if (pod is null) return BadRequest(new { Message = "No pod with that ID found." });
 
                 var userToAdd = await _userManager.FindByNameAsync(username);
                 if (userToAdd is null) return BadRequest(new { Message = "The user to add was not found." });
 
-                if (userToAdd.PodJoined is not null) return BadRequest(new { Message = "User already a member of a pod." });
+                if (userToAdd.PodJoinedId is not null) return BadRequest(new { Message = "User already a member of a pod." });
 
                 await _userManager.RemoveFromRoleAsync(userToAdd, "NoPodUser");
                 await _userManager.AddToRoleAsync(userToAdd, "User");
@@ -185,7 +180,7 @@ namespace ToolShare.Api.Controllers
             }
             catch (Exception)
             {
-                return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
+                return StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
             }
         }
 
@@ -197,13 +192,13 @@ namespace ToolShare.Api.Controllers
             try
             {
                 var currentPodManager = await _userManager.GetUserAsync(HttpContext.User);
-                if (currentPodManager is null) return BadRequest(new { Message = "No current user is logged in." });
-
-                if (currentPodManager.PodManagedId != podId)   
-                    return BadRequest(new { Message = "You are not a manager of your pod."});
-
+                if (currentPodManager is null) return BadRequest(new { Message = "No current user located." });
+                
                 var pod = await _podsRepository.FindById(podId);
                 if (pod is null) return NotFound("Pod not found");
+
+                if (currentPodManager.PodManagedId != podId)   
+                    return BadRequest(new { Message = "You are not a manager of this pod."});
                 
                 var userToRemove = await _userManager.FindByNameAsync(username);
                 if (userToRemove is null) return BadRequest(new { Message = "This user does not exist."});
@@ -223,7 +218,7 @@ namespace ToolShare.Api.Controllers
             }
             catch (Exception)
             {
-                return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
+                return StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
             }   
         }
 
@@ -234,8 +229,9 @@ namespace ToolShare.Api.Controllers
         {
             try
             {
-                if (!ModelState.IsValid) return BadRequest(ModelState);
-                
+                if (newName.Length > 50)
+                    return BadRequest(new { Message = "Pod name must be less than 50 characters."});
+
                 var currentPodManager = await _userManager.GetUserAsync(HttpContext.User);
                 if (currentPodManager is null) return BadRequest(new { Message = "No current user is logged in." });
 
@@ -251,7 +247,7 @@ namespace ToolShare.Api.Controllers
             }
             catch (Exception)
             {
-                return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");               
+                return StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");               
             }
         }
         
@@ -263,10 +259,10 @@ namespace ToolShare.Api.Controllers
             try
             {
                 var currentPodManager = await _userManager.GetUserAsync(HttpContext.User);
-                if (currentPodManager is null) return BadRequest(new { Message = "No current user is logged in." });
+                if (currentPodManager is null) return BadRequest(new { Message = "No current user located." });
 
                 if (currentPodManager.PodManagedId != podId)   
-                    return BadRequest(new { Message = "You are not a manager of your pod."});
+                    return BadRequest(new { Message = "You are not a manager of this pod."});
 
                 var pod = await _podsRepository.FindById(podId);
                 if (pod is null) return BadRequest(new {Message ="No pod located with that id"});
@@ -283,7 +279,7 @@ namespace ToolShare.Api.Controllers
             }
             catch (Exception)
             {
-                return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");               
+                return StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");               
             }
         }
 
@@ -294,14 +290,14 @@ namespace ToolShare.Api.Controllers
         {
             try
             {
-                if (!ModelState.IsValid) return BadRequest(ModelState);
                 var currentPodManager = await _userManager.GetUserAsync(HttpContext.User);
                 if (currentPodManager is null) return BadRequest(new { Message = "No current user is logged in." });
                 
                 if (currentPodManager.PodManagedId != podId)   
-                    return BadRequest(new { Message = "You are not a manager of your pod."});
+                    return BadRequest(new { Message = "You are not a manager of this pod."});
             
-                var pod = await _podsRepository.FindById(podId);
+                var pod = await _podsRepository.FindByIdWithIncludes(
+                    podId, p => p != null && p.PodId == podId, p => p.PodMembers);
                 if (pod is null) return BadRequest(new {Message ="No pod located with that id"});
 
                 if (pod.PodMembers.Any())
@@ -316,7 +312,7 @@ namespace ToolShare.Api.Controllers
             }
             catch (Exception)
             {
-                return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");               
+                return StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");               
             }
              
         }

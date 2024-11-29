@@ -21,7 +21,7 @@ namespace ToolShare.Api.Profiles
 
             this.CreateMap<Pod, PodDto>().ReverseMap();
 
-            this.CreateMap<Pod, LimitedPodInfoDTO>()
+            this.CreateMap<Pod, LimitedPodInfoDto>()
                 .ForMember(
                     dest => dest.PodManagerName, 
                     opt => opt.MapFrom(src => src.PodManager.UserName))

@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace ToolShare.Api.Dtos
 {
-    public class LimitedPodInfoDTO
+    public class LimitedPodInfoDto
     {
         public string Name { get; set; }
         public string PodManagerName { get; set; }
