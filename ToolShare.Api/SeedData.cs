@@ -1,23 +1,16 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.ObjectPool;
-using Microsoft.VisualBasic;
 using ToolShare.Data;
 using ToolShare.Data.Models;
-using YamlDotNet.Serialization;
 
 namespace ToolShare.Api
 {
-    public class SeedData
+    public static class SeedData
     {
-        private static readonly IEnumerable<SeedUser> seedUsers =
+        private static readonly IEnumerable<SeedUser> SeedUsers =
         [
-            new SeedUser()
+            new()
             {
                 UserName = "tomsmith",
                 NormalizedUserName = "TOMSMITH",
@@ -30,7 +23,7 @@ namespace ToolShare.Api
                 RoleList = ["PodManager", "User"]
             },
 
-            new SeedUser()
+            new()
             {
                 UserName = "fredjones",
                 NormalizedUserName = "FREDJONES",
@@ -43,7 +36,7 @@ namespace ToolShare.Api
                 RoleList = ["PodManager", "User"]
             },
 
-            new SeedUser()
+            new()
             {
                 UserName = "wendy123",
                 NormalizedUserName = "WENDY123",
@@ -51,38 +44,90 @@ namespace ToolShare.Api
                 NormalizedEmail = "WENDY@HOTMAIL.COM",
                 FirstName = "Wendy",
                 LastName = "Jones",
-                AboutMe = "Let's share!",
+                AboutMe = "Let's share! I'm Fred's sister.",
                 ProfilePhotoUrl = "https://res.cloudinary.com/dzsqoueki/image/upload/w_1000,c_fill,ar_1:1,g_auto,r_max,bo_5px_solid_red,b_rgb:262c35/v1730826605/FakeProfilePhoto7Female.jpg",
                 RoleList = ["User"]
             },
-
-            new SeedUser()
+            
+            new()
             {
-                UserName = "teddybear5",
-                NormalizedUserName = "TEDDYBEAR5",
+                UserName = "janedoe",
+                NormalizedUserName = "JANEDOE",
+                Email = "jane.doe@example.com",
+                NormalizedEmail = "JANE.DOE@EXAMPLE.COM",
+                FirstName = "Jane",
+                LastName = "Doe",
+                AboutMe = "Enthusiastic book lover and traveler",
+                ProfilePhotoUrl = "https://res.cloudinary.com/dzsqoueki/image/upload/w_1000,c_fill,ar_1:1,g_auto,r_max,bo_5px_solid_red,b_rgb:262c35/v1731154587/blank-profile-picture-973460_1280_pxrhwm.png",
+                RoleList = ["User"]
+            },
+            
+            new()
+            {
+                UserName = "Sunshine",
+                NormalizedUserName = "SUNSHINE",
+                Email = "sara.ray@example.com",
+                NormalizedEmail = "SARA.RAY@EXAMPLE.COM",
+                FirstName = "Sara",
+                LastName = "Ray",
+                AboutMe = "Tech enthusiast and aspiring coder",
+                ProfilePhotoUrl = "https://res.cloudinary.com/dzsqoueki/image/upload/w_1000,c_fill,ar_1:1,g_auto,r_max,bo_5px_solid_red,b_rgb:262c35/v1731154587/blank-profile-picture-973460_1280_pxrhwm.png",
+                RoleList = ["User"]
+            },
+
+            new()
+            {
+                UserName = "Bobbo",
+                NormalizedUserName = "BOBBO",
+                Email = "bob.jones@example.com",
+                NormalizedEmail = "BOB.JONES@EXAMPLE.COM",
+                FirstName = "Bob",
+                LastName = "Jones",
+                AboutMe = "Food blogger and amateur chef",
+                ProfilePhotoUrl = "https://res.cloudinary.com/dzsqoueki/image/upload/w_1000,c_fill,ar_1:1,g_auto,r_max,bo_5px_solid_red,b_rgb:262c35/v1731154587/blank-profile-picture-973460_1280_pxrhwm.png",
+                RoleList = ["User"]
+            },
+            
+            new()
+            {
+                UserName = "Big Mike",
+                NormalizedUserName = "BIG MIKE",
+                Email = "big.mike@example.com",
+                NormalizedEmail = "big.mike@EXAMPLE.COM",
+                FirstName = "Michael",
+                LastName = "Moore",
+                AboutMe = "I love documentaries and building bird houses.",
+                ProfilePhotoUrl = "https://res.cloudinary.com/dzsqoueki/image/upload/w_1000,c_fill,ar_1:1,g_auto,r_max,bo_5px_solid_red,b_rgb:262c35/v1731154587/blank-profile-picture-973460_1280_pxrhwm.png",
+                RoleList = ["User"]
+            },
+            
+            new()
+            {
+                UserName = "napoleon_dynamite",
+                NormalizedUserName = "NAPOLEON_DYNAMITE",
                 Email = "teddybear@hotmail.com",
                 NormalizedEmail = "TEDDYBEAR@HOTMAIL.COM",
-                FirstName = "Napoleon",
-                LastName = "Dynamite",
-                AboutMe = "I've got skillz",
+                FirstName = "Jon",
+                LastName = "Heder",
+                AboutMe = " A liger is my favorite animal because it's a mix between a lion and a tiger and was bred for its magical skills",
                 ProfilePhotoUrl = "https://res.cloudinary.com/dzsqoueki/image/upload/w_1000,c_fill,ar_1:1,g_auto,r_max,bo_5px_solid_red,b_rgb:262c35/v1730826604/FakeProfilePhoto4.jpg",
                 RoleList = ["User"]
             },
 
-            new SeedUser()
+            new()
             {
                 UserName = "oliviasmith",
                 NormalizedUserName = "OLIVIASMITH",
                 Email = "olivia@protonmail.com",
                 NormalizedEmail = "OLIVIA@PROTONMAIL.COM",
                 FirstName = "Olivia",
-                LastName = "Rodrigo",
+                LastName = "Smith",
                 AboutMe = "Hey, you know me!",
                 ProfilePhotoUrl = "https://res.cloudinary.com/dzsqoueki/image/upload/w_1000,c_fill,ar_1:1,g_auto,r_max,bo_5px_solid_red,b_rgb:262c35/v1730826605/FakeProfilePhoto8Female.jpg",
                 RoleList = ["User"]
             },
 
-            new SeedUser()
+            new()
             {
                 UserName = "hungryhippo325",
                 NormalizedUserName = "HUNGRYHIPPO325",
@@ -95,7 +140,7 @@ namespace ToolShare.Api
                 RoleList = ["User"]
             },
 
-            new SeedUser()
+            new()
             {
                 UserName = "jonjon",
                 NormalizedUserName = "JONJON",
@@ -107,8 +152,34 @@ namespace ToolShare.Api
                 ProfilePhotoUrl = "https://res.cloudinary.com/dzsqoueki/image/upload/w_1000,c_fill,ar_1:1,g_auto,r_max,bo_5px_solid_red,b_rgb:262c35/v1730826604/FakeProfilePhoto1.jpg",
                 RoleList = ["NoPodUser"]
             },
+            
+            new()
+            {
+                UserName = "SharpScissors",
+                NormalizedUserName = "SHARPSCISSORS",
+                Email = "viggo@hotmail.net",
+                NormalizedEmail = "VIGGO@HOTMAIL.NET",
+                FirstName = "Viggo",
+                LastName = "Wenders",
+                AboutMe = "I have lots of tools and I am ready to share!",
+                ProfilePhotoUrl = "https://res.cloudinary.com/dzsqoueki/image/upload/w_1000,c_fill,ar_1:1,g_auto,r_max,bo_5px_solid_red,b_rgb:262c35/v1722303642/pejtc5ftiwtijro07dyq.jpg",
+                RoleList = ["NoPodUser"]
+            },
+            
+            new()
+            {
+                UserName = "coolhandluke",
+                NormalizedUserName = "COOLHANDLUKE",
+                Email = "luke@aol.com",
+                NormalizedEmail = "LUKE@AOL.COM",
+                FirstName = "Paul",
+                LastName = "Newman",
+                AboutMe = "I don't have very many tools; so, I'm hoping to just mooch off everyone else!",
+                ProfilePhotoUrl = "https://res.cloudinary.com/dzsqoueki/image/upload/w_1000,c_fill,ar_1:1,g_auto,r_max,bo_5px_solid_red,b_rgb:262c35/v1731154587/blank-profile-picture-973460_1280_pxrhwm.png",
+                RoleList = ["NoPodUser"]
+            },
 
-            new SeedUser()
+            new()
             {
                 UserName = "admin",
                 NormalizedUserName = "ADMIN",
@@ -137,7 +208,7 @@ namespace ToolShare.Api
 
             using var userManager = serviceProvider.GetRequiredService<UserManager<AppUser>>();
 
-            foreach (var seedUser in seedUsers)
+            foreach (var seedUser in SeedUsers)
             {
                 var hashed = password.HashPassword(seedUser, "Passw0rd!");
                 seedUser.PasswordHash = hashed;
@@ -167,33 +238,45 @@ namespace ToolShare.Api
                 return;
             }
             
-            AppUser? tomsmithUser = await context.Users.FirstOrDefaultAsync(u => u.UserName == "tomsmith");
-            AppUser? teddybear5User = await context.Users.FirstOrDefaultAsync(u => u.UserName == "teddybear5");
-            AppUser? oliviasmithUser = await context.Users.FirstOrDefaultAsync(u => u.UserName == "oliviasmith");
-            AppUser? fredjonesUser = await context.Users.FirstOrDefaultAsync(u => u.UserName == "fredjones");
-            AppUser? wendy123User = await context.Users.FirstOrDefaultAsync(u => u.UserName == "wendy123");
-            AppUser? hungryhippo325 = await context.Users.FirstOrDefaultAsync(u => u.UserName == "hungryhippo325");
-            
-            Pod?[] seedPods =  
+            // Get Users
+            AppUser tomsmith = await context.Users.FirstOrDefaultAsync(u => u.UserName == "tomsmith") ?? throw new InvalidOperationException();
+            AppUser napoleondynamite = await context.Users.FirstOrDefaultAsync(u => u.UserName == "napoleon_dynamite") ?? throw new InvalidOperationException();
+            AppUser oliviasmith = await context.Users.FirstOrDefaultAsync(u => u.UserName == "oliviasmith") ?? throw new InvalidOperationException();
+            AppUser janedoe = await context.Users.FirstOrDefaultAsync(u => u.UserName == "janedoe") ?? throw new InvalidOperationException();
+            AppUser bigmike = await context.Users.FirstOrDefaultAsync(u => u.UserName == "Big Mike") ?? throw new InvalidOperationException();
+       
+            AppUser fredjones = await context.Users.FirstOrDefaultAsync(u => u.UserName == "fredjones") ?? throw new InvalidOperationException();
+            AppUser wendy123 = await context.Users.FirstOrDefaultAsync(u => u.UserName == "wendy123") ?? throw new InvalidOperationException();
+            AppUser sunshine = await context.Users.FirstOrDefaultAsync(u => u.UserName == "Sunshine") ?? throw new InvalidOperationException();
+            AppUser bobbo = await context.Users.FirstOrDefaultAsync(u => u.UserName == "Bobbo") ?? throw new InvalidOperationException();
+            AppUser hungryhippo325 = await context.Users.FirstOrDefaultAsync(u => u.UserName == "hungryhippo325") ?? throw new InvalidOperationException();
+
+            // Create Seed Pods
+            Pod[] seedPods =  
             [
-                new Pod()
+                new ()
                 {
-                    Name = "SmithPod",
-                    PodManager = tomsmithUser,
+                    Name = "Smith Pod",
+                    PodManager = tomsmith,
                 },
-                new Pod()
+                new ()
                 {
-                    Name = "JonesPod",
-                    PodManager = fredjonesUser
+                    Name = "Jones Pod",
+                    PodManager = fredjones,
                 },
             ];
             
-            seedPods[0].PodMembers.Add(tomsmithUser);
-            seedPods[0].PodMembers.Add(teddybear5User);
-            seedPods[0].PodMembers.Add(oliviasmithUser);
+            // Add Pod Members
+            seedPods[0].PodMembers.Add(tomsmith);
+            seedPods[0].PodMembers.Add(napoleondynamite);
+            seedPods[0].PodMembers.Add(oliviasmith);
+            seedPods[0].PodMembers.Add(janedoe);
+            seedPods[0].PodMembers.Add(bigmike);
             
-            seedPods[1].PodMembers.Add(fredjonesUser);
-            seedPods[1].PodMembers.Add(wendy123User);
+            seedPods[1].PodMembers.Add(fredjones);
+            seedPods[1].PodMembers.Add(wendy123);
+            seedPods[1].PodMembers.Add(sunshine);
+            seedPods[1].PodMembers.Add(bobbo);
             seedPods[1].PodMembers.Add(hungryhippo325);
 
             await context.Pods.AddRangeAsync(seedPods);
@@ -211,123 +294,219 @@ namespace ToolShare.Api
             }
             
             // Get Users
-            AppUser? tomsmithUser = await context.Users.FirstOrDefaultAsync(u => u.UserName == "tomsmith");
-            AppUser? teddybear5User = await context.Users.FirstOrDefaultAsync(u => u.UserName == "teddybear5");
-            AppUser? oliviasmithUser = await context.Users.FirstOrDefaultAsync(u => u.UserName == "oliviasmith");
-            AppUser? fredjonesUser = await context.Users.FirstOrDefaultAsync(u => u.UserName == "fredjones");
-            AppUser? wendy123User = await context.Users.FirstOrDefaultAsync(u => u.UserName == "wendy123");
-            AppUser? hungryhippo325User = await context.Users.FirstOrDefaultAsync(u => u.UserName == "hungryhippo325");
+            AppUser tomsmith = await context.Users.FirstOrDefaultAsync(u => u.UserName == "tomsmith") ?? throw new InvalidOperationException();
+            AppUser napoleondynamite = await context.Users.FirstOrDefaultAsync(u => u.UserName == "napoleon_dynamite") ?? throw new InvalidOperationException();
+            AppUser oliviasmith = await context.Users.FirstOrDefaultAsync(u => u.UserName == "oliviasmith") ?? throw new InvalidOperationException();
+            AppUser janedoe = await context.Users.FirstOrDefaultAsync(u => u.UserName == "janedoe") ?? throw new InvalidOperationException();
+            AppUser bigmike = await context.Users.FirstOrDefaultAsync(u => u.UserName == "Big Mike") ?? throw new InvalidOperationException();
+       
+            AppUser fredjones = await context.Users.FirstOrDefaultAsync(u => u.UserName == "fredjones") ?? throw new InvalidOperationException();
+            AppUser wendy123 = await context.Users.FirstOrDefaultAsync(u => u.UserName == "wendy123") ?? throw new InvalidOperationException();
+            AppUser sunshine = await context.Users.FirstOrDefaultAsync(u => u.UserName == "Sunshine") ?? throw new InvalidOperationException();
+            AppUser bobbo = await context.Users.FirstOrDefaultAsync(u => u.UserName == "Bobbo") ?? throw new InvalidOperationException();
+            AppUser hungryhippo325 = await context.Users.FirstOrDefaultAsync(u => u.UserName == "hungryhippo325") ?? throw new InvalidOperationException();
+
             
             Tool[] seedTools =  
             [
-                new Tool() 
+                new () 
                 {   
                     Name = "Honda Walk Behind Lawnmower",
                     Description = "A self-propelled walk behind lawnmower that works great.",
                     BorrowingPeriodInDays = 7,
-                    ToolPhotoUrl = "https://res.cloudinary.com/dzsqoueki/image/upload/w_1000,ar_1:1,c_fill,g_auto,e_art:hokusai/v1731874629/naomi-o-hare-ziu7At0z4CE-unsplash_bzzfdg.jpg",
-                    ToolOwner = tomsmithUser
+                    ToolPhotoUrl = "https://res.cloudinary.com/dzsqoueki/image/upload/w_1000,ar_1:1,c_fill,g_auto,e_art:hokusai/v1732847991/cub-cadet-gas-self-propelled-lawn-mowers-cc800-64_1000_agqcge.jpg",
+                    ToolOwner = tomsmith,
+                    ToolStatus = ToolStatus.Borrowed,
+                    ToolBorrower = napoleondynamite
                 },
 
-                new Tool() 
+                new () 
                 {   
                     Name = "Scott's Push Reel Mower",
                     Description = "A push reel mower that is appropriate for smaller yards. Just need to keep blades sharp.",
                     BorrowingPeriodInDays = 14,
-                    ToolPhotoUrl = "https://res.cloudinary.com/dzsqoueki/image/upload/w_1000,ar_1:1,c_fill,g_auto,e_art:hokusai/v1731874629/naomi-o-hare-ziu7At0z4CE-unsplash_bzzfdg.jpg",
-                    ToolOwner = tomsmithUser
+                    ToolPhotoUrl = "https://res.cloudinary.com/dzsqoueki/image/upload/w_1000,ar_1:1,c_fill,g_auto,e_art:hokusai/v1732848042/scotts-reel-lawn-mowers-415-16s-4f_600_mm0n02.jpg",
+                    ToolOwner = tomsmith
                 },
 
-                new Tool() 
+                new () 
                 {   
                     Name = "Ryobi Leaf Blower",
                     Description = "A cordless leaf blower.",
                     BorrowingPeriodInDays = 7,
-                    ToolPhotoUrl = "https://res.cloudinary.com/dzsqoueki/image/upload/w_1000,ar_1:1,c_fill,g_auto,e_art:hokusai/v1731874629/naomi-o-hare-ziu7At0z4CE-unsplash_bzzfdg.jpg",
-                    ToolOwner = teddybear5User
+                    ToolPhotoUrl = "https://res.cloudinary.com/dzsqoueki/image/upload/w_1000,ar_1:1,c_fill,g_auto,e_art:hokusai/v1732848104/146b0a4304d448c5b04ed50630097831_t2pp5w.jpg",
+                    ToolOwner = napoleondynamite,
+                    ToolStatus = ToolStatus.Borrowed,
+                    ToolBorrower = oliviasmith
                 },
 
-                new Tool() 
+                new () 
                 {   
-                    Name = "Dewalt Lead Blower",
+                    Name = "Dewalt Leaf Blower",
                     Description = "A leaf blower. NOTE: Not battery operated; needs to be plugged in",
                     BorrowingPeriodInDays = 21,
-                    ToolPhotoUrl = "https://res.cloudinary.com/dzsqoueki/image/upload/w_1000,ar_1:1,c_fill,g_auto,e_art:hokusai/v1731874629/naomi-o-hare-ziu7At0z4CE-unsplash_bzzfdg.jpg",
-                    ToolOwner = teddybear5User
+                    ToolPhotoUrl = "https://res.cloudinary.com/dzsqoueki/image/upload/w_1000,ar_1:1,c_fill,g_auto,e_art:hokusai/v1732848148/dewalt-cordless-leaf-blowers-dcbl722p1-64_600_lduuii.jpg",
+                    ToolOwner = napoleondynamite
                 },
 
-
-                new Tool() 
+                new () 
+                {   
+                    Name = "Christmas Light Hanger",
+                    Description = "It's used to hang your lights on your roof, so you don't have to climb up there.",
+                    BorrowingPeriodInDays = 7,
+                    ToolPhotoUrl = "https://res.cloudinary.com/dzsqoueki/image/upload/w_1000,ar_1:1,c_fill,g_auto,e_art:hokusai/v1732848427/90603A_1000x1000_ptlsns.jpg",
+                    ToolOwner = janedoe,
+                    ToolStatus = ToolStatus.Requested,
+                    ToolRequester = napoleondynamite
+                },
+                
+                new () 
+                {   
+                    Name = "Rubber Mallet",
+                    Description = "Very handy when driving stakes into the ground.",
+                    BorrowingPeriodInDays = 21,
+                    ToolPhotoUrl = "https://res.cloudinary.com/dzsqoueki/image/upload/w_1000,ar_1:1,c_fill,g_auto,e_art:hokusai/v1732729454/screwdriver-1294338_1280_e5qlme.png",
+                    ToolOwner = janedoe,
+                    ToolStatus = ToolStatus.ReturnPending,
+                    ToolBorrower = bigmike
+                },
+                
+                new () 
+                {   
+                    Name = "Portable boom box",
+                    Description = "Perfect for really loud parties.",
+                    BorrowingPeriodInDays = 23,
+                    ToolPhotoUrl = "https://res.cloudinary.com/dzsqoueki/image/upload/w_1000,ar_1:1,c_fill,g_auto,e_art:hokusai/v1732848505/boombox2-600x600_grande_xlqbmk.jpg",
+                    ToolOwner = bigmike
+                },
+                
+                new () 
+                {   
+                    Name = "Soldering Iron",
+                    Description = "I don't know? In case you got some microchips in need of soldering....",
+                    BorrowingPeriodInDays = 200,
+                    ToolPhotoUrl = "https://res.cloudinary.com/dzsqoueki/image/upload/w_1000,ar_1:1,c_fill,g_auto,e_art:hokusai/v1732729454/screwdriver-1294338_1280_e5qlme.png",
+                    ToolOwner = bigmike
+                },
+                
+                new () 
                 {   
                     Name = "Ladder (22 Ft.)",
                     Description = "A 22 ft. long aluminum ladder",
                     BorrowingPeriodInDays = 30,
-                    ToolPhotoUrl = "https://res.cloudinary.com/dzsqoueki/image/upload/w_1000,ar_1:1,c_fill,g_auto,e_art:hokusai/v1731874629/naomi-o-hare-ziu7At0z4CE-unsplash_bzzfdg.jpg",
-                    ToolOwner = oliviasmithUser
+                    ToolPhotoUrl = "https://res.cloudinary.com/dzsqoueki/image/upload/w_1000,ar_1:1,c_fill,g_auto,e_art:hokusai/v1732848531/werner-step-ladders-nxt1a06-64_600_bftcg1.jpg",
+                    ToolOwner = oliviasmith
                 },
-
-
-                new Tool() 
+                
+                new () 
                 {   
                     Name = "Dewalt Brad Nailer",
                     Description = "18 Gauge; Cordless",
                     BorrowingPeriodInDays = 14,
-                    ToolPhotoUrl = "https://res.cloudinary.com/dzsqoueki/image/upload/w_1000,ar_1:1,c_fill,g_auto,e_art:hokusai/v1731874629/naomi-o-hare-ziu7At0z4CE-unsplash_bzzfdg.jpg",
-                    ToolOwner = oliviasmithUser
+                    ToolPhotoUrl = "https://res.cloudinary.com/dzsqoueki/image/upload/w_1000,ar_1:1,c_fill,g_auto,e_art:hokusai/v1732848568/dewalt-brad-nailers-dwfp12233-64_1000_ky37mo.jpg",
+                    ToolOwner = oliviasmith,
+                    ToolStatus = ToolStatus.Borrowed,
+                    ToolBorrower = bigmike
                 },
                 
-                new Tool() 
+                new () 
                 {   
                     Name = "Ridgid Framing Nailer",
                     Description = "8 nails per second Includes: Swivel Connect, No-Mar Pad, Oil, and Wrench",
                     BorrowingPeriodInDays = 14,
-                    ToolPhotoUrl = "https://res.cloudinary.com/dzsqoueki/image/upload/w_1000,ar_1:1,c_fill,g_auto,e_art:hokusai/v1731874629/naomi-o-hare-ziu7At0z4CE-unsplash_bzzfdg.jpg",
-                    ToolOwner = fredjonesUser
+                    ToolPhotoUrl = "https://res.cloudinary.com/dzsqoueki/image/upload/w_1000,ar_1:1,c_fill,g_auto,e_art:hokusai/v1732848602/2f3d408f-42a9-4c3b-b4d6-46aaa9a30fcd_wnryqj.jpg",
+                    ToolOwner = fredjones,
+                    ToolStatus = ToolStatus.ReturnPending,
+                    ToolBorrower = wendy123
                 },
                 
-                new Tool() 
+                new () 
                 {   
                     Name = "Tarps",
                     Description = "Tarps for painting. I have six of  them.",
                     BorrowingPeriodInDays = 180,
-                    ToolPhotoUrl = "https://res.cloudinary.com/dzsqoueki/image/upload/w_1000,ar_1:1,c_fill,g_auto,e_art:hokusai/v1731874629/naomi-o-hare-ziu7At0z4CE-unsplash_bzzfdg.jpg",
-                    ToolOwner = fredjonesUser
+                    ToolPhotoUrl = "https://res.cloudinary.com/dzsqoueki/image/upload/w_1000,ar_1:1,c_fill,g_auto,e_art:hokusai/v1732729454/screwdriver-1294338_1280_e5qlme.png",
+                    ToolOwner = fredjones,
+                    ToolStatus = ToolStatus.Requested,
+                    ToolRequester = sunshine
                 },
                 
-                new Tool() 
+                new () 
                 {   
                     Name = "Graco Paint Sprayer",
                     Description = "Cordless, handheld, and airless sprayer.",
                     BorrowingPeriodInDays = 7,
-                    ToolPhotoUrl = "https://res.cloudinary.com/dzsqoueki/image/upload/w_1000,ar_1:1,c_fill,g_auto,e_art:hokusai/v1731874629/naomi-o-hare-ziu7At0z4CE-unsplash_bzzfdg.jpg",
-                    ToolOwner = wendy123User
+                    ToolPhotoUrl = "https://res.cloudinary.com/dzsqoueki/image/upload/w_1000,ar_1:1,c_fill,g_auto,e_art:hokusai/v1732848734/61fjWkGxtGL_qukyxw.jpg",
+                    ToolOwner = wendy123
                 },
 
-                    new Tool() 
+                new () 
                 {   
                     Name = "Shopvac Wet/Dry Vacuum",
                     Description = "A bit old, but still works great",
                     BorrowingPeriodInDays = 7,
-                    ToolPhotoUrl = "https://res.cloudinary.com/dzsqoueki/image/upload/w_1000,ar_1:1,c_fill,g_auto,e_art:hokusai/v1731874629/naomi-o-hare-ziu7At0z4CE-unsplash_bzzfdg.jpg",
-                    ToolOwner = wendy123User
+                    ToolPhotoUrl = "https://res.cloudinary.com/dzsqoueki/image/upload/w_1000,ar_1:1,c_fill,g_auto,e_art:hokusai/v1732848775/5989305_Main_1200x_eowdva.jpg",
+                    ToolOwner = wendy123,
+                    ToolStatus = ToolStatus.Borrowed,
+                    ToolBorrower = bobbo
+                },
+                
+                new () 
+                {   
+                    Name = "Sprinkler",
+                    Description = "Keep your lawn nice and green during the dry times.",
+                    BorrowingPeriodInDays = 7,
+                    ToolPhotoUrl = "https://res.cloudinary.com/dzsqoueki/image/upload/w_1000,ar_1:1,c_fill,g_auto,e_art:hokusai/v1732848808/XT45360M_IMG_IU2_RGB_1500_lrztii.jpg",
+                    ToolOwner = sunshine,
+                    ToolStatus = ToolStatus.Borrowed,
+                    ToolBorrower = hungryhippo325
                 },
 
-                new Tool() 
+                new () 
+                {   
+                    Name = "Extra Christmas Lights",
+                    Description = "A whole bunch of extra christmas lights I don't use. Go ahead and borrow them",
+                    BorrowingPeriodInDays = 250,
+                    ToolPhotoUrl = "https://res.cloudinary.com/dzsqoueki/image/upload/w_1000,ar_1:1,c_fill,g_auto,e_art:hokusai/v1732729454/screwdriver-1294338_1280_e5qlme.png",
+                    ToolOwner = sunshine
+                },
+                
+                new () 
+                {   
+                    Name = "Chainsaw",
+                    Description = "Good for like, you know, cutting trees down.",
+                    BorrowingPeriodInDays = 7,
+                    ToolPhotoUrl = "https://res.cloudinary.com/dzsqoueki/image/upload/w_1000,ar_1:1,c_fill,g_auto,e_art:hokusai/v1732848837/71lS6YPQqVL_ebayrd.jpg",
+                    ToolOwner = bobbo
+                },
+
+                new () 
+                {   
+                    Name = "Jackhammer",
+                    Description = "Good for like, you know, breaking up concrete",
+                    BorrowingPeriodInDays = 21,
+                    ToolPhotoUrl = "https://res.cloudinary.com/dzsqoueki/image/upload/w_1000,ar_1:1,c_fill,g_auto,e_art:hokusai/v1732848859/thumb-electric-jack-hammers_fu2ilr.jpg",
+                    ToolOwner = bobbo,
+                    ToolStatus = ToolStatus.ReturnPending,
+                    ToolBorrower = hungryhippo325
+                },
+                
+                new () 
                 {   
                     Name = "Shovel",
                     Description = "It's just a shovel....",
                     BorrowingPeriodInDays = 7,
-                    ToolPhotoUrl = "https://res.cloudinary.com/dzsqoueki/image/upload/w_1000,ar_1:1,c_fill,g_auto,e_art:hokusai/v1731874629/naomi-o-hare-ziu7At0z4CE-unsplash_bzzfdg.jpg",
-                    ToolOwner = hungryhippo325User
+                    ToolPhotoUrl = "https://res.cloudinary.com/dzsqoueki/image/upload/w_1000,ar_1:1,c_fill,g_auto,e_art:hokusai/v1732729454/screwdriver-1294338_1280_e5qlme.png",
+                    ToolOwner = hungryhippo325
                 },
 
-                    new Tool() 
+                new () 
                 {   
                     Name = "Hammer",
                     Description = "It's just a hammer...",
                     BorrowingPeriodInDays = 7,
                     ToolPhotoUrl = "https://res.cloudinary.com/dzsqoueki/image/upload/w_1000,ar_1:1,c_fill,g_auto,e_art:hokusai/v1731874629/naomi-o-hare-ziu7At0z4CE-unsplash_bzzfdg.jpg",
-                    ToolOwner = hungryhippo325User
+                    ToolOwner = hungryhippo325
                 },
 
             ];
