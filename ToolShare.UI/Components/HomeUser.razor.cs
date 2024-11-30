@@ -13,8 +13,6 @@ public partial class HomeUser : ComponentBase
     private AppUserDTO userInfo {get;set;}
     private string nameFilter = string.Empty;
     private IQueryable<ToolDTO> allTools { get; set; }
-    private IQueryable<ToolDTO> currentUserTools { get; set; }
-    private IQueryable<ToolDTO> availableTools { get; set; }
     private IEnumerable<ToolDTO> filteredTools { get; set; }
 
     [Inject]
@@ -29,8 +27,6 @@ public partial class HomeUser : ComponentBase
         userInfo = await UsersDataService.GetCurrentUser();
         allTools = await ToolsDataService.GetToolsByPod(userInfo.PodJoinedId);
         filteredTools = allTools.ToList();
-        currentUserTools = allTools.Where(t => t.ToolOwnerName == userInfo.UserName);
-        availableTools = allTools.Where(t => t.ToolStatus == ToolStatus.Available);
         _isLoading = false;
     }
 
@@ -39,28 +35,6 @@ public partial class HomeUser : ComponentBase
         Message = await ToolsDataService.RequestTool(toolId);
         allTools = await ToolsDataService.GetToolsByPod(userInfo.PodJoinedId);
         filteredTools = allTools;
-        currentUserTools = allTools.Where(t => t.ToolOwnerName == userInfo.UserName);
-        availableTools = allTools.Where(t => t.ToolStatus == ToolStatus.Available);        
         return Message;
     } 
-
-    private void ShowCurrentTools()
-    {
-        filteredTools = currentUserTools;
-    }
-
-    private void ShowAllTools()
-    {
-        filteredTools = allTools;
-    }
-
-    private void ShowAvailableTools()
-    {
-        filteredTools = availableTools;
-    }
-
-    private void FilterTools()
-    {
-        filteredTools = filteredTools.Where(t => t.Name.Contains(nameFilter));
-    }
 }

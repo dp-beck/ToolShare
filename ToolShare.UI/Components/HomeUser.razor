@@ -2,24 +2,14 @@
 @if (!_isLoading)
 {
     <p>You are a member of @userInfo.PodJoinedName. See any tools you want to borrow?
-        Please reach out to the tool owner via email to get started.</p>
-    <div>
-        <a @onclick="ShowAllTools">All Tools</a>
-        <a @onclick="ShowAvailableTools">Available Tools</a>
-        <a @onclick="ShowCurrentTools">Your Tools</a>
-    </div>
-
-    <div>
-        <p>Search by Name</p>
-        <input type="search" @bind="nameFilter"/>
-        <button @onclick="FilterTools">Search</button>
-    </div>
-
-    <MudDataGrid Items="@filteredTools" >
+        Just hit the request button. Feel free to email the tool owner to let them know
+        you requested a tool.</p>
+    
+    <MudDataGrid Items="@filteredTools" Filterable="true">
         <Columns>
-            <PropertyColumn Property="tool =>tool.ToolPhotoUrl" Title="Photo"> 
+            <PropertyColumn Property="tool => tool.ToolPhotoUrl" Title="Photo">
                 <CellTemplate>
-                    <img src="@context.Item.ToolPhotoUrl" alt="picture of the tool" width="50px"/>
+                    <MudImage src="@context.Item.ToolPhotoUrl" alt="picture of the tool" Width="100" Elevation="10"/>
                 </CellTemplate>
             </PropertyColumn>
             <PropertyColumn Property="tool => tool.Name" Title="Name">
@@ -36,6 +26,9 @@
                 </CellTemplate>
             </PropertyColumn>
         </Columns>
+        <PagerContent>
+            <MudDataGridPager/>
+        </PagerContent>
     </MudDataGrid>
     
     @if (Message != String.Empty)
