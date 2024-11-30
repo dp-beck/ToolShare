@@ -28,35 +28,49 @@
     
     <h4>Add User to Pod</h4>
     
-    <QuickGrid class="table" Items="@NoPodUsers">
-        <TemplateColumn Context="NoPodUser" Title="Photo">
-            <img src="@NoPodUser.ProfilePhotoUrl" alt ="picture of the user" width="50px"/>
+    <MudDataGrid Items="@NoPodUsers">
+        <TemplateColumn Title="Photo">
+            <CellTemplate>
+                <img src="@context.Item.ProfilePhotoUrl" alt="picture of the user" width="50px"/>    
+            </CellTemplate>
         </TemplateColumn>
-        <TemplateColumn Context="NoPodUser" Title="UserName" >
-            <a class="nav-link" href="user-detail/@NoPodUser.UserName">@NoPodUser.UserName</a>
+        
+        <TemplateColumn Title="UserName">
+            <CellTemplate>
+                <a class="nav-link" href="user-detail/@context.Item.UserName">@context.Item.UserName</a>    
+            </CellTemplate>
+            
         </TemplateColumn>
         <PropertyColumn Property="NoPodUser => NoPodUser.FirstName" Title="First Name"></PropertyColumn>
         <PropertyColumn Property="NoPodUser => NoPodUser.LastName" Title="Last Name"></PropertyColumn>
-        <TemplateColumn Context="NoPodUser" Title="">
-            <button @onclick="async () => await HandleAddUserClick(NoPodUser.UserName)">Add?</button>
+        <TemplateColumn Title="">
+            <CellTemplate>
+                <button @onclick="async () => await HandleAddUserClick(context.Item.UserName)">Add?</button>
+            </CellTemplate>
         </TemplateColumn>
-    </QuickGrid>
+    </MudDataGrid>
 
     <h4>Remove Pod Members</h4>
     <p>Make this a Grid of Pod Members with Photo, Username, First Name, Last Name, Button to Remove from Pod</p>
-    <QuickGrid class="table" Items="@Pod.PodMembers.AsQueryable()">
-        <TemplateColumn Context="PodMember" Title="Photo">
-            <img src="@PodMember.ProfilePhotoUrl" alt ="picture of the user" width="50px"/>
+    <MudDataGrid Items="@Pod.PodMembers.AsQueryable()">
+        <TemplateColumn Title="Photo">
+            <CellTemplate>
+                <img src="@context.Item.ProfilePhotoUrl" alt="picture of the user" width="50px"/>
+            </CellTemplate>
         </TemplateColumn>
-        <TemplateColumn Context="PodMember" Title="UserName" >
-            <a class="nav-link" href="user-detail/@PodMember.UserName">@PodMember.UserName</a>
+        <TemplateColumn Title="UserName">
+            <CellTemplate>
+                <a class="nav-link" href="user-detail/@context.Item.UserName">@context.Item.UserName</a>    
+            </CellTemplate>
         </TemplateColumn>
         <PropertyColumn Property="PodMember => PodMember.FirstName" Title="First Name"></PropertyColumn>
         <PropertyColumn Property="PodMember => PodMember.LastName" Title="Last Name"></PropertyColumn>
-        <TemplateColumn Context="PodMember" Title="">
-            <button @onclick="async () => await HandleRemoveMemberClick(PodMember.UserName)">Delete?</button>
+        <TemplateColumn Title="">
+            <CellTemplate>
+                <button @onclick="async () => await HandleRemoveMemberClick(context.Item.UserName)">Delete?</button>    
+            </CellTemplate>
         </TemplateColumn>
-    </QuickGrid>
+    </MudDataGrid>
     
     <h4>Choose a new Pod Manager</h4>
     <p>Make this a drop down menu of pod members, selecting will change the manager

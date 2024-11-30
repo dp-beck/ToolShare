@@ -9,6 +9,7 @@ using ToolShare.UI.Services;
 using ToolShare.Data.Models;
 using System.Reflection;
 using ToolShare.UI.Identity.Models;
+using MudBlazor.Services;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
@@ -56,5 +57,8 @@ builder.Services.AddHttpClient(
     "Auth",
     opt => opt.BaseAddress = new Uri(builder.Configuration["BackendUrl"] ?? "https://localhost:5001"))
     .AddHttpMessageHandler<CookieHandler>();
+
+// Adding MudBlazor
+builder.Services.AddMudServices();
 
 await builder.Build().RunAsync();

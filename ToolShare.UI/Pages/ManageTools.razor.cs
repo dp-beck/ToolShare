@@ -1,6 +1,5 @@
 using System.Data.SqlTypes;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.QuickGrid;
 using ToolShare.Data.Models;
 using ToolShare.UI.DTOs;
 using ToolShare.UI.Identity.Models;
@@ -14,7 +13,6 @@ public partial class ManageTools : ComponentBase
     private string Message { get; set; } = string.Empty;
     private AppUserDTO userInfo {get;set;}
     
-    private PaginationState pagination = new PaginationState { ItemsPerPage = 5 };
     private string borrowedToolsNameFilter = string.Empty;
     private string OwnedToolsNameFilter = string.Empty;
     private string statusFilter = string.Empty;

@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.QuickGrid;
 using ToolShare.Data.Models;
 using ToolShare.UI.DTOs;
 using ToolShare.UI.Pages;
@@ -13,11 +12,10 @@ public partial class HomeUser : ComponentBase
     private bool _isLoading { get; set; } = true;
     private AppUserDTO userInfo {get;set;}
     private string nameFilter = string.Empty;
-    private PaginationState pagination = new PaginationState { ItemsPerPage = 5 };
     private IQueryable<ToolDTO> allTools { get; set; }
     private IQueryable<ToolDTO> currentUserTools { get; set; }
     private IQueryable<ToolDTO> availableTools { get; set; }
-    private IQueryable<ToolDTO> filteredTools { get; set; }
+    private IEnumerable<ToolDTO> filteredTools { get; set; }
 
     [Inject]
     public required IUsersDataService UsersDataService { get; set; }
@@ -30,7 +28,7 @@ public partial class HomeUser : ComponentBase
     {
         userInfo = await UsersDataService.GetCurrentUser();
         allTools = await ToolsDataService.GetToolsByPod(userInfo.PodJoinedId);
-        filteredTools = allTools;
+        filteredTools = allTools.ToList();
         currentUserTools = allTools.Where(t => t.ToolOwnerName == userInfo.UserName);
         availableTools = allTools.Where(t => t.ToolStatus == ToolStatus.Available);
         _isLoading = false;

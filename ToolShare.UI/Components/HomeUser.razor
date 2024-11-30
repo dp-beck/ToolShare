@@ -1,3 +1,4 @@
+@using ToolShare.Data.Models
 @if (!_isLoading)
 {
     <p>You are a member of @userInfo.PodJoinedName. See any tools you want to borrow?
@@ -14,21 +15,28 @@
         <button @onclick="FilterTools">Search</button>
     </div>
 
-    <QuickGrid class="table" Items="filteredTools" Pagination="pagination">
-        <TemplateColumn Context="tool" Title="Photo">
-            <img src="@tool.ToolPhotoUrl" alt ="picture of the tool" width="50px"/>
-        </TemplateColumn>
-        <TemplateColumn Context="tool" Title="Name" >
-            <a class="nav-link" href="tool-detail/@tool.ToolId">@tool.Name</a>
-        </TemplateColumn>
-        <PropertyColumn Property="tool => tool.ToolOwnerName" Title="Tool Owner"/>
-        <PropertyColumn Property="tool => tool.BorrowingPeriodInDays" Title="Loan Period"/>
-        <PropertyColumn Property="tool => tool.ToolStatus" Title="Availability"/>
-        <TemplateColumn Context="tool" Title="">
-            <button @onclick="async () => await HandleRequestClick(tool.ToolId)">Request?</button>
-        </TemplateColumn>
-    </QuickGrid>
-    <Paginator State="pagination"/>
+    <MudDataGrid Items="@filteredTools" >
+        <Columns>
+            <PropertyColumn Property="tool =>tool.ToolPhotoUrl" Title="Photo"> 
+                <CellTemplate>
+                    <img src="@context.Item.ToolPhotoUrl" alt="picture of the tool" width="50px"/>
+                </CellTemplate>
+            </PropertyColumn>
+            <PropertyColumn Property="tool => tool.Name" Title="Name">
+                <CellTemplate>
+                    <a class="nav-link" href="tool-detail/@context.Item.ToolId">@context.Item.Name</a>
+                </CellTemplate>
+            </PropertyColumn>
+            <PropertyColumn Property="tool => tool.ToolOwnerName" Title="Tool Owner"/>
+            <PropertyColumn Property="tool => tool.BorrowingPeriodInDays" Title="Loan Period"/>
+            <PropertyColumn Property="tool => tool.ToolStatus" Title="Availability"/>
+            <PropertyColumn Property="tool => tool.ToolId" Title="">
+                <CellTemplate>
+                    <button @onclick="async () => await HandleRequestClick(context.Item.ToolId)">Request?</button>
+                </CellTemplate>
+            </PropertyColumn>
+        </Columns>
+    </MudDataGrid>
     
     @if (Message != String.Empty)
     {

@@ -8,79 +8,67 @@
 
     <h4> Tools You Own </h4>
 
-    <QuickGrid class="table" Items="@filteredOwnedTools" Pagination="@pagination">
-        <TemplateColumn Context="tool" Title="Photo">
-            <img src="@tool.ToolPhotoUrl" alt ="picture of the tool" width="50px"/>
+    <MudDataGrid Items="@filteredOwnedTools">
+        <TemplateColumn Title="Photo">
+            <CellTemplate>
+                <img src="@context.Item.ToolPhotoUrl" alt="picture of the tool" width="50px"/>
+            </CellTemplate>
         </TemplateColumn>
         <PropertyColumn Property="tool => tool.Name" Title="Name" Sortable="true">
-            <ColumnOptions>
-                <div class="search-box">
-                    <input type="search" autofocus @bind="OwnedToolsNameFilter" @bind:event="oninput" placeholder="Tool name..." />
-                </div>
-            </ColumnOptions>
         </PropertyColumn>
         <PropertyColumn Property="tool => tool.ToolStatus" Title="Status">
-            <ColumnOptions>
-                <div class="selection-menu">
-                    <select @bind="statusFilter" @bind:event="onchange">
-                        <option value="">--Please choose an option--</option>
-                        <option value="Available">Available</option>
-                        <option value="Borrowed">Borrowed</option>
-                        <option value="Requested">Requested</option>
-                        <option value="ReturnPending">Return Pending</option>
-                    </select>
-                </div>
-            </ColumnOptions>
         </PropertyColumn>
         <PropertyColumn Property="tool => tool.ToolRequesterName" Title="Requester"/>
         <PropertyColumn Property="tool => tool.ToolBorrowerName" Title="Borrower"/>
         <PropertyColumn Property="tool => tool.BorrowingPeriodInDays" Title="Loan Period"/>
-        <TemplateColumn Context="tool" Title="Details" >
-            <a class="nav-link" href="tool-detail/@tool.ToolId">Click Here</a>
+        <TemplateColumn Title="Details">
+            <CellTemplate>
+                <a class="nav-link" href="tool-detail/@context.Item.ToolId">Click Here</a>
+            </CellTemplate>
         </TemplateColumn>
-        <TemplateColumn Context="tool" Title="Actions">
-            @switch (tool.ToolStatus)
+        <TemplateColumn Title="Actions">
+            <CellTemplate>
+            @switch (context.Item.ToolStatus)
             {
                 case ToolStatus.Available:
-                    <button @onclick="async () => await HandleDeleteClick(tool.ToolId)">Delete</button>
+                    <button @onclick="async () => await HandleDeleteClick(context.Item.ToolId)">Delete</button>
                     break;
                 case ToolStatus.Borrowed:
                     break;
                 case ToolStatus.Requested:
-                    <button @onclick="async () => await HandleAcceptClick(tool.ToolId)">Accept</button>
+                    <button @onclick="async () => await HandleAcceptClick(context.Item.ToolId)">Accept</button>
                     break;
                 case ToolStatus.ReturnPending:
-                    <button @onclick="async () => await HandleAcceptReturnClick(tool.ToolId)">Mark Returned</button>
+                    <button @onclick="async () => await HandleAcceptReturnClick(context.Item.ToolId)">Mark Returned</button>
                     break;
             }
-
+            </CellTemplate>
         </TemplateColumn>
-    </QuickGrid>
-    <Paginator State="pagination"/>
+    </MudDataGrid>
     
     <h4> Tools You've Borrowed </h4>
 
-    <QuickGrid class="table" Items="@filteredBorrowedTools" Pagination="@pagination">
-        <TemplateColumn Context="tool" Title="Photo">
-            <img src="@tool.ToolPhotoUrl" alt ="picture of the tool" width="50px"/>
+    <MudDataGrid Items="@filteredBorrowedTools">
+        <TemplateColumn Title="Photo">
+            <CellTemplate>
+                <img src="@context.Item.ToolPhotoUrl" alt="picture of the tool" width="50px"/>
+            </CellTemplate>
         </TemplateColumn>
         <PropertyColumn Property="tool => tool.Name" Title="Name" Sortable="true">
-            <ColumnOptions>
-                <div class="search-box">
-                    <input type="search" autofocus @bind="borrowedToolsNameFilter" @bind:event="oninput" placeholder="Tool name..." />
-                </div>
-            </ColumnOptions>
         </PropertyColumn>
         <PropertyColumn Property="tool => tool.ToolOwnerName" Title="Owner"/>
         <PropertyColumn Property="tool => tool.BorrowingPeriodInDays" Title="Loan Period"/>
         <PropertyColumn Property="tool => tool.ToolStatus" Title="Status"></PropertyColumn>
-        <TemplateColumn Context="tool" Title="Details" >
-            <a class="nav-link" href="tool-detail/@tool.ToolId">Click Here</a>
+        <TemplateColumn Title="Details">
+            <CellTemplate>
+                <a class="nav-link" href="tool-detail/@context.Item.ToolId">Click Here</a>
+            </CellTemplate>
         </TemplateColumn>
-        <TemplateColumn Context="tool" Title="Actions">
-            <button @onclick="async () => await HandleRequestReturnClick(tool.ToolId)">Return</button>
+        <TemplateColumn Title="Actions">
+            <CellTemplate>
+                <button @onclick="async () => await HandleRequestReturnClick(context.Item.ToolId)">Return</button>
+            </CellTemplate>
         </TemplateColumn>
-    </QuickGrid>
-    <Paginator State="pagination"/>
+    </MudDataGrid>
 
 }
