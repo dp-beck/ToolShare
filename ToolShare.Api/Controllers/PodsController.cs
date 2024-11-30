@@ -78,6 +78,7 @@ namespace ToolShare.Api.Controllers
                 if (pod is null) return BadRequest(new {Message = "No pod with that Id exists."});
 
                 var currentUser = await _userManager.GetUserAsync(HttpContext.User);
+                
                 if (currentUser is null) return BadRequest(new { Message = "No current user located."});
 
                 if (pod.PodId != currentUser.PodJoinedId) 
@@ -140,7 +141,7 @@ namespace ToolShare.Api.Controllers
                 await _userManager.AddToRoleAsync(currentUser, "PodManager");
                 await _userManager.AddToRoleAsync(currentUser, "User");
                 await _userManager.RemoveFromRoleAsync(currentUser, "NoPodUser");
-
+                
                 await _podsRepository.Add(pod);
             
                 return Ok(new { Message = "Pod created successfully."});

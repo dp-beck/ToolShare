@@ -21,6 +21,6 @@ public partial class SideBar
     protected override async Task OnInitializedAsync()
     {
         currentUser = await UsersDataService.GetCurrentUser();
-        currentPod = await IPodsDataService.FindPodDetailsByName(currentUser.PodJoinedName);
+        currentPod = await IPodsDataService.FindPodDetailsById(currentUser.PodJoinedId);
     }   
 }

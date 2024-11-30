@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -47,7 +48,7 @@ namespace ToolShare.Api.Controllers
             }
             catch (Exception)
             {
-                return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
+                return StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
             }
         }
         
@@ -60,21 +61,21 @@ namespace ToolShare.Api.Controllers
             {
                 var currentUser = await _userManager.GetUserAsync(HttpContext.User);
                 
-                if (currentUser is null) return BadRequest(new { Message = "No current user is logged in."});
+                if (currentUser is null) return BadRequest(new { Message = "No current user located."});
                 if (currentUser.PodJoinedId != podId) return BadRequest(new { Message = "You are not a member of this pod."});
                 
-                var alltools = await _toolsRepository.GetAllWithIncludes(
+                var allTools = await _toolsRepository.GetAllWithIncludes(
                     t => t.ToolOwner);
                 
-                var tools = alltools.AsQueryable().Where(t => t.ToolOwner.PodJoinedId == podId);
+                var podTools = allTools.AsQueryable().Where(t => t.ToolOwner.PodJoinedId == podId);
 
-                List<ToolDto> toolDtos = _mapper.Map<List<ToolDto>>(tools);
+                List<ToolDto> podToolDtos = _mapper.Map<List<ToolDto>>(podTools);
 
-                return Ok(toolDtos);
+                return Ok(podToolDtos);
             }
             catch (Exception)
             {
-                return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
+                return StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
             }
         }
 
@@ -85,6 +86,14 @@ namespace ToolShare.Api.Controllers
         {
             try
             {
+                var currentUser = await _userManager.GetUserAsync(HttpContext.User);
+                if (currentUser is null) return BadRequest(new { Message = "No current user located."});
+                
+                var requestedUser = await _userManager.FindByNameAsync(username);
+                if (requestedUser is null) return BadRequest(new { Message = "We could not find the requested user."});
+
+                if (currentUser.PodJoinedId != requestedUser.PodJoinedId) return BadRequest(new { Message = "You are not a member of the same pod as the requested user."});
+                
                 var tools = await _toolsRepository.FindToolsOwnedByUsername(username);
                 
                 List<ToolDto> toolDtos = _mapper.Map<List<ToolDto>>(tools);
@@ -93,7 +102,7 @@ namespace ToolShare.Api.Controllers
             }
             catch (Exception)
             {
-                return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
+                return StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
             }
         }
 
@@ -104,6 +113,14 @@ namespace ToolShare.Api.Controllers
         {
             try
             {
+                var currentUser = await _userManager.GetUserAsync(HttpContext.User);
+                if (currentUser is null) return BadRequest(new { Message = "No current user located."});
+                
+                var requestedUser = await _userManager.FindByNameAsync(username);
+                if (requestedUser is null) return BadRequest(new { Message = "We could not find the requested user."});
+
+                if (currentUser.PodJoinedId != requestedUser.PodJoinedId) return BadRequest(new { Message = "You are not a member of the same pod as the requested user."});
+
                 var tools = await _toolsRepository.FindToolsBorrowedByUsername(username);
                 
                 List<ToolDto> toolDtos = _mapper.Map<List<ToolDto>>(tools);
@@ -112,9 +129,10 @@ namespace ToolShare.Api.Controllers
             }
             catch (Exception)
             {
-                return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
+                return StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
             }
         }
+        
         [HttpGet]
         [Authorize]
         [Route("{toolId:int}")]
@@ -122,16 +140,23 @@ namespace ToolShare.Api.Controllers
         {
             try
             {
+                var currentUser = await _userManager.GetUserAsync(HttpContext.User);
+                if (currentUser is null) return BadRequest(new { Message = "No current user located."});
+                
                 var tool = await _toolsRepository.FindByIdWithIncludes(toolId, t => t.ToolId == toolId,
                     t => t.ToolOwner, t => t.ToolBorrower!);
-            
+                
+                if (tool is null) return BadRequest(new { Message = "We could not find the requested tool." });
+                
+                if (currentUser.PodJoinedId != tool.ToolOwner.PodJoinedId) return BadRequest(new { Message = "You are not a member of the same pod as the tool owner."});
+
                 ToolDto toolDto = _mapper.Map<ToolDto>(tool);
 
                 return Ok(toolDto);   
             }
             catch (Exception )
             {
-                return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
+                return StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
             }
         }
 
@@ -141,10 +166,9 @@ namespace ToolShare.Api.Controllers
         {
             try
             {
-                if (!ModelState.IsValid) return BadRequest(ModelState);
                 var currentUser = await _userManager.GetUserAsync(HttpContext.User);
                 
-                if (currentUser is null) return BadRequest(new { Message = "No current user is logged in."});
+                if (currentUser is null) return NotFound("No current user was located");
 
                 Tool tool = new Tool
                 {
@@ -161,7 +185,7 @@ namespace ToolShare.Api.Controllers
             }
             catch (Exception)
             {
-                return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
+                return StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
             }
         }
 
@@ -189,7 +213,7 @@ namespace ToolShare.Api.Controllers
             }
             catch (Exception)
             {
-                return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
+                return StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
             }
         }
         
@@ -206,6 +230,12 @@ namespace ToolShare.Api.Controllers
                 var currentUser = await _userManager.GetUserAsync(HttpContext.User);
                 if (currentUser is null) return NotFound("Could not find current user.");
                 
+                if (toolRequested.ToolOwner.PodJoinedId != currentUser.PodJoinedId)
+                    return BadRequest(new { Message = "You are not a member of the same pod as the requested tool owner." });
+
+                if (toolRequested.ToolStatus != ToolStatus.Available)
+                    return BadRequest(new { Message = "This tool is not available." });
+
                 toolRequested.ToolRequester = currentUser;
                 toolRequested.ToolStatus = ToolStatus.Requested;
 
@@ -215,7 +245,7 @@ namespace ToolShare.Api.Controllers
             }
             catch (Exception)
             {
-                return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
+                return StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
             }
         }
         
@@ -247,7 +277,7 @@ namespace ToolShare.Api.Controllers
             }
             catch (Exception)
             {
-                return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
+                return StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
             }
         }
 
@@ -266,6 +296,9 @@ namespace ToolShare.Api.Controllers
 
                 if (toolBorrowed.OwnerId != currentUser.Id)
                     return BadRequest(new {Message = "You are not the owner of this tool."});
+                
+                if (toolBorrowed.ToolStatus != ToolStatus.ReturnPending)
+                    return BadRequest(new {Message = "This tool is not pending return."});
             
                 toolBorrowed.ToolBorrower = null;
                 toolBorrowed.BorrowerId = null;
@@ -277,7 +310,7 @@ namespace ToolShare.Api.Controllers
             }
             catch (Exception)
             {
-                return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
+                return StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
             }
         }
         
@@ -294,8 +327,8 @@ namespace ToolShare.Api.Controllers
                 var currentUser = await _userManager.GetUserAsync(HttpContext.User);
                 if (currentUser is null) return NotFound("Could not find current user.");
 
-                if (toolBorrowed.OwnerId != currentUser.Id)
-                    return BadRequest(new {Message = "You are not the owner of this tool."});
+                if (toolBorrowed.BorrowerId != currentUser.Id)
+                    return BadRequest(new {Message = "You are not the one currently borrowing this tool."});
                 
                 toolBorrowed.ToolStatus = ToolStatus.ReturnPending;
 
@@ -305,7 +338,7 @@ namespace ToolShare.Api.Controllers
             }
             catch (Exception)
             {
-                return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
+                return StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
             }
         }
 
@@ -335,7 +368,7 @@ namespace ToolShare.Api.Controllers
             }
             catch (Exception)
             {
-                return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
+                return StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
             }
         }
 

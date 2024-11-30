@@ -1,5 +1,4 @@
 using System.Security.Claims;
-using System.Text.Json;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -7,7 +6,6 @@ using Microsoft.EntityFrameworkCore;
 using ToolShare.Data.Models;
 using ToolShare.Api.Dtos;
 using AutoMapper;
-using AutoMapper.QueryableExtensions;
 
 namespace ToolShare.Api.Controllers
 {
@@ -46,7 +44,7 @@ namespace ToolShare.Api.Controllers
             }
             catch (Exception)
             {
-                return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
+                return StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
             }
         }
 
@@ -57,22 +55,20 @@ namespace ToolShare.Api.Controllers
         {
             try
             {
-                var appUser = await _userManager.GetUserAsync(HttpContext.User);
-                if (appUser is null) return BadRequest(new {Message = "No current user is logged in."});
-        
-                var appUserId = await _userManager.GetUserIdAsync(appUser);
-                var currentUser = _userManager.Users
+                var currentUser = await _userManager.Users
                     .Include(u => u.PodJoined)
                     .Include(u => u.PodManaged)
                     .Include(u => u.ToolsOwned)
-                    .FirstOrDefault(x => x.Id == appUserId);
+                    .FirstOrDefaultAsync(x => HttpContext.User.Identity != null && x.UserName == HttpContext.User.Identity.Name);
             
+                if (currentUser is null) return BadRequest(new {Message = "No current user located."});
+
                 AppUserDto appUserDto = _mapper.Map<AppUserDto>(currentUser);
                         
                 return Ok(appUserDto);
             } catch (Exception)
             {
-                return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
+                return StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
             }
         }
 
@@ -83,15 +79,11 @@ namespace ToolShare.Api.Controllers
         {
             try
             {
-                var appUser = await _userManager.FindByNameAsync(username);
-
-                if (appUser is null) return BadRequest(new { message = "User not found" });
-
-                var user = _userManager.Users
+                var user = await _userManager.Users
                     .Include(u => u.PodJoined)
                     .Include(u => u.PodManaged)
                     .Include(u => u.ToolsOwned)
-                    .FirstOrDefault(x => x.UserName == username);
+                    .FirstOrDefaultAsync(x => x.UserName == username);
 
                 AppUserDto appUserDto = _mapper.Map<AppUserDto>(user);
 
@@ -99,7 +91,7 @@ namespace ToolShare.Api.Controllers
             }
             catch (Exception)
             {
-                return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
+                return StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
             }
         }
 
@@ -116,11 +108,10 @@ namespace ToolShare.Api.Controllers
 
                 List<AppUserDto> userDtos = _mapper.Map<List<AppUserDto>>(users);
                 return Ok(userDtos);
-
             }
             catch (Exception)
             {
-                return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
+                return StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
             }
         }
 
@@ -164,6 +155,7 @@ namespace ToolShare.Api.Controllers
         {
             try
             {
+                
                 var user = new AppUser
                 {
                 UserName = registrationDto.UserName,
@@ -182,12 +174,12 @@ namespace ToolShare.Api.Controllers
                     return Ok(new { Message = "Registration successful"});
                 }
 
-                return BadRequest(new {Errors = result.Errors});
+                return BadRequest(new { result.Errors});
 
             }
             catch (Exception)
             {
-                return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
+                return StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
             }
         }
 
@@ -205,11 +197,11 @@ namespace ToolShare.Api.Controllers
 
                 if (result.Succeeded) return Ok(new { Message = "Login successful."});
             
-                return BadRequest(new { Message = "Login unsucessful. Either the password or username is incorrect."} );
+                return BadRequest(new { Message = "Login unsuccessful. Either the password or username is incorrect."} );
             }
             catch (Exception)
             {
-                return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
+                return StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
             }
         }
 
@@ -225,7 +217,7 @@ namespace ToolShare.Api.Controllers
 
             } catch (Exception)
             {
-                return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
+                return StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
             }
         }
 
@@ -237,7 +229,7 @@ namespace ToolShare.Api.Controllers
             try
             {
                 var currentUser = await _userManager.GetUserAsync(HttpContext.User);
-                if (currentUser is null) return BadRequest(new {Message = "No current user is logged in."});
+                if (currentUser is null) return BadRequest(new {Message = "No current user was located."});
                 
                 var result = await _userManager.ChangePasswordAsync(currentUser, 
                     changePasswordDto.CurrentPassword, 
@@ -245,26 +237,26 @@ namespace ToolShare.Api.Controllers
 
                 if (result.Succeeded)
                 {
-                    return Ok(new { Message = "Password change sucessful"});
+                    return Ok(new { Message = "Password change successful"});
                 }
                 
-                return BadRequest(new {Errors = result.Errors});
+                return BadRequest(new { result.Errors});
 
             } catch (Exception)
             {
-                return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
+                return StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
             }
         }
 
         [HttpPut]
-        [Route("current-user/update")]
+        [Route("update")]
         [Authorize]
         public async Task<IActionResult> UpdateUser(UserInfoUpdateDto userInfoUpdateDto)
         {
             try
             {
                 var currentUser = await _userManager.GetUserAsync(HttpContext.User);
-                if (currentUser is null) return BadRequest(new { Message = "No current user is logged in." });
+                if (currentUser is null) return BadRequest(new { Message = "No current user was located." });
 
                 currentUser.UserName = userInfoUpdateDto.UserName;
                 currentUser.AboutMe = userInfoUpdateDto.AboutMe;
@@ -272,17 +264,17 @@ namespace ToolShare.Api.Controllers
                 currentUser.FirstName = userInfoUpdateDto.FirstName;
                 currentUser.LastName = userInfoUpdateDto.LastName;
 
-                var result = _userManager.UpdateAsync(currentUser);
-                if (result.IsCompletedSuccessfully)
+                var result = await _userManager.UpdateAsync(currentUser);
+                if (result.Succeeded)
                 {
                     return Ok(new { Message = "User Update Successful" });
                 }
 
-                return BadRequest(new { Errors = result.Result });
+                return BadRequest(new { Errors = result.Errors });
             }
             catch (Exception)
             {
-                return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
+                return StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
             }
         }
 
@@ -299,13 +291,13 @@ namespace ToolShare.Api.Controllers
                 var result = await _userManager.DeleteAsync(currentUser);
 
                 if (result.Succeeded)
-                    return Ok(new { Message = "Current user deleted sucessfully."});
+                    return Ok(new { Message = "Current user deleted successfully."});
             
-                return BadRequest(new { Errors = result.Errors});
+                return BadRequest(new { result.Errors});
             }
             catch (Exception)
             {
-                return this.StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
+                return StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
             }
         }
     }

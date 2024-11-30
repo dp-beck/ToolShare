@@ -66,7 +66,7 @@ namespace ToolShare.UI.Services
         {
             try
             {
-                var response = await _httpClient.PutAsJsonAsync("api/users/current-user/update", userInfoUpdateDto);
+                var response = await _httpClient.PutAsJsonAsync("api/users/update", userInfoUpdateDto);
                 response.EnsureSuccessStatusCode();
                 return "Success";
             }
