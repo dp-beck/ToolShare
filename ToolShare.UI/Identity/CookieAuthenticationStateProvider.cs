@@ -49,8 +49,7 @@ namespace ToolShare.UI.Identity
         /// <summary>
         /// Register a new user.
         /// </summary>
-        /// <param name="email">The user's email address.</param>
-        /// <param name="password">The user's password.</param>
+        /// <param name="registrationInfo">Dto with registration information.</param>
         /// <returns>The result serialized to a <see cref="FormResult"/>.
         /// </returns>
         public async Task<FormResult> RegisterAsync(RegistrationInfo registrationInfo)

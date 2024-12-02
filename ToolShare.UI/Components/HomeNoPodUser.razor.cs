@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Components;
+using MudBlazor;
 using ToolShare.UI.DTOs;
 using ToolShare.UI.Services;
 
@@ -6,7 +7,9 @@ namespace ToolShare.UI.Components;
 
 public partial class HomeNoPodUser : ComponentBase
 {
-    public IEnumerable<LimitedPodInfoDTO> Pods { get; set; }
+    private MudForm form;
+    string[] errors = { };
+    public IEnumerable<LimitedPodInfoDTO>? Pods { get; set; }
     public PodDTO podDTO { get; set; } = new PodDTO();
     private bool success;
     private bool error; 
@@ -21,7 +24,7 @@ public partial class HomeNoPodUser : ComponentBase
         Pods = await PodsDataService.GetAllPodsLimitedInfoForNoPodUser();
     }
     
-    private async Task HandleValidSubmit()
+    private async Task HandleSubmit()
     {
         var addedPod = await PodsDataService.InitializeNewPod(podDTO);
         if (addedPod != null)

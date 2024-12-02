@@ -6,13 +6,14 @@
 
 <PageTitle>Tool Share - Home</PageTitle>
 
-<AuthorizeView Roles="NoPodUser">
-    <h1>Welcome to Tool Share, @context.User.Identity?.Name!</h1>
-    <HomeNoPodUser/>
-</AuthorizeView>
+<MudContainer>
+    <AuthorizeView Roles="NoPodUser">
+        <MudText Typo="Typo.h2">Welcome to Tool Share, @context.User.Identity?.Name!</MudText>
+        <HomeNoPodUser/>
+    </AuthorizeView>
 
-<AuthorizeView Roles="User">
-    <h1>Welcome to Tool Share, @context.User.Identity?.Name!</h1>
-    <HomeUser/>
-
-</AuthorizeView>
+    <AuthorizeView Roles="User">
+        <MudText Typo="Typo.h2">Welcome to Tool Share, @context.User.Identity?.Name!</MudText>
+        <HomeUser/>
+    </AuthorizeView>
+</MudContainer>

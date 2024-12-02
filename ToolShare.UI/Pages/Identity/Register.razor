@@ -1,96 +1,87 @@
 @page "/register"
 @layout EmptyLayout
+@using System.ComponentModel.DataAnnotations
+@using System.Text.RegularExpressions
 @using ToolShare.UI.Identity
 @attribute [AllowAnonymous]
 @inject IAccountManagement Acct
 
 <PageTitle>Tool Share - Register</PageTitle>
 
-<h1>Register</h1>
+<MudText Typo="Typo.h2" Align="Align.Center">Register</MudText>
 
 <AuthorizeView>
     <Authorized>
-        <div class="alert alert-success">You're already logged in as @context.User.Identity?.Name.</div>
+        <MudAlert Severity="Severity.Info">You're already logged in as @context.User.Identity?.Name.</MudAlert>
     </Authorized>
     <NotAuthorized>
         @if (success)
         {
-            <div class="alert alert-success">
-                You successfully registered. Now you can <a href="login">login</a>.
-            </div>
+            <MudAlert Severity="Severity.Success">
+                You successfully registered. Now you can <MudLink href="login">login</MudLink>.
+            </MudAlert>
         }
         else
         {
-            if (errors)
-            {
-                foreach (var error in errorList)
-                {
-                    <div class="alert alert-danger">@error</div>
-                }
-            }
-            <div class="flex-outer">
-                <div>
-                    <label for="email">
-                        Email:
-                    </label>
-                    <input autofocus autocomplete="on" required id="email" name="emailInput" placeholder="Enter your email address" type="email" @bind-value="registrationInfo.Email" />
-                </div>
-                <div>
-                    <label for="username">
-                        Username:
-                    </label>
-                    <input autofocus autocomplete="on" required id="username" name="usernameInput" placeholder="Enter your username" type="string" @bind-value="registrationInfo.UserName" />
-                </div>
-                <div>
-                    <label for="firstName">
-                        First Name:
-                    </label>
-                    <input autofocus autocomplete="on" required id="firstName" name="firstNameInput" placeholder="Enter your first name" type="string" @bind-value="registrationInfo.FirstName" />
-                </div>
-                <div>
-                    <label for="lastName">
-                        Last Name:
-                    </label>
-                    <input autofocus autocomplete="on" required id="lastName" name="lastNameInput" placeholder="Enter your last name" type="string" @bind-value="registrationInfo.LastName" />
-                </div>
-                <div>
-                    <label for="aboutMe">
-                        About Me:
-                    </label>
-                    <textarea autofocus autocomplete="on" required id="aboutMe" name="aboutMeInput" placeholder="Tell us about yourself" type="string" @bind="registrationInfo.AboutMe" />
-                </div>
-                <div>
-                    <label for="profilePhotoUrl">
-                        Profile Photo:
-                    </label>
-                    <button type="button" @onclick="openWidget">Upload Image</button>
-                    <input type="hidden" id="profilePhotoUrl" name="profilePhotoUrl" @bind="registrationInfo.ProfilePhotoUrl" />
-                    <p>@PhotoUploadMessage</p>
-                </div>
-                <div>
-                    <label for="password">
-                        Password:
-                    </label>
-                    <input required id="password" name="passwordInput" placeholder="Enter your password" type="password" @bind-value="registrationInfo.Password" /><br />
-                </div>
-                <div>
-                    <label for="confirmPassword">
-                        Retype password:
-                    </label>
-                    <input required id="confirmPassword" name="confirmPasswordInput" placeholder="Re-enter your password" type="password" @bind-value="confirmPassword" />
-                </div>
-                <div>
-                    <button class="btn btn-primary" @onclick="DoRegisterAsync">Register</button>
-                </div>
-            </div>
+            <MudGrid>
+                <MudItem xs="12" sm="7">
+                    <MudPaper Class="pa-4">
+                        <MudForm @ref="form" @bind-IsValid="@validForm" @bind-Errors="@errors">
+                            <MudTextField @bind-Value="registrationInfo.UserName" T="string" Label="Username" Required="true" RequiredError="User name is required!"/>
+                            <MudTextField @bind-Value="registrationInfo.Email" T="string" Label="Email" Required="true" RequiredError="Email is required!"
+                                          Validation="@(new EmailAddressAttribute() { ErrorMessage = "The email address is invalid" })"/>
+                            <MudTextField @bind-Value="registrationInfo.FirstName" T="string" Label="First Name" />
+                            <MudTextField @bind-Value="registrationInfo.LastName" T="string" Label="Last Name" />
+                            <MudTextField @bind-Value="registrationInfo.AboutMe" T="string" Label="About Me" Variant="Variant.Text" Lines="5"/>
+                            <MudTextField @bind-Value="registrationInfo.Password" T="string" Label="Password" HelperText="Choose a strong password" @ref="pwField1"
+                                          InputType="InputType.Password"
+                                          Validation="@(new Func<string, IEnumerable<string>>(PasswordStrength))" Required="true"
+                                          RequiredError="Password is required!"/>
+                            <MudTextField T="string"
+                                          Label="Password" HelperText="Repeat the password" InputType="InputType.Password"
+                                          Validation="@(new Func<string, string>(PasswordMatch!))"
+                                          Required="true"
+                                          RequiredError="Please confirm password!"/>
+                            <MudButton @onclick="OpenWidget"
+                                       Class="mr-auto"
+                                       Variant="Variant.Filled"
+                                       Color="Color.Primary"
+                                       StartIcon="@Icons.Material.Filled.CloudUpload">
+                                Upload Profile Photo
+                            </MudButton>
+                            <MudText Typo="Typo.caption">@PhotoUploadMessage</MudText>
+                            <div class="d-flex align-center justify-space-between">
+                                <MudButton OnClick="async () => await DoRegisterAsync()" 
+                                           Variant="Variant.Filled" 
+                                           Color="Color.Primary" 
+                                           Disabled="@(!validForm)" 
+                                           Class="ml-auto">Register</MudButton>
+                            </div>
+                        </MudForm>
+                    </MudPaper>
+                </MudItem>
+                <MudItem xs="12" sm="5">
+                    <MudPaper Class="pa-4 mud-height-full">
+                        <MudText Typo="Typo.subtitle2">@($"Errors ({errors.Length})")</MudText>
+                        @foreach (var error in errors)
+                        {
+                            <MudText Color="@Color.Error">@error</MudText>
+                        }
+                    </MudPaper>
+                </MudItem>
+            </MudGrid>
         }
     </NotAuthorized>
 </AuthorizeView>
 
 @code {
-    private bool success, errors;
+    private MudForm? form;
+    string[] errors = { };
+    private bool success;
+    private bool validForm;
+    MudTextField<string>? pwField1;
     private string PhotoUploadMessage { get; set; } = string.Empty;
-    private RegistrationInfo? registrationInfo = new RegistrationInfo
+    private RegistrationInfo registrationInfo = new ()
     {
         UserName = string.Empty,
         Email = string.Empty,
@@ -100,48 +91,38 @@
         Password = string.Empty,
         ProfilePhotoUrl = string.Empty
     };
-
-    private string confirmPassword = string.Empty;
-    private string[] errorList = [];
-    [Inject] public required IJSRuntime JS { get; set; }
-
+    
+    [Inject] public required IJSRuntime Js { get; set; }
+    
+    private IEnumerable<string> PasswordStrength(string pw)
+    {
+        if (string.IsNullOrWhiteSpace(pw))
+        {
+            yield return "Password is required!";
+            yield break;
+        }
+        if (pw.Length < 8)
+            yield return "Password must be at least of length 8";
+        if (!Regex.IsMatch(pw, @"[A-Z]"))
+            yield return "Password must contain at least one capital letter";
+        if (!Regex.IsMatch(pw, @"[a-z]"))
+            yield return "Password must contain at least one lowercase letter";
+        if (!Regex.IsMatch(pw, @"[0-9]"))
+            yield return "Password must contain at least one digit";
+    }
+    
+    private string? PasswordMatch(string arg)
+    {
+        if (pwField1?.Value != arg)
+            return "Passwords don't match";
+        return null;
+    }
+    
     public async Task DoRegisterAsync()
     {
-        success = errors = false;
-        errorList = [];
-
-        if (string.IsNullOrWhiteSpace(registrationInfo.Email))
-        {
-            errors = true;
-            errorList = ["Email is required."];
-
-            return;
-        }
-
-        if (string.IsNullOrWhiteSpace(registrationInfo.Password))
-        {
-            errors = true;
-            errorList = ["Password is required."];
-
-            return;
-        }
-
-        if (string.IsNullOrWhiteSpace(confirmPassword))
-        {
-            errors = true;
-            errorList = ["Please confirm your password."];
-
-            return;
-        }
-
-        if (registrationInfo.Password != confirmPassword)
-        {
-            errors = true;
-            errorList = ["Passwords don't match."];
-
-            return;
-        }
-
+        success =  false;
+        errors = [];
+        
         var result = await Acct.RegisterAsync(registrationInfo);
 
         if (result.Succeeded)
@@ -153,19 +134,17 @@
             registrationInfo.FirstName =
             registrationInfo.LastName =
             registrationInfo.AboutMe = 
-            registrationInfo.ProfilePhotoUrl =
-            confirmPassword = string.Empty;
+            registrationInfo.ProfilePhotoUrl = string.Empty;
         }
         else
         {
-            errors = true;
-            errorList = result.ErrorList;
+            errors = result.ErrorList;
         }
     }
     
-    private async Task openWidget()
+    private async Task OpenWidget()
     {
-        registrationInfo.ProfilePhotoUrl = await JS.InvokeAsync<string>("openWidget");
+        registrationInfo.ProfilePhotoUrl = await Js.InvokeAsync<string>("openWidget");
         if (!string.IsNullOrEmpty(registrationInfo.ProfilePhotoUrl))
         {
             PhotoUploadMessage = "Photo successfully uploaded!";

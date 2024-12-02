@@ -6,88 +6,73 @@
 
 <PageTitle>Tool Share - Log in or Sign Up</PageTitle>
 
-<h1>Welcome to Tool Share!</h1>
-
-<img src="images/logo.png" alt="logo" style="width: 100px;">
-
-<p> An app for making it possible to share your tools with family and friends.
-    Say goodbye to misplacing your tools by keeping track of who has what
-    and for how long.
-</p>
 <AuthorizeView>
-     <Authorized>
-         <HomeRedirect />
-     </Authorized>
-     <NotAuthorized>
-        <div> 
-            <p> Welcome back! Sign in to get started! </p>
-        </div>
-        @if (errors)
-        {
-            @foreach (var error in errorList)
-            {
-                <div class="alert alert-danger">@error</div>
-            }
-        }
-        <div class="flex-outer">
-            <div>
-                <label for="username">
-                    Username:
-                </label>
-                <input required id="username" name="usernameInput" placeholder="Enter your username" type="string" @bind-value="username" />
-            </div>
-            <div>
-                <label for="password">
-                    Password:
-                </label>
-                <input required id="password" name="passwordInput" placeholder="Enter your password" type="password" @bind-value="password" />
-            </div>
-            <div>
-                <button class="btn btn-primary" @onclick="DoLoginAsync">Login</button>
-            </div>
-        </div>
-        <p>Not signed up yet? Head on over to the <NavLink href="register"> Registration Page! </NavLink> </p>
+    <Authorized>
+        <HomeRedirect/>
+    </Authorized>
+    
+    <NotAuthorized>
+        <MudContainer Class="d-flex flex-wrap gap-4 justify-center align-content-center min-vh-100">
+            <MudContainer Class="pa-1" Style="margin:0">
+                <MudText Typo="Typo.h1">Welcome to Tool Share!</MudText>
+                
+                <MudText Typo="Typo.body1"> An app for making it possible to share your tools with family and friends.
+                    Say goodbye to misplacing your tools by keeping track of who has what
+                    and for how long.
+                </MudText>
+            </MudContainer>
+
+            <MudPaper Class="white pa-3" Elevation="3">
+                <MudText Typo="Typo.body1">Welcome back! Sign in to get started!</MudText>
+                <MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
+                    <MudTextField @bind-Value="username" T="string" Label="Username" Required="true" RequiredError="User name is required!"/>
+                    <MudTextField @bind-Value="password" T="string" Label="Password"
+                                  InputType="InputType.Password"
+                                  Required="true"
+                                  RequiredError="Password is required!"/>
+                    <MudButton OnClick="async () => await DoLoginAsync() "
+                               Variant="Variant.Filled" Color="Color.Primary" 
+                               Disabled="@(!success)" Class="ml-auto">Log In</MudButton>
+                </MudForm>
+                @foreach (var error in errors)
+                {
+                    <MudText Typo="Typo.body2" Color="Color.Error">@error</MudText>
+                }
+                <MudText Typo="Typo.body2" Class="mt-4">Not signed up yet? Head on over to the <MudLink Typo="Typo.body2" href="register"> Registration Page! </MudLink></MudText>
+               </MudPaper>
+
+        </MudContainer>
     </NotAuthorized>
 </AuthorizeView>
 
 @code {
-    private bool success, errors;
+    bool success;
+    string[] errors = { };
+    MudForm? form;
     private string username = string.Empty;
     private string password = string.Empty;
-    private string[] errorList = [];
 
     private async Task DoLoginAsync()
     {
-        success = errors = false;
-        errorList = [];
-
-        if (string.IsNullOrWhiteSpace(username))
+        if (form != null)
         {
-            errors = true;
-            errorList = ["Username is required."];
-
-            return;
+            await form.Validate();
+            if (form.IsValid)
+            {
+                StateHasChanged();
+                var result = await Acct.LoginAsync(username, password);
+                if (result.Succeeded)
+                {
+                    success = true;
+                    username = password = string.Empty;
+                }
+                else
+                {
+                    errors = result.ErrorList;
+                }
+            }
         }
-
-        if (string.IsNullOrWhiteSpace(password))
-        {
-            errors = true;
-            errorList = ["Password is required."];
-
-            return;
-        }
-
-        var result = await Acct.LoginAsync(username, password);
-
-        if (result.Succeeded)
-        {
-            success = true;
-            username = password = string.Empty;
-        }
-        else
-        {
-            errors = true;
-            errorList = result.ErrorList;
-        }
+        
+    
     }
 }

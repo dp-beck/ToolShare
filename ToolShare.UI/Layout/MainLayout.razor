@@ -5,43 +5,33 @@
 <MudDialogProvider />
 <MudSnackbarProvider />
 
-<div class="page">
-    <div class="sidebar">
-        <SideBar />
-    </div>
+<MudLayout>    
+    <AuthorizeView Roles="User,PodManager">
+        <Authorized>
+            <MudDrawer  @bind-Open="@_drawerOpen">
 
-    <main>
-        <div class="top-row px-4">
-            <AuthorizeView>
-                <Authorized>
-                    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-                        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                            <span class="navbar-toggler-icon"></span>
-                        </button>
-
-                        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                            <ul class="navbar-nav mr-auto">
-                                <li class="nav-item active">
-                                    <a class="nav-link" href="/">Home</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" href="current-user">Manage User Details</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" href="logout">Logout</a>
-                                </li>
-                            </ul>
-                        </div>
-
-                    </nav>
-                    
-                </Authorized>
-
-            </AuthorizeView>
-        </div>
+            </MudDrawer>
+         </Authorized> 
+    </AuthorizeView>
+    
+    <MudAppBar>
+        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
+        <MudSpacer />
+        <MudLink Href="/" Color="Color.Inherit">
+            <MudIconButton Icon="@Icons.Material.Filled.Home" Color="Color.Inherit" Title="Home"/>
+        </MudLink>
         
-            <article class="content px-4">
-                @Body
-            </article>    
-    </main>
-</div>
+        <MudLink Href="/current-user" Color="Color.Inherit">
+            <MudIconButton Icon="@Icons.Material.Filled.ManageAccounts" Color="Color.Inherit" Title="Manage User Details"/>
+        </MudLink>
+
+        <MudLink Href="/logout" Color="Color.Inherit">
+            <MudIconButton Icon="@Icons.Material.Filled.Logout" Color="Color.Inherit" Title="Logout" />
+        </MudLink>
+    </MudAppBar>
+
+    <MudMainContent>
+        @Body
+    </MudMainContent>
+    
+</MudLayout>
