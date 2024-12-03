@@ -1,61 +1,34 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="">Tool Share</a>
-        <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-    </div>
-</div>
-
-<p style="color:white">Pod Members</p>
-<ul>
-    @foreach (var user in currentPod.PodMembers)
-    {
-        <li>
-            <img src="@user.ProfilePhotoUrl" width="40px" alt="Profile Photo Icon" style="border-radius: 100%"/>
-            <NavLink class="nav-link" href="@($"user-detail/{user.UserName}")">
-                <span style="color:white">@user.UserName</span>    
-            </NavLink>
-        </li>
-    }
-</ul>
-<div class="@NavMenuCssClass nav-scrollable" @onclick="ToggleNavMenu">
-    <nav class="flex-column">
+﻿@if (CurrentPod.PodMembers is not null)
+{
+    <MudList T="string">
+        <MudListSubheader>Pod Members</MudListSubheader>
+        @foreach (var user in CurrentPod.PodMembers)
+        {
+            <MudListItem>
+                <AvatarContent>
+                    <MudAvatar>
+                        <MudImage Src="@user.ProfilePhotoUrl"/>
+                    </MudAvatar>
+                </AvatarContent>
+                <ChildContent>
+                    <MudLink Href="@($"user-detail/{user.UserName}")">@user.UserName</MudLink>
+                </ChildContent>
+            </MudListItem>
+        }
         
         <AuthorizeView Roles="User">
             <Authorized>
-                <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="add-tool">
-                        <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Add Tool
-                    </NavLink>
-                </div>
-                <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="manage-tools">
-                        <span class="bi bi-gear-fill-nav-menu" aria-hidden="true"></span> Manage Tools
-                    </NavLink>
-                </div>
+                <MudDivider/>
+                <MudListItem Text="Add Tool" Icon="@Icons.Material.Filled.Add" Href="add-tool"/>
+                <MudListItem Text="Manage Tools" Icon="@Icons.Material.Filled.Settings" Href="manage-tools"/>
             </Authorized>
         </AuthorizeView>
-        
+
         <AuthorizeView Roles="PodManager">
             <Authorized>
-                <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="@($"manage-pod/{currentPod.PodId}")">
-                        <span class="bi bi-gear-fill-nav-menu" aria-hidden="true"></span> Manage Pod
-                    </NavLink>
-                </div>
+                <MudDivider/>
+                <MudListItem Text="Manage Pod" Icon="@Icons.Material.Filled.Settings" Href="@($"manage-pod/{CurrentPod.PodId}")"/>
             </Authorized>
         </AuthorizeView>
-    </nav>
-</div>
-
-@code {
-    private bool collapseNavMenu = true;
-
-    private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
-
-    private void ToggleNavMenu()
-    {
-        collapseNavMenu = !collapseNavMenu;
-    }
+    </MudList>    
 }

@@ -8,8 +8,14 @@
 <MudLayout>    
     <AuthorizeView Roles="User,PodManager">
         <Authorized>
-            <MudDrawer  @bind-Open="@_drawerOpen">
-
+            <MudDrawer @bind-Open="@_drawerOpen" Color="Color.Surface">
+                <MudDrawerHeader>
+                    <MudText Typo="Typo.h6" Color="Color.Dark">Tool Share</MudText>
+                </MudDrawerHeader>
+                <MudDrawerContainer>
+                    <SideBar/>    
+                </MudDrawerContainer>
+               
             </MudDrawer>
          </Authorized> 
     </AuthorizeView>

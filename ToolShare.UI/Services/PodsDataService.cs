@@ -1,12 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http.Json;
-using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using System.Text.Unicode;
-using System.Threading.Tasks;
 using AutoMapper;
 using ToolShare.Data.Models;
 using ToolShare.UI.DTOs;
@@ -31,9 +25,9 @@ namespace ToolShare.UI.Services
             _mapper = mapper;
         }
 
-        public async Task<PodDTO> FindPodDetailsByName(string PodName)
+        public async Task<PodDTO> FindPodDetailsByName(string podName)
         {
-            var response = await _httpClient.GetAsync($"api/Pods/{PodName}");
+            var response = await _httpClient.GetAsync($"api/Pods/{podName}");
             response.EnsureSuccessStatusCode();
             var JsonResponse = await response.Content.ReadAsStringAsync();
             var podDetails = JsonSerializer.Deserialize<PodDTO>(JsonResponse, jsonSerializerOptions);
@@ -83,21 +77,40 @@ namespace ToolShare.UI.Services
             return podsInfo;
         }
 
-        public async Task<PodDTO> InitializeNewPod(PodDTO podDTO)
+        public async Task<FormResult> InitializeNewPod(string podName)
         {
-            var podJson = 
-                new StringContent(JsonSerializer.Serialize(podDTO), Encoding.UTF8, "application/json");
+            string[] defaultDetail = [ "An unknown error prevented pod from being created." ];
 
-            var response = await _httpClient.PostAsync("api/pods", podJson);
-
-            if (response.IsSuccessStatusCode)
+            try
             {
+                var result = await _httpClient.PostAsJsonAsync("api/pods", podName);
                 
-                return await JsonSerializer.DeserializeAsync<PodDTO>(await response.Content.ReadAsStreamAsync());
+                if (result.IsSuccessStatusCode)
+                {
+                    return new FormResult { Succeeded = true };
+                    //return await JsonSerializer.DeserializeAsync<PodDTO>(await response.Content.ReadAsStreamAsync());
+                }
+                
+                // body should contain details about why it failed
+                var details = await result.Content.ReadAsStringAsync();
+                
+                // return the error list
+                return new FormResult
+                {
+                    Succeeded = false,
+                    ErrorList = [details]
+                };
+            }
+            catch (Exception e)
+            {
+                // unknown error
+                return new FormResult
+                {
+                    Succeeded = false,
+                    ErrorList = defaultDetail
+                };
             }
             
-            return null;
-
         }
 
         public async Task<string> UpdatePodName(int podId, string NewPodName)

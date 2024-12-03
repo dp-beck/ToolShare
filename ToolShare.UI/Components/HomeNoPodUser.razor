@@ -1,64 +1,69 @@
 @using ToolShare.UI.DTOs
-<MudText Typo="Typo.body1"> You have not been added to a pod yet. See the pods that have been created so far below.
-    Send the manager an email requesting to be added to their pod! Alternatively, go ahead
-    and fill out the Create Pod form below to start your own pod!
-</MudText>
-
-<MudPaper Class="mt-4">
-    <MudText Typo="Typo.h3" Align="Align.Center">Pods</MudText>
-
-    @if (Pods == null)
-    {
-        <p><em>Loading...</em></p>
-    }
-    else
-    {
-        <MudSimpleTable Hover="true" Style="overflow-x: auto;">
-            <thead>
-            <tr>
-                <th>Pod Name</th>
-                <th>Pod Manager</th>
-                <th>Contact Email</th>
-            </tr>
-            </thead>
-
-            <tbody>
-
-            @foreach (var pod in Pods)
-            {
-                <tr>
-                    <td>@pod.Name</td>
-                    <td>@pod.PodManagerName</td>
-                    <td>@pod.PodManagerEmail</td>
-                </tr>
-            }
-            </tbody>
-        </MudSimpleTable>
-    }
-    
-</MudPaper>
-
-<MudPaper Class="mt-4">
-
-    <MudText Typo="Typo.h3" Align="Align.Center">Start a New Pod</MudText>
-
 @if (success)
 {
-    <div class=@StatusClass>@Message</div>
+    <MudAlert Severity="Severity.Success">
+        You successfully created a new pod. Please log out and log in to begin managing your new pod!"
+    </MudAlert>
 }
 else
 {
-    <MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
-        <MudTextField @bind-Value="podDTO.Name" T="string" Label="Pod Name" Required="true" RequiredError="Pod name is required!"/>
-        
-        <MudButton OnClick="async () => await HandleSubmit() "
-                   Variant="Variant.Filled" Color="Color.Primary" 
-                   Disabled="@(!success)" Class="ml-auto">Create Pod</MudButton>
-    </MudForm>
- 
-    @if (error)
-    {
-        <div class=@StatusClass>@Message</div>
-    }
+    <MudText Typo="Typo.body1"> You have not been added to a pod yet. See the pods that have been created so far below.
+        Send the manager an email requesting to be added to their pod! Alternatively, go ahead
+        and fill out the Create Pod form below to start your own pod!
+    </MudText>
+
+    <MudPaper Class="mt-4">
+        <MudText Typo="Typo.h3" Align="Align.Center">Pods</MudText>
+
+        @if (Pods == null)
+        {
+            <p><em>Loading...</em></p>
+        }
+        else
+        {
+            <MudSimpleTable Hover="true" Style="overflow-x: auto;">
+                <thead>
+                <tr>
+                    <th>Pod Name</th>
+                    <th>Pod Manager</th>
+                    <th>Contact Email</th>
+                </tr>
+                </thead>
+
+                <tbody>
+
+                @foreach (var pod in Pods)
+                {
+                    <tr>
+                        <td>@pod.Name</td>
+                        <td>@pod.PodManagerName</td>
+                        <td>@pod.PodManagerEmail</td>
+                    </tr>
+                }
+                </tbody>
+            </MudSimpleTable>
+        }
+
+    </MudPaper>
+
+    <MudPaper Class="mt-4">
+
+        <MudText Typo="Typo.h3" Align="Align.Center">Start a New Pod</MudText>
+
+        <MudForm @ref="form" @bind-IsValid="@validForm" @bind-Errors="@errors">
+            <MudTextField @bind-Value="podName" T="string" Label="Pod Name" Required="true" RequiredError="Pod name is required!"/>
+
+            <MudButton OnClick="async () => await HandleSubmit()"
+                       Variant="Variant.Filled" Color="Color.Primary"
+                       Disabled="@(!validForm)" Class="ml-auto">Create Pod</MudButton>
+        </MudForm>
+    
+            <MudPaper Class="pa-4 mud-height-full">
+                <MudText Typo="Typo.subtitle2">@($"Errors ({errors.Length})")</MudText>
+                @foreach (var error in errors)
+                {
+                    <MudText Color="@Color.Error">@error</MudText>
+                }
+            </MudPaper>
+    </MudPaper>
 }
-</MudPaper>

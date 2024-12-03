@@ -138,16 +138,21 @@ namespace ToolShare.Api.Controllers
 
                 pod.PodMembers.Add(currentUser);
 
+                await _podsRepository.Add(pod);
+                
                 await _userManager.AddToRoleAsync(currentUser, "PodManager");
                 await _userManager.AddToRoleAsync(currentUser, "User");
                 await _userManager.RemoveFromRoleAsync(currentUser, "NoPodUser");
                 
-                await _podsRepository.Add(pod);
-            
                 return Ok(new { Message = "Pod created successfully."});
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                if (e.InnerException != null)
+                {
+                    return StatusCode(StatusCodes.Status500InternalServerError,
+                        $"Database Failure: {e.InnerException.Message}");   
+                } 
                 return StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
             }
         }

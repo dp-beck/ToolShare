@@ -177,9 +177,9 @@ namespace ToolShare.Api.Controllers
                 return BadRequest(new { result.Errors});
 
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Database Failure: {e.Message}");
             }
         }
 

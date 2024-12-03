@@ -12,10 +12,10 @@ namespace ToolShare.UI.Services
     {
         public Task<IEnumerable<PodDTO>> GetAllPods();
         public Task<IEnumerable<LimitedPodInfoDTO>> GetAllPodsLimitedInfoForNoPodUser();
-        public Task<PodDTO> FindPodDetailsByName(string PodName);
+        public Task<PodDTO> FindPodDetailsByName(string podName);
         public Task<PodDTO> FindPodDetailsById(int podId);
 
-        public Task<PodDTO> InitializeNewPod(PodDTO podDTO);
+        public Task<FormResult> InitializeNewPod(string podName);
         public Task<String> UpdatePodName(int podId, string NewPodName);
         public Task<String> AddUser(int podId, string username);
         public Task<String> RemoveUser(int podId, string username);

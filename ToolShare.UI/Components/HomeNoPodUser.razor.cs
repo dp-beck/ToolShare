@@ -11,8 +11,9 @@ public partial class HomeNoPodUser : ComponentBase
     string[] errors = { };
     public IEnumerable<LimitedPodInfoDTO>? Pods { get; set; }
     public PodDTO podDTO { get; set; } = new PodDTO();
+    string podName = string.Empty;
     private bool success;
-    private bool error; 
+    private bool validForm;
     protected string Message = string.Empty;
     protected string StatusClass = string.Empty;
     
@@ -26,25 +27,14 @@ public partial class HomeNoPodUser : ComponentBase
     
     private async Task HandleSubmit()
     {
-        var addedPod = await PodsDataService.InitializeNewPod(podDTO);
-        if (addedPod != null)
+        var result = await PodsDataService.InitializeNewPod(podName);
+        if (result.Succeeded)
         {
             success = true;
-            error = false;
-            StatusClass = "alert alert-success";
-            Message = "You sucessfully created a new pod. Please log out and log in to begin managing your new pod!"; 
         }
         else 
         {
-            success = false;
-            error = true;
-            StatusClass = "alert-danger";
-            Message = "Something went wrong! Please try again"; 
+            errors = result.ErrorList;
         }
-    }
-
-    private void HandleInvalidSubmit()
-    {
-        return;
     }
 }

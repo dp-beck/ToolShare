@@ -7,7 +7,7 @@ namespace ToolShare.UI.Layout;
 
 public partial class SideBar
 {
-    private PodDTO currentPod { get; set; } = new();
+    private PodDTO CurrentPod { get; set; } = new();
     
     [Inject]
     public required IPodsDataService IPodsDataService { get; set; }
@@ -21,6 +21,6 @@ public partial class SideBar
     protected override async Task OnInitializedAsync()
     {
         currentUser = await UsersDataService.GetCurrentUser();
-        currentPod = await IPodsDataService.FindPodDetailsById(currentUser.PodJoinedId);
+        CurrentPod = await IPodsDataService.FindPodDetailsById(currentUser.PodJoinedId);
     }   
 }
