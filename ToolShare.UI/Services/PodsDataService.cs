@@ -88,7 +88,6 @@ namespace ToolShare.UI.Services
                 if (result.IsSuccessStatusCode)
                 {
                     return new FormResult { Succeeded = true };
-                    //return await JsonSerializer.DeserializeAsync<PodDTO>(await response.Content.ReadAsStreamAsync());
                 }
                 
                 // body should contain details about why it failed

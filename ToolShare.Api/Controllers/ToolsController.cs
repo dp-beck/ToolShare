@@ -224,7 +224,8 @@ namespace ToolShare.Api.Controllers
         {
             try 
             {
-                var toolRequested = await _toolsRepository.FindById(toolId);
+                var toolRequested = await _toolsRepository.FindByIdWithIncludes(toolId, t => t.ToolId == toolId, 
+                    t => t.ToolOwner);
                 if (toolRequested == null) return NotFound("Could not find tool with this id.");
                 
                 var currentUser = await _userManager.GetUserAsync(HttpContext.User);

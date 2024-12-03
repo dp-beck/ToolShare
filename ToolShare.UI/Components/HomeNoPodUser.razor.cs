@@ -10,13 +10,10 @@ public partial class HomeNoPodUser : ComponentBase
     private MudForm form;
     string[] errors = { };
     public IEnumerable<LimitedPodInfoDTO>? Pods { get; set; }
-    public PodDTO podDTO { get; set; } = new PodDTO();
     string podName = string.Empty;
     private bool success;
     private bool validForm;
-    protected string Message = string.Empty;
-    protected string StatusClass = string.Empty;
-    
+
     [Inject]
     public required IPodsDataService PodsDataService { get; set; }
     

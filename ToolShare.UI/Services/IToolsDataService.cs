@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using ToolShare.UI.Dtos;
 using ToolShare.UI.DTOs;
+using ToolShare.UI.Identity.Models;
 
 namespace ToolShare.UI.Services
 {
@@ -16,7 +17,7 @@ namespace ToolShare.UI.Services
         public Task<ToolDTO> CreateTool(ToolDTO tool);
         public Task<ToolDTO> FindToolById(int toolId);
         public Task<String> UpdateTool(int toolId, UpdateToolDTO updateToolDto);
-        public Task<String> RequestTool(int toolId);
+        public Task<FormResult> RequestTool(int toolId);
         public Task<String> LendTool(int toolId);
         public Task<String> RequestToolReturn(int toolId);
         public Task<String> AcceptToolReturned(int toolId);

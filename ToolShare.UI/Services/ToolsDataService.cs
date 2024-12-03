@@ -10,6 +10,7 @@ using AutoMapper;
 using ToolShare.Data.Models;
 using ToolShare.UI.Dtos;
 using ToolShare.UI.DTOs;
+using ToolShare.UI.Identity.Models;
 
 namespace ToolShare.UI.Services
 {
@@ -109,20 +110,35 @@ namespace ToolShare.UI.Services
             }
         }
 
-        public async Task<String> RequestTool(int toolId)
+        public async Task<FormResult> RequestTool(int toolId)
         {
+            string[] defaultDetail = [ "An unknown error prevented tool from being requested." ];
+
             try
             {
                 var request = new HttpRequestMessage(HttpMethod.Put, $"api/tools/{toolId}/request-tool");
-                using var response = await _httpClient.SendAsync(request);
-                response.EnsureSuccessStatusCode();
-                return "Success";
+                using var result = await _httpClient.SendAsync(request);
+                if (result.IsSuccessStatusCode)
+                {
+                    return new FormResult { Succeeded = true };
+                }
+                
+                var details = await result.Content.ReadAsStringAsync();
+                
+                return new FormResult
+                {
+                    Succeeded = false,
+                    ErrorList = [details]
+                };
             }
             catch (Exception e)
-            {
-              return e.Message;
+            { 
+                return new FormResult
+                {
+                    Succeeded = false,
+                    ErrorList = defaultDetail
+                };
             }
-
         }
 
         public async Task<String> LendTool(int toolId)

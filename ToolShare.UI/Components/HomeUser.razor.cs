@@ -1,40 +1,64 @@
 using Microsoft.AspNetCore.Components;
-using ToolShare.Data.Models;
+using MudBlazor;
 using ToolShare.UI.DTOs;
-using ToolShare.UI.Pages;
 using ToolShare.UI.Services;
 
 namespace ToolShare.UI.Components;
 
 public partial class HomeUser : ComponentBase
 {
-    private string Message { get; set; } = String.Empty;
-    private bool _isLoading { get; set; } = true;
-    private AppUserDTO userInfo {get;set;}
-    private string nameFilter = string.Empty;
-    private IQueryable<ToolDTO> allTools { get; set; }
-    private IEnumerable<ToolDTO> filteredTools { get; set; }
+    private bool IsLoading { get; set; } = true;
+    public required AppUserDTO UserInfo {get;set;}
+    private IQueryable<ToolDTO>? AllTools { get; set; }
+    private IEnumerable<ToolDTO>? FilteredTools { get; set; }
+    private string _searchString = String.Empty;
+
 
     [Inject]
     public required IUsersDataService UsersDataService { get; set; }
-    [Inject]
-    public required IPodsDataService PodsDataService { get; set; }
-    
+
     [Inject]
     public required IToolsDataService ToolsDataService { get; set; }
+
+    [Inject]
+    public required ISnackbar Snackbar { get; set; }
+    
     protected override async Task OnInitializedAsync()
     {
-        userInfo = await UsersDataService.GetCurrentUser();
-        allTools = await ToolsDataService.GetToolsByPod(userInfo.PodJoinedId);
-        filteredTools = allTools.ToList();
-        _isLoading = false;
+        UserInfo = await UsersDataService.GetCurrentUser();
+        AllTools = await ToolsDataService.GetToolsByPod(UserInfo.PodJoinedId);
+        FilteredTools = AllTools.ToList();
+        IsLoading = false;
     }
 
-    private async Task<String> HandleRequestClick(int toolId)
+    private async Task HandleRequestClick(int toolId)
     {
-        Message = await ToolsDataService.RequestTool(toolId);
-        allTools = await ToolsDataService.GetToolsByPod(userInfo.PodJoinedId);
-        filteredTools = allTools;
-        return Message;
+        var result = await ToolsDataService.RequestTool(toolId);
+
+        if (result.Succeeded)
+        {
+            AllTools = await ToolsDataService.GetToolsByPod(UserInfo.PodJoinedId);
+            FilteredTools = AllTools;
+            Snackbar.Add("Tool successfully requested!", Severity.Success);    
+        }
+        else
+        {
+            Snackbar.Add($"Error: {result.ErrorList}", Severity.Error);
+        }
     } 
+    
+    // quick filter - filter globally across multiple columns with the same input
+    private Func<ToolDTO, bool> QuickFilter => tool =>
+    {
+        if (string.IsNullOrWhiteSpace(_searchString))
+            return true;
+
+        if (tool.Name.Contains(_searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+
+        if (tool.ToolOwnerName != null && tool.ToolOwnerName.Contains(_searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        
+        return false;
+    };
 }

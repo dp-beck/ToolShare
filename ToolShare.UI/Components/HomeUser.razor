@@ -1,13 +1,20 @@
 @using ToolShare.Data.Models
-@if (!_isLoading)
+@using ToolShare.UI.DTOs
+@if (!IsLoading)
 {
-    <p>You are a member of @userInfo.PodJoinedName. See any tools you want to borrow?
+    <MudText Typo="Typo.body1" Class="mt-4 mb-4">You are a member of @UserInfo.PodJoinedName. See any tools you want to borrow?
         Just hit the request button. Feel free to email the tool owner to let them know
-        you requested a tool.</p>
+        you requested a tool.</MudText>
     
-    <MudDataGrid Items="@filteredTools" Filterable="true">
+    <MudDataGrid T="ToolDTO" Items="@FilteredTools" SortMode="SortMode.Multiple" Filterable="true" QuickFilter="@QuickFilter">
+        <ToolBarContent>
+            <MudText Typo="Typo.h6">@UserInfo.PodJoinedName Tools</MudText>
+            <MudSpacer />
+            <MudTextField @bind-Value="_searchString" Placeholder="Search" Adornment="Adornment.Start" Immediate="true"
+                          AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+        </ToolBarContent>
         <Columns>
-            <PropertyColumn Property="tool => tool.ToolPhotoUrl" Title="Photo">
+            <PropertyColumn Property="tool => tool.ToolPhotoUrl" Title="Photo" Sortable="false" Filterable="false">
                 <CellTemplate>
                     <MudImage src="@context.Item.ToolPhotoUrl" alt="picture of the tool" Width="100" Elevation="10"/>
                 </CellTemplate>
@@ -18,11 +25,15 @@
                 </CellTemplate>
             </PropertyColumn>
             <PropertyColumn Property="tool => tool.ToolOwnerName" Title="Tool Owner"/>
-            <PropertyColumn Property="tool => tool.BorrowingPeriodInDays" Title="Loan Period"/>
+            <PropertyColumn Property="tool => tool.BorrowingPeriodInDays" Title="Loan Period (Days)"/>
             <PropertyColumn Property="tool => tool.ToolStatus" Title="Availability"/>
-            <PropertyColumn Property="tool => tool.ToolId" Title="">
+            <PropertyColumn Property="tool => tool.ToolId" Title="" Sortable="false" Filterable="false">
                 <CellTemplate>
-                    <button @onclick="async () => await HandleRequestClick(context.Item.ToolId)">Request?</button>
+                    @if (context.Item.ToolStatus == ToolStatus.Available)
+                    {
+                        <MudButton OnClick="async () => await HandleRequestClick(context.Item.ToolId)" 
+                                   Variant="Variant.Filled" Color="Color.Secondary">Request</MudButton>
+                    }
                 </CellTemplate>
             </PropertyColumn>
         </Columns>
@@ -31,8 +42,4 @@
         </PagerContent>
     </MudDataGrid>
     
-    @if (Message != String.Empty)
-    {
-        <p>@Message</p>
-    }
 }
