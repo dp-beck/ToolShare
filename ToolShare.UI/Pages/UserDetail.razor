@@ -1,16 +1,20 @@
 @page "/user-detail/{Username}"
 @if (!_isLoading)
 {
-    <h3>User Detail: @Username</h3>
+    <MudText Typo="Typo.h3" Align="Align.Center" Class="mt-4">User Detail: @Username</MudText>
     
-    <img src="@UserInfo.ProfilePhotoUrl" 
-         alt="Profile photo of user"
-         width="150px"
-         style="border-radius: 100%"/>
-     
-    <p>First Name: @UserInfo.FirstName</p>
-    <p>Last Name: @UserInfo.LastName</p>
-    <p>Email: @UserInfo.Email</p>
-    <p>About Me: @UserInfo.AboutMe</p>
+    <MudContainer MaxWidth="MaxWidth.Small" Class="mt-4">
+        <MudPaper Width="100%" Class="pa-4">
+            <MudImage Src="@UserInfo.ProfilePhotoUrl"
+                      Alt="Profile photo of User"
+                      Width="150"
+                      Class="rounded-circle"/>
+            <MudText Typo="Typo.h6" Class="mt-4">First Name: @UserInfo.FirstName</MudText>
+            <MudText Typo="Typo.h6">Last Name: @UserInfo.LastName</MudText>
+            <MudText Typo="Typo.h6">Email: @UserInfo.Email</MudText>
+            <MudText Typo="Typo.h6">About Me: @UserInfo.AboutMe</MudText>
+        </MudPaper>
+    </MudContainer>
+    
      
 }

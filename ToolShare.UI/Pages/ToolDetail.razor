@@ -53,17 +53,24 @@
         }
         else
         {
-            <h3>@Tool.Name</h3>
+            <MudText Typo="Typo.h3" Align="Align.Center" Class="mt-4">Tool Detail: @Tool.Name</MudText>
 
-            <img src="@Tool.ToolPhotoUrl" alt="Photo of Tool" width="100px"/>
-            <p>Tool Description: @Tool.Description</p>
-            <p>Borrowing Period (Days): @Tool.BorrowingPeriodInDays</p>
-            <p>Tool Status: @Tool.ToolStatus</p>
-            <p>Tool Owner: @Tool.ToolOwnerName</p>
-            <p> Tool Borrower: @Tool.ToolBorrowerName</p>
+            <MudContainer MaxWidth="MaxWidth.Small" Class="mt-4">
+                <MudPaper Width="100%" Class="pa-4">
+                    <MudImage Src="@Tool.ToolPhotoUrl"
+                              Alt="Profile photo of User"
+                              Width="150"
+                              Elevation="25"
+                              Class="rounded-lg border-1"/>
+                    <MudText Typo="Typo.h6" Class="mt-4">Description: @Tool.Description</MudText>
+                    <MudText Typo="Typo.h6">Borrowing Period: @Tool.BorrowingPeriodInDays Days</MudText>
+                    <MudText Typo="Typo.h6">Tool Status: @Tool.ToolStatus</MudText>
+                    <MudText Typo="Typo.h6">Tool Owner: @Tool.ToolOwnerName</MudText>
+                    <MudText Typo="Typo.h6">Tool Borrower: @Tool.ToolBorrowerName</MudText>
+                </MudPaper>
+            </MudContainer>
         }
 
     }
     
-
 </AuthorizeView>
