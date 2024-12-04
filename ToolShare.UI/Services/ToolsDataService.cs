@@ -70,20 +70,24 @@ namespace ToolShare.UI.Services
             return toolsInfo;
         }
         
-        public async Task<ToolDTO> CreateTool(ToolDTO tool)
+        public async Task<FormResult> CreateTool(ToolDTO tool)
         {
-            var toolJson = 
-                new StringContent(JsonSerializer.Serialize(tool), Encoding.UTF8, "application/json");
+            string[] defaultDetail = [ "An unknown error prevented tool from being created." ];
+            
+            var result = await _httpClient.PostAsJsonAsync<ToolDTO>("api/tools", tool);
 
-            var response = await _httpClient.PostAsync("api/tools", toolJson);
-
-            if (response.IsSuccessStatusCode)
+            if (result.IsSuccessStatusCode)
             {
-                
-                return await JsonSerializer.DeserializeAsync<ToolDTO>(await response.Content.ReadAsStreamAsync());
+                return new FormResult { Succeeded = true };
             }
             
-            return null;
+            var details = await result.Content.ReadAsStringAsync();
+                
+            return new FormResult
+            {
+                Succeeded = false,
+                ErrorList = [details]
+            };        
         }
 
         public async Task<ToolDTO> FindToolById(int toolId)

@@ -5,7 +5,8 @@ function openWidget() {
             cloudName: 'dzsqoueki',
             uploadPreset: 'toolshare',
             folder: 'widgetUpload',
-            cropping: true,
+            cropping: true, 
+                croppingAspectRatio: 1
             }, 
             (error, result) => {
                 if (!error && result && result.event === "success") {

@@ -1,13 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using ToolShare.Api.Dtos;
 using ToolShare.Data.Models;
 using ToolShare.Data.Repositories;
@@ -183,9 +177,14 @@ namespace ToolShare.Api.Controllers
 
                 return Ok(new { Message = "Tool created successfully."});
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
+                if (e.InnerException != null)
+                {
+                    return StatusCode(StatusCodes.Status500InternalServerError,
+                        $"Database Failure: {e.InnerException.Message}");   
+                } 
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Database Failure {e.Message}");
             }
         }
 
@@ -244,9 +243,14 @@ namespace ToolShare.Api.Controllers
 
                 return Ok(new {Message = "Tool successfully requested."});
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
+                if (e.InnerException != null)
+                {
+                    return StatusCode(StatusCodes.Status500InternalServerError,
+                        $"Database Failure: {e.InnerException.Message}");   
+                } 
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Database Failure {e.Message}");
             }
         }
         

@@ -1,3 +1,5 @@
+*.DotSettings
+
 # File for Personal Projct Notes
 notes.md
 ToolShare Data Models.pdf

@@ -1,51 +1,56 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
+using MudBlazor;
 using ToolShare.UI.DTOs;
 using ToolShare.UI.Services;
 namespace ToolShare.UI.Pages;
 
 public partial class AddTool : ComponentBase
 {
-    private ToolDTO ToolDto { get; set; } = new ToolDTO();
+    private MudForm? form;
+    private bool validForm;
+    private string[] errors = [];
+    private ToolDTO ToolDto { get; set; } = new();
     private bool success;
-    private bool error;
-    private string Message = string.Empty;
-    private string StatusClass = string.Empty;
+    private string secureUrl = string.Empty;
     private string PhotoUploadMessage = string.Empty;
     [Inject]
     public required IToolsDataService ToolsDataService { get; set; }
     [Inject] public required IJSRuntime JS { get; set; }
     
-    private async Task HandleValidSubmit()
-    {
-       var addedTool = await ToolsDataService.CreateTool(ToolDto);
-        if (addedTool != null)
+    private async Task HandleSubmit()
+    { 
+        ToolDto.ToolPhotoUrl = TransformImageUrl(secureUrl, "w_1000,ar_1:1,c_fill,g_auto,e_art:hokusai");
+        var result = await ToolsDataService.CreateTool(ToolDto);
+        if (result.Succeeded)
         {
-            success = true;
-            error = false;
-            StatusClass = "alert alert-success";
-            Message = "You sucessfully created a new tool!"; 
+           success = true;
         }
         else 
         {
-            success = false;
-            error = true;
-            StatusClass = "alert-danger";
-            Message = "Something went wrong! Please try again"; 
+           errors = result.ErrorList;
         }
     }
 
-    private void HandleInvalidSubmit()
-    {
-        return;
-    }
     
-    private async Task openWidget()
+    private async Task OpenWidget()
     {
-        ToolDto.ToolPhotoUrl = await JS.InvokeAsync<string>("openWidget");
+        secureUrl = await JS.InvokeAsync<string>("openWidget");
+        
         if (!string.IsNullOrEmpty(ToolDto.ToolPhotoUrl))
         {
             PhotoUploadMessage = "Photo successfully uploaded!";
         }
     }
+
+    private string TransformImageUrl(string url, string transformation)
+    {
+        string[] parts = url.Split(["/upload/"], StringSplitOptions.None);
+        if (parts.Length != 2)
+        {
+            throw new ArgumentException("Invalid Cloudinary URL");
+        }
+        return parts[0] + "/upload/" + transformation + "/" + parts[1];
+    }
+    
 }

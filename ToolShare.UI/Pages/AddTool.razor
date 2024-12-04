@@ -1,65 +1,42 @@
 @page "/add-tool"
-@using ToolShare.UI.DTOs
 
-<h3>Add Tool</h3>
+<MudText Align="Align.Center" Typo="Typo.h3" Class="mt-4 mb-4">Add Tool</MudText>
 @if (success)
 {
-    <div class=@StatusClass>@Message</div>
+    <MudAlert Severity="Severity.Success">Congrats! You added a tool successfully!</MudAlert>
 }
 else
 {
-    <EditForm Model="@ToolDto"
-              OnValidSubmit="HandleValidSubmit"
-              OnInvalidSubmit="HandleInvalidSubmit">
-        <DataAnnotationsValidator />
-        <ValidationSummary />
-        <div class="form-group row m-3">
-            <label for="Name" class="col-sm-2 col-form-label">Name:</label>
-            <div class="col-sm-10">
-                <InputText id="Name"
-                           @bind-Value="@ToolDto.Name"
-                           placeholder="Enter Tool Name">
-                </InputText>
-            </div>
-        </div>
-
-        <div class="form-group row m-3">
-            <label for="Description" class="col-sm-2 col-form-label">Description:</label>
-            <div class="col-sm-10">
-                <InputTextArea id="Description"
-                               @bind-Value="@ToolDto.Description"
-                               placeholder="Provide a description of your tool">
-                </InputTextArea>
-            </div>
-        </div>
-
-        <div class="form-group row m-3">
-            <label for="BorrowingPeriodInDays" class="col-sm-2 col-form-label">Borrowing Period (Days):</label>
-            <div class="col-sm-10">
-                <InputNumber id="BorrowingPeriodInDays"
-                             @bind-Value="@ToolDto.BorrowingPeriodInDays">
-                </InputNumber>
-            </div>
-        </div>
-        
-        <div class="form-group row m-3">
-            <label for="toolPhoto" class="col-sm-2 col-form-label">Tool Photo:</label>
-            <div class="col-sm-10">
-                <button type="button" @onclick="openWidget">Upload Image</button>
-            </div>
-            <InputText type="hidden" id="toolPhoto" name="toolPhoto" @bind-Value="@ToolDto.ToolPhotoUrl" />
-            <p>@PhotoUploadMessage</p>
-        </div>
-
-        <div class="form-group row m-3">
-            <div class="col-sm-10">
-                <button type="submit" class="btn btn-primary">Submit</button>
-            </div>
-        </div>    
-        
-    </EditForm>
-    @if (error)
-    {
-        <div class=@StatusClass>@Message</div>
-    }
+    <MudContainer MaxWidth="MaxWidth.Small">
+        <MudPaper Width="100%" Class="pa-4">
+            <MudForm @ref="form" @bind-IsValid="@validForm" @bind-Errors="@errors" Spacing="6">
+                <MudTextField @bind-Value="ToolDto.Name" T="string" 
+                              Placeholder="Enter Tool name" Label="Name" 
+                              Required="true" RequiredError="Tool name is required!"/>
+                <MudTextField @bind-Value="ToolDto.Description" T="string" 
+                              Placeholder="Tell us about the tool, e.g. what it does, any special instructions..." 
+                              Label="Description" Variant="Variant.Text" Lines="5"/>
+                <MudNumericField @bind-Value="ToolDto.BorrowingPeriodInDays" 
+                                 Label="Borrowing Period (Days)" Variant="Variant.Text" 
+                                 Min="0" Max="365" />
+                <MudButton @onclick="OpenWidget"
+                           Class="mr-auto"
+                           Variant="Variant.Filled"
+                           Color="Color.Primary"
+                           StartIcon="@Icons.Material.Filled.CloudUpload">
+                    Upload Tool Photo
+                </MudButton>
+                <MudText Typo="Typo.caption">@PhotoUploadMessage</MudText>
+                <MudButton OnClick="async () => await HandleSubmit()"
+                           Variant="Variant.Filled"
+                           Color="Color.Primary"
+                           Disabled="@(!validForm)"
+                           Class="ml-auto">Add Tool</MudButton>
+            </MudForm>
+            @foreach (var error in errors)
+            {
+                <MudText Color="@Color.Error">@error</MudText>
+            }
+        </MudPaper>
+    </MudContainer>
 }

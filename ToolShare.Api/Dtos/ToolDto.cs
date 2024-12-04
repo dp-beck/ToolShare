@@ -18,7 +18,7 @@ namespace ToolShare.Api.Dtos
         public string? ToolPhotoUrl { get; set; }
 
         public required ToolStatus ToolStatus { get; set; }
-        public required string ToolOwnerName { get; set; }
+        public string? ToolOwnerName { get; set; }
         public string? ToolBorrowerName { get; set; }
         public string? ToolRequesterName { get; set; }
 

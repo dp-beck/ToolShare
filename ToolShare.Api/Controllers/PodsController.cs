@@ -153,7 +153,7 @@ namespace ToolShare.Api.Controllers
                     return StatusCode(StatusCodes.Status500InternalServerError,
                         $"Database Failure: {e.InnerException.Message}");   
                 } 
-                return StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Database Failure {e.Message}");
             }
         }
 
