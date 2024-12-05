@@ -1,74 +1,91 @@
 @page "/manage-tools"
 @using ToolShare.Data.Models
 @using ToolShare.UI.Components
+@using ToolShare.UI.DTOs
 
 @if (!_isLoading)
 {
-    <h3>Manage Tools: @userInfo.UserName</h3>
-
-    <h4> Tools You Own </h4>
-
-    <MudDataGrid Items="@filteredOwnedTools">
-        <TemplateColumn Title="Photo">
-            <CellTemplate>
-                <img src="@context.Item.ToolPhotoUrl" alt="picture of the tool" width="50px"/>
-            </CellTemplate>
-        </TemplateColumn>
-        <PropertyColumn Property="tool => tool.Name" Title="Name" Sortable="true">
-        </PropertyColumn>
-        <PropertyColumn Property="tool => tool.ToolStatus" Title="Status">
-        </PropertyColumn>
-        <PropertyColumn Property="tool => tool.ToolRequesterName" Title="Requester"/>
-        <PropertyColumn Property="tool => tool.ToolBorrowerName" Title="Borrower"/>
-        <PropertyColumn Property="tool => tool.BorrowingPeriodInDays" Title="Loan Period"/>
-        <TemplateColumn Title="Details">
-            <CellTemplate>
-                <a class="nav-link" href="tool-detail/@context.Item.ToolId">Click Here</a>
-            </CellTemplate>
-        </TemplateColumn>
-        <TemplateColumn Title="Actions">
-            <CellTemplate>
-            @switch (context.Item.ToolStatus)
-            {
-                case ToolStatus.Available:
-                    <button @onclick="async () => await HandleDeleteClick(context.Item.ToolId)">Delete</button>
-                    break;
-                case ToolStatus.Borrowed:
-                    break;
-                case ToolStatus.Requested:
-                    <button @onclick="async () => await HandleAcceptClick(context.Item.ToolId)">Accept</button>
-                    break;
-                case ToolStatus.ReturnPending:
-                    <button @onclick="async () => await HandleAcceptReturnClick(context.Item.ToolId)">Mark Returned</button>
-                    break;
-            }
-            </CellTemplate>
-        </TemplateColumn>
+    <MudText Typo="Typo.h3" Align="Align.Center">Manage Tools: @userInfo.UserName</MudText>
+    
+    <MudDataGrid Class="mt-4" T="ToolDTO" Items="@ToolsOwned" SortMode="SortMode.Multiple" Filterable="true" QuickFilter="@QuickFilterOwnedTools">
+        <ToolBarContent>
+            <MudText Typo="Typo.h5">Tools You Own</MudText>
+            <MudSpacer />
+            <MudTextField @bind-Value="_searchStringOwnedTools" Placeholder="Search" Adornment="Adornment.Start" Immediate="true"
+                          AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+        </ToolBarContent>
+        <Columns>
+            <PropertyColumn Property="tool => tool.ToolPhotoUrl" Title="Photo" Sortable="false" Filterable="false">
+                <CellTemplate>
+                    <MudImage src="@context.Item.ToolPhotoUrl" alt="picture of the tool" Width="100" Elevation="10"/>
+                </CellTemplate>
+            </PropertyColumn>
+            <PropertyColumn Property="tool => tool.Name" Title="Name">
+                <CellTemplate>
+                    <MudLink Href="@($"tool-detail/{context.Item.ToolId}")">@context.Item.Name</MudLink>
+                </CellTemplate>
+            </PropertyColumn>
+            <PropertyColumn Property="tool => tool.ToolStatus" Title="Availability"/>
+            <PropertyColumn Property="tool => tool.ToolRequesterName" Title="Requester"/>
+            <PropertyColumn Property="tool => tool.ToolBorrowerName" Title="Borrower"/>
+            <PropertyColumn Property="tool => tool.BorrowingPeriodInDays" Title="Loan Period (Days)"/>
+            <PropertyColumn Property="tool => tool.ToolId" Title="" Sortable="false" Filterable="false">
+                <CellTemplate>
+                    @switch(context.Item.ToolStatus)
+                    {
+                        case ToolStatus.Available:
+                            <MudButton OnClick="async () => await HandleDeleteClick(context.Item.ToolId)"
+                                       Variant="Variant.Filled" Color="Color.Warning">Delete</MudButton>
+                            break;
+                        case ToolStatus.Borrowed:
+                            <MudText Typo="Typo.body1">Due: @context.Item.DateDue</MudText>
+                            break;
+                        case ToolStatus.Requested:
+                            <MudButton OnClick="async () => await HandleAcceptClick(context.Item.ToolId)"
+                                       Variant="Variant.Filled" Color="Color.Primary">Lend Tool</MudButton>
+                            break;
+                        case ToolStatus.ReturnPending:
+                            <MudButton OnClick="async () => await HandleAcceptReturnClick(context.Item.ToolId)"
+                                       Variant="Variant.Filled" Color="Color.Secondary">Accept Return</MudButton>
+                            break;
+                    }
+                </CellTemplate>
+            </PropertyColumn>
+        </Columns>
     </MudDataGrid>
     
-    <h4> Tools You've Borrowed </h4>
-
-    <MudDataGrid Items="@filteredBorrowedTools">
-        <TemplateColumn Title="Photo">
-            <CellTemplate>
-                <img src="@context.Item.ToolPhotoUrl" alt="picture of the tool" width="50px"/>
-            </CellTemplate>
-        </TemplateColumn>
-        <PropertyColumn Property="tool => tool.Name" Title="Name" Sortable="true">
-        </PropertyColumn>
-        <PropertyColumn Property="tool => tool.ToolOwnerName" Title="Owner"/>
-        <PropertyColumn Property="tool => tool.BorrowingPeriodInDays" Title="Loan Period"/>
-        <PropertyColumn Property="tool => tool.ToolStatus" Title="Status"></PropertyColumn>
-        <TemplateColumn Title="Details">
-            <CellTemplate>
-                <a class="nav-link" href="tool-detail/@context.Item.ToolId">Click Here</a>
-            </CellTemplate>
-        </TemplateColumn>
-        <TemplateColumn Title="Actions">
-            <CellTemplate>
-                <button @onclick="async () => await HandleRequestReturnClick(context.Item.ToolId)">Return</button>
-            </CellTemplate>
-        </TemplateColumn>
+    <MudDataGrid Class="mt-4" T="ToolDTO" Items="@ToolsBorrowed" SortMode="SortMode.Multiple" Filterable="true" QuickFilter="@QuickFilterBorrowedTools">
+        <ToolBarContent>
+            <MudText Typo="Typo.h5">Tools You've Borrowed</MudText>
+            <MudSpacer />
+            <MudTextField @bind-Value="_searchStringBorrowedTools" Placeholder="Search" Adornment="Adornment.Start" Immediate="true"
+                          AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+        </ToolBarContent>
+        <Columns>
+            <PropertyColumn Property="tool => tool.ToolPhotoUrl" Title="Photo" Sortable="false" Filterable="false">
+                <CellTemplate>
+                    <MudImage src="@context.Item.ToolPhotoUrl" alt="picture of the tool" Width="100" Elevation="10"/>
+                </CellTemplate>
+            </PropertyColumn>
+            <PropertyColumn Property="tool => tool.Name" Title="Name">
+                <CellTemplate>
+                    <MudLink Href="@($"tool-detail/{context.Item.ToolId}")">@context.Item.Name</MudLink>
+                </CellTemplate>
+            </PropertyColumn>
+            <PropertyColumn Property="tool => tool.ToolOwnerName" Title="Borrower"/>
+            <PropertyColumn Property="tool => tool.BorrowingPeriodInDays" Title="Loan Period (Days)"/>
+            <PropertyColumn Property="tool => tool.DateDue" Title="Date Due"/>
+            <PropertyColumn Property="tool => tool.ToolStatus" Title="Tool Status"/>
+            <PropertyColumn Property="tool => tool.ToolId" Title="" Sortable="false" Filterable="false">
+                <CellTemplate>
+                    @if(context.Item.ToolStatus == ToolStatus.Borrowed)
+                    {
+                            <MudButton OnClick="async () => await HandleRequestReturnClick(context.Item.ToolId)"
+                                       Variant="Variant.Filled" Color="Color.Tertiary">Request Return</MudButton>
+                    }
+                </CellTemplate>
+            </PropertyColumn>
+        </Columns>
     </MudDataGrid>
 
 }

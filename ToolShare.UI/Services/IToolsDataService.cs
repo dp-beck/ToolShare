@@ -18,9 +18,9 @@ namespace ToolShare.UI.Services
         public Task<ToolDTO> FindToolById(int toolId);
         public Task<String> UpdateTool(int toolId, UpdateToolDTO updateToolDto);
         public Task<FormResult> RequestTool(int toolId);
-        public Task<String> LendTool(int toolId);
-        public Task<String> RequestToolReturn(int toolId);
-        public Task<String> AcceptToolReturned(int toolId);
-        public Task<String> DeleteTool(int toolId);
+        public Task<FormResult> LendTool(int toolId);
+        public Task<FormResult> RequestToolReturn(int toolId);
+        public Task<FormResult> AcceptToolReturned(int toolId);
+        public Task<FormResult> DeleteTool(int toolId);
     }
 }

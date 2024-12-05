@@ -261,7 +261,9 @@ namespace ToolShare.Api.Controllers
         {
             try 
             {
-                var toolBorrowed = await _toolsRepository.FindById(toolId);
+                var toolBorrowed = await _toolsRepository.FindByIdWithIncludes(toolId, 
+                    t => t.ToolId == toolId,
+                    t => t.ToolRequester, t=> t.ToolBorrower);
                 if (toolBorrowed == null) return NotFound("Could not find tool with this id.");
                 
                 var currentUser = await _userManager.GetUserAsync(HttpContext.User);
@@ -275,14 +277,20 @@ namespace ToolShare.Api.Controllers
                 toolBorrowed.ToolBorrower = toolBorrowed.ToolRequester;
                 toolBorrowed.ToolRequester = null;
                 toolBorrowed.ToolStatus = ToolStatus.Borrowed;
+                toolBorrowed.DateBorrowed = DateOnly.FromDateTime(DateTime.Now);
 
                 await _toolsRepository.SaveChanges();
 
                 return Ok(new {Message = "Tool successfully lent."});
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
+                if (e.InnerException != null)
+                {
+                    return StatusCode(StatusCodes.Status500InternalServerError,
+                        $"Database Failure: {e.InnerException.Message}");   
+                } 
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Database Failure {e.Message}");
             }
         }
 
@@ -293,7 +301,9 @@ namespace ToolShare.Api.Controllers
         {
             try 
             {
-                var toolBorrowed = await _toolsRepository.FindById(toolId);
+                var toolBorrowed = await _toolsRepository.FindByIdWithIncludes(toolId, 
+                    t => t.ToolId == toolId,
+                    t=> t.ToolBorrower);
                 if (toolBorrowed == null) return NotFound("Could not find tool with this id.");
 
                 var currentUser = await _userManager.GetUserAsync(HttpContext.User);
@@ -313,9 +323,14 @@ namespace ToolShare.Api.Controllers
 
                 return Ok(new {Message = "Tool return accepted successfully."});
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
+                if (e.InnerException != null)
+                {
+                    return StatusCode(StatusCodes.Status500InternalServerError,
+                        $"Database Failure: {e.InnerException.Message}");   
+                } 
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Database Failure {e.Message}");
             }
         }
         
@@ -341,12 +356,16 @@ namespace ToolShare.Api.Controllers
 
                 return Ok(new {Message = "Tool return request successful."});
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
+                if (e.InnerException != null)
+                {
+                    return StatusCode(StatusCodes.Status500InternalServerError,
+                        $"Database Failure: {e.InnerException.Message}");   
+                } 
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Database Failure {e.Message}");
             }
         }
-
         
         [HttpDelete]
         [Authorize(Roles = "User,PodManager")]
@@ -355,7 +374,9 @@ namespace ToolShare.Api.Controllers
         {
             try
             {
-                var tool = await _toolsRepository.FindById(toolId);
+                var tool = await _toolsRepository.FindByIdWithIncludes(toolId, 
+                    t => t.ToolId == toolId,
+                    t=> t.ToolBorrower);                
                 if (tool is null) return NotFound("Could not find tool with this id.");
 
                 var currentUser = await _userManager.GetUserAsync(HttpContext.User);
@@ -371,9 +392,14 @@ namespace ToolShare.Api.Controllers
 
                 return Ok(new { Message = "Tool successfully deleted" });
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
+                if (e.InnerException != null)
+                {
+                    return StatusCode(StatusCodes.Status500InternalServerError,
+                        $"Database Failure: {e.InnerException.Message}");   
+                } 
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Database Failure {e.Message}");
             }
         }
 

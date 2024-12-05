@@ -7,6 +7,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using AutoMapper;
+using MudBlazor;
 using ToolShare.Data.Models;
 using ToolShare.UI.Dtos;
 using ToolShare.UI.DTOs;
@@ -145,63 +146,114 @@ namespace ToolShare.UI.Services
             }
         }
 
-        public async Task<String> LendTool(int toolId)
+        public async Task<FormResult> LendTool(int toolId)
         {
+            string[] defaultDetail = [ "An unknown error prevented tool from being lent." ];
+
             try
             {
                 var request = new HttpRequestMessage(HttpMethod.Put, $"api/tools/{toolId}/lend-tool");
-                using var response = await _httpClient.SendAsync(request);
-                response.EnsureSuccessStatusCode();
-                return "Success";
+                using var result = await _httpClient.SendAsync(request);
+                if (result.IsSuccessStatusCode)
+                {
+                    return new FormResult { Succeeded = true };
+                }
+                
+                var details = await result.Content.ReadAsStringAsync();
+                
+                return new FormResult
+                {
+                    Succeeded = false,
+                    ErrorList = [details]
+                };
+
             }
             catch (Exception e)
             {
-                return e.Message;
+                return new FormResult
+                {
+                    Succeeded = false,
+                    ErrorList = defaultDetail
+                };
             }
         }
 
-        public async Task<string> RequestToolReturn(int toolId)
+        public async Task<FormResult> RequestToolReturn(int toolId)
         {
+            string[] defaultDetail = [ "An unknown error prevented the return from being requested." ];
+
             try
             {
                 var request = new HttpRequestMessage(HttpMethod.Put, $"api/tools/{toolId}/request-tool-return");
-                using var response = await _httpClient.SendAsync(request);
-                response.EnsureSuccessStatusCode();
-                return "Success";
+                using var result = await _httpClient.SendAsync(request);
+                if (result.IsSuccessStatusCode) return new FormResult { Succeeded = true };
+                
+                var details = await result.Content.ReadAsStringAsync();
+                return new FormResult
+                {
+                    Succeeded = false,
+                    ErrorList = [details]
+                };
             }
             catch (Exception e)
             {
-                return e.Message;
+                return new FormResult
+                {
+                    Succeeded = false,
+                    ErrorList = defaultDetail
+                };            
             }        
         }
 
-        public async Task<string> AcceptToolReturned(int toolId)
+        public async Task<FormResult> AcceptToolReturned(int toolId)
         {
+            string[] defaultDetail = [ "An unknown error prevented tool return from being accepted." ];
+
             try
             {
                 var request = new HttpRequestMessage(HttpMethod.Put, $"api/tools/{toolId}/accept-tool-return");
-                using var response = await _httpClient.SendAsync(request);
-                response.EnsureSuccessStatusCode();
-                return "Success";
+                using var result = await _httpClient.SendAsync(request);
+                if (result.IsSuccessStatusCode) return new FormResult { Succeeded = true };
+                
+                var details = await result.Content.ReadAsStringAsync();
+                return new FormResult
+                {
+                    Succeeded = false,
+                    ErrorList = [details]
+                };
             }
             catch (Exception e)
             {
-                return e.Message;
+                return new FormResult
+                {
+                    Succeeded = false,
+                    ErrorList = defaultDetail
+                };
             }
-            
         }
 
-        public async Task<String> DeleteTool(int toolId)
+        public async Task<FormResult> DeleteTool(int toolId)
         {
+            string[] defaultDetail = [ "An unknown error prevented the tool from being deleted." ];
+
             try
             {
                 var response = await _httpClient.DeleteAsync($"api/tools/{toolId}");
-                response.EnsureSuccessStatusCode();
-                return "Success";
+                if (response.IsSuccessStatusCode) return new FormResult { Succeeded = true };
+                var details = await response.Content.ReadAsStringAsync();
+                return new FormResult
+                {
+                    Succeeded = false,
+                    ErrorList = [details]
+                };            
             }
             catch (Exception e)
             {
-                return e.Message;
+                return new FormResult
+                {
+                    Succeeded = false,
+                    ErrorList = defaultDetail
+                };            
             }
         }
     }

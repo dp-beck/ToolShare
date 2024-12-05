@@ -38,7 +38,7 @@ public partial class HomeUser : ComponentBase
         if (result.Succeeded)
         {
             AllTools = await ToolsDataService.GetToolsByPod(UserInfo.PodJoinedId);
-            FilteredTools = AllTools;
+            FilteredTools = AllTools.ToList();
             Snackbar.Add("Tool successfully requested!", Severity.Success);    
         }
         else

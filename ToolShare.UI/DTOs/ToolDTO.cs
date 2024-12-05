@@ -18,5 +18,7 @@ namespace ToolShare.UI.DTOs
         public string? ToolOwnerName { get; set; }
         public string? ToolBorrowerName { get; set; }
         public string? ToolRequesterName { get; set; }
+        public DateOnly? DateBorrowed { get; set; }
+        public DateOnly? DateDue => DateBorrowed?.AddDays(BorrowingPeriodInDays);
     }
 }
