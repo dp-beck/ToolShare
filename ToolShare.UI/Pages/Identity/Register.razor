@@ -81,6 +81,7 @@
     private bool validForm;
     MudTextField<string>? pwField1;
     private string PhotoUploadMessage { get; set; } = string.Empty;
+    private string SecureUrl { get; set; } = string.Empty;
     private RegistrationInfo registrationInfo = new ()
     {
         UserName = string.Empty,
@@ -122,7 +123,7 @@
     {
         success =  false;
         errors = [];
-        
+        registrationInfo.ProfilePhotoUrl = TransformImageUrl(SecureUrl, "w_1000,c_fill,ar_1:1,g_auto,r_max,bo_5px_solid_red,b_rgb:262c35");
         var result = await Acct.RegisterAsync(registrationInfo);
 
         if (result.Succeeded)
@@ -144,10 +145,20 @@
     
     private async Task OpenWidget()
     {
-        registrationInfo.ProfilePhotoUrl = await Js.InvokeAsync<string>("openWidget");
+        SecureUrl = await Js.InvokeAsync<string>("openWidget");
         if (!string.IsNullOrEmpty(registrationInfo.ProfilePhotoUrl))
         {
             PhotoUploadMessage = "Photo successfully uploaded!";
         }
+    }
+    
+    private string TransformImageUrl(string url, string transformation)
+    {
+        string[] parts = url.Split(["/upload/"], StringSplitOptions.None);
+        if (parts.Length != 2)
+        {
+            throw new ArgumentException("Invalid Cloudinary URL");
+        }
+        return parts[0] + "/upload/" + transformation + "/" + parts[1];
     }
 }
