@@ -210,9 +210,14 @@ namespace ToolShare.Api.Controllers
 
                 return Ok(new {Message = "Tool Updated Successfully"});
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, "Database Failure");
+                if (e.InnerException != null)
+                {
+                    return StatusCode(StatusCodes.Status500InternalServerError,
+                        $"Database Failure: {e.InnerException.Message}");   
+                } 
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Database Failure {e.Message}");
             }
         }
         

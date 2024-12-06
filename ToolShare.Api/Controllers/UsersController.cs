@@ -287,6 +287,9 @@ namespace ToolShare.Api.Controllers
             {
                 var currentUser = await _userManager.GetUserAsync(HttpContext.User);
                 if (currentUser is null) return BadRequest(new{ Message = "There is no current user to delete."});
+                
+                if (currentUser.PodManaged is not null) return BadRequest(new { Message = "Sorry you cannot delete your account if you are the manager of a pod. Please go to the Pod Management Page first to transfer management to another pod member" });
+                if (currentUser.ToolsBorrowed.Any()) return BadRequest(new { Message = "Sorry you cannot delete your account if you still have borrowed tools. Please have these returned to their owners, first."});
 
                 var result = await _userManager.DeleteAsync(currentUser);
 

@@ -16,13 +16,14 @@ public partial class ToolDetail : ComponentBase
     public ToolDTO Tool { get; set; }
     public UpdateToolDTO UpdateToolDTO { get; set; }
     private EditContext? editContext;
-    private String Message {get;set;} = String.Empty;
     [Parameter]
     public int ToolId { get; set; }
     
     [Inject]
     public required IToolsDataService ToolsDataService { get; set; }
 
+    [Inject]
+    public required ISnackbar Snackbar { get; set; }
     protected override async Task OnInitializedAsync()
     {
         Tool = await ToolsDataService.FindToolById(ToolId);
@@ -44,9 +45,16 @@ public partial class ToolDetail : ComponentBase
         _isLoading = false;
     }
 
-    private async Task<String> HandleEditSubmit()
+    private async Task HandleEditSubmit()
     {
-        Message = await ToolsDataService.UpdateTool(ToolId, UpdateToolDTO);
-        return Message;
+        var result = await ToolsDataService.UpdateTool(ToolId, UpdateToolDTO);
+        if (result.Succeeded)
+        {
+            Snackbar.Add("Tool successfully updated!", Severity.Success);    
+        }
+        else
+        {
+            Snackbar.Add($"Error: {result.ErrorList}", Severity.Error);
+        }
     }
 }

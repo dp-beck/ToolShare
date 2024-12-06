@@ -101,17 +101,31 @@ namespace ToolShare.UI.Services
             return toolDetails;
         }
 
-        public async Task<String> UpdateTool(int toolId, UpdateToolDTO updateToolDto)
+        public async Task<FormResult> UpdateTool(int toolId, UpdateToolDTO updateToolDto)
         {
+            string[] defaultDetail = [ "An unknown error prevented tool from being updated." ];
+
             try
             {
-                var response = await _httpClient.PutAsJsonAsync($"api/tools/{toolId}", updateToolDto);
-                response.EnsureSuccessStatusCode();
-                return "Success";
+                var result = await _httpClient.PutAsJsonAsync($"api/tools/{toolId}", updateToolDto);
+                if (result.IsSuccessStatusCode)
+                {
+                    return new FormResult { Succeeded = true };
+                }
+                var details = await result.Content.ReadAsStringAsync();
+                return new FormResult
+                {
+                    Succeeded = false,
+                    ErrorList = [details]
+                };
             }
             catch (Exception e)
             { 
-                return e.Message;
+                return new FormResult
+                {
+                    Succeeded = false,
+                    ErrorList = defaultDetail
+                };            
             }
         }
 

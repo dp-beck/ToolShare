@@ -16,12 +16,12 @@
         <Columns>
             <PropertyColumn Property="tool => tool.ToolPhotoUrl" Title="Photo" Sortable="false" Filterable="false">
                 <CellTemplate>
-                    <MudImage src="@context.Item.ToolPhotoUrl" alt="picture of the tool" Width="100" Elevation="10"/>
+                    <MudImage Src="@context.Item.ToolPhotoUrl" alt="picture of the tool" Width="100" Elevation="10"/>
                 </CellTemplate>
             </PropertyColumn>
             <PropertyColumn Property="tool => tool.Name" Title="Name">
                 <CellTemplate>
-                    <a class="nav-link" href="tool-detail/@context.Item.ToolId">@context.Item.Name</a>
+                    <MudLink Href="@($"tool-detail/{context.Item.ToolId}")">@context.Item.Name</MudLink>
                 </CellTemplate>
             </PropertyColumn>
             <PropertyColumn Property="tool => tool.ToolOwnerName" Title="Tool Owner"/>
@@ -33,6 +33,10 @@
                     {
                         <MudButton OnClick="async () => await HandleRequestClick(context.Item.ToolId)" 
                                    Variant="Variant.Filled" Color="Color.Secondary">Request</MudButton>
+                    }
+                    @if (context.Item.ToolStatus == ToolStatus.Borrowed)
+                    {
+                        <MudText Typo="Typo.body1">Date Due: @context.Item.DateDue</MudText>
                     }
                 </CellTemplate>
             </PropertyColumn>

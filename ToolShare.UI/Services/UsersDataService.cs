@@ -20,7 +20,8 @@ namespace ToolShare.UI.Services
     {
         private readonly HttpClient _httpClient;
         private readonly IMapper _mapper;
-         private readonly JsonSerializerOptions jsonSerializerOptions =
+
+        private readonly JsonSerializerOptions jsonSerializerOptions =
             new()
             {
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
@@ -57,53 +58,99 @@ namespace ToolShare.UI.Services
             var response = await _httpClient.GetAsync("api/users/users-without-pods");
             response.EnsureSuccessStatusCode();
             var JsonResponse = await response.Content.ReadAsStringAsync();
-            var NoPodUsers = JsonSerializer.Deserialize<IEnumerable<AppUserDTO>>(JsonResponse, jsonSerializerOptions).AsQueryable();
+            var NoPodUsers = JsonSerializer.Deserialize<IEnumerable<AppUserDTO>>(JsonResponse, jsonSerializerOptions)
+                .AsQueryable();
 
             return NoPodUsers;
         }
 
-        public async Task<String> UpdateCurrentUser(UserInfoUpdateDto userInfoUpdateDto)
+        public async Task<FormResult> UpdateCurrentUser(UserInfoUpdateDto userInfoUpdateDto)
         {
+            string[] defaultDetail = ["An unknown error prevented the user from being updated."];
+
             try
             {
-                var response = await _httpClient.PutAsJsonAsync("api/users/update", userInfoUpdateDto);
-                response.EnsureSuccessStatusCode();
-                return "Success";
+                var result = await _httpClient.PutAsJsonAsync("api/users/update", userInfoUpdateDto);
+                if (result.IsSuccessStatusCode)
+                {
+                    return new FormResult { Succeeded = true };
+                }
+
+                var details = await result.Content.ReadAsStringAsync();
+                return new FormResult
+                {
+                    Succeeded = false,
+                    ErrorList = [details]
+                };
             }
             catch (Exception e)
-            { 
-                return e.Message;
+            {
+                return new FormResult
+                {
+                    Succeeded = false,
+                    ErrorList = defaultDetail
+                };
             }
         }
 
-        public async Task<string> UpdatePassword(ChangePasswordDto changePasswordDto)
+        public async Task<FormResult> UpdatePassword(ChangePasswordDto changePasswordDto)
         {
+            string[] defaultDetail = ["An unknown error prevented the user from changing the password."];
+
             try
             {
-                var response = await _httpClient.PutAsJsonAsync("api/users/change-password", changePasswordDto); 
-                response.EnsureSuccessStatusCode();
-                return "Success";
+                var result = await _httpClient.PutAsJsonAsync("api/users/change-password", changePasswordDto);
+                if (result.IsSuccessStatusCode)
+                {
+                    return new FormResult { Succeeded = true };
+                }
+
+                var details = await result.Content.ReadAsStringAsync();
+
+                return new FormResult
+                {
+                    Succeeded = false,
+                    ErrorList = [details]
+                };
             }
             catch (Exception e)
             {
-                return e.Message;
+                return new FormResult
+                {
+                    Succeeded = false,
+                    ErrorList = defaultDetail
+                };
             }
         }
 
-        public async Task<String> DeleteCurrentUser()
+        public async Task<FormResult> DeleteCurrentUser()
         {
+            string[] defaultDetail = ["An unknown error prevented the user from changing the password."];
+
             try
             {
-                var response = await _httpClient.DeleteAsync("api/users/delete");
-                response.EnsureSuccessStatusCode();
-                return "success";
+                var result = await _httpClient.DeleteAsync("api/users/delete");
+                if (result.IsSuccessStatusCode)
+                {
+                    return new FormResult { Succeeded = true };
+                }
+
+                var details = await result.Content.ReadAsStringAsync();
+
+                return new FormResult
+                {
+                    Succeeded = false,
+                    ErrorList = [details]
+                };
             }
             catch (Exception e)
             {
-                return e.Message;
+                return new FormResult
+                {
+                    Succeeded = false,
+                    ErrorList = defaultDetail
+                };
             }
-
-
         }
     }
 }

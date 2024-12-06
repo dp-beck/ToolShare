@@ -64,7 +64,7 @@ public partial class ManagePod : ComponentBase
 
     private async Task HandleDelete()
     {
-        Message = await UsersDataService.DeleteCurrentUser();
+        Message = await PodsDataService.DeletePod(Pod.PodId);
 
         if (Message == "success")
         {

@@ -16,7 +16,7 @@ namespace ToolShare.UI.Services
         public Task<IQueryable<ToolDTO>> GetToolsBorrowedByUser(string username);
         public Task<FormResult> CreateTool(ToolDTO tool);
         public Task<ToolDTO> FindToolById(int toolId);
-        public Task<String> UpdateTool(int toolId, UpdateToolDTO updateToolDto);
+        public Task<FormResult> UpdateTool(int toolId, UpdateToolDTO updateToolDto);
         public Task<FormResult> RequestTool(int toolId);
         public Task<FormResult> LendTool(int toolId);
         public Task<FormResult> RequestToolReturn(int toolId);

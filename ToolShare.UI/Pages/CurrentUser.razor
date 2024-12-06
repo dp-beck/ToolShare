@@ -1,96 +1,76 @@
 @page "/current-user/"
+@using System.ComponentModel.DataAnnotations
 @using ToolShare.UI.DTOs
 
 @if (!_isLoading)
 {
-    <h1 class="page-title">@userInfo.UserName</h1>
-
-    <img src="@userInfo.ProfilePhotoUrl" 
-         alt="Profile photo of user"
-         width="150px"
-         style="border-radius: 100%"/>
-
-    <h2>User Details</h2>
-    <EditForm Model="@UserEditDTO" OnSubmit="HandleEditSubmit">
-        <DataAnnotationsValidator />
-        <ValidationSummary />
-        <div class="form-group row m-3">
-            <label for="UserName" class="col-sm-2 col-form-label"> UserName: </label>
-            <div class="col-sm-10">
-                <InputText class="form-control" id="UserName" @bind-Value="UserEditDTO!.UserName" />
-            </div>
-        </div>
-
-        <div class="form-group row m-3">
-            <label for="FirstName" class="col-sm-2 col-form-label"> First Name: </label>
-            <div class="col-sm-10">
-                <InputText class="form-control" id="FirstName" @bind-Value="UserEditDTO!.FirstName" />
-            </div>
-        </div>
-
-        <div class="form-group row m-3">
-            <label for="LastName" class="col-sm-2 col-form-label"> Last Name: </label>
-            <div class="col-sm-10">
-                <InputText class="form-control" id="LastName" @bind-Value="UserEditDTO!.LastName" />
-            </div>
-        </div>
-
-        <div class="form-group row m-3">
-            <label for="Email" class="col-sm-2 col-form-label"> Email: </label>
-            <div class="col-sm-10">
-                <InputText class="form-control" id="Email" @bind-Value="UserEditDTO!.Email" />
-            </div>
-        </div>
-
-        <div class="form-group row m-3">
-            <label for="AboutMe" class="col-sm-2 col-form-label"> About Me: </label>
-            <div class="col-sm-10">
-                <InputTextArea class="form-control" id="AboutMe" @bind-Value="UserEditDTO!.AboutMe" />
-            </div>
-        </div>
-        <div class="form-group row m-3">
-            <div class="col-sm-10">
-                <button type="submit" class="btn btn-primary">Submit Changes</button>
-            </div>
-        </div>
-        
-    </EditForm>
+    <MudText Typo="Typo.h3" Align="Align.Center">@UserEditDTO.UserName</MudText>
     
-    <h2>Change Password</h2>
-    <EditForm Model="ChangePasswordDto" OnSubmit="HandleChangePassword">
-        <DataAnnotationsValidator />
-        <ValidationSummary />
-        <div class="form-group row m-3">
-            <label for="CurrentPassword" class="col-sm-2 col-form-label"> Current Password: </label>
-            <div class="col-sm-10">
-                <InputText type="password" class="form-control" id="CurrentPassword" @bind-Value="ChangePasswordDto!.CurrentPassword" />
-            </div>
-        </div>
-    
-        <div class="form-group row m-3">
-            <label for="NewPassword" class="col-sm-2 col-form-label"> New Password: </label>
-            <div class="col-sm-10">
-                <InputText type="password" class="form-control" id="NewPassword" @bind-Value="ChangePasswordDto!.NewPassword" />
-            </div>
-        </div>
-    
-        <div class="form-group row m-3">
-            <div class="col-sm-10">
-                <button type="submit" class="btn btn-warning">Change Password</button>
-            </div>
-        </div>
-    
-    </EditForm>
-    
-    @if (Message != String.Empty)
+    <MudText Typo="Typo.body1" Align="Align.Center"> You are a member of the @userInfo.PodJoinedName.</MudText>
+    @if (userInfo.PodManagedName is null)
     {
-        <p>@Message</p>
+        
+        <MudText Typo="Typo.body1" Align="Align.Center">You are not the manager of the pod.</MudText>
     }
-
-    <h2>Pod Details</h2>
-    <p>Pod Joined: @userInfo.PodJoinedName </p>
-    <p>Pod Managed: @userInfo.PodManagedName</p>
+    else
+    {
+        <MudText Typo="Typo.body1" Align="Align.Center">You are the manager of the pod.</MudText>
+    }
     
-    <button type="button" class="btn btn-danger" @onclick="HandleDelete">Delete User</button>
+    <MudImage Src="@userInfo.ProfilePhotoUrl" 
+         Alt="Profile photo of user"
+         Width="150"
+         Class="rounded-circle"
+         />
 
+    <MudForm @ref="UserDetailsForm" @bind-IsValid="@validUserDetailsForm" @bind-Errors="@UserDetailsFormErrors" Spacing="6" Class="mt-4">
+        <MudTextField @bind-Value="@UserEditDTO.UserName" T="string"
+                      Label="Username" Required="true" RequiredError="Username is required!"/>
+        <MudTextField @bind-Value="UserEditDTO.FirstName" T="string"
+                      Label="First Name"/>
+        <MudTextField @bind-Value="UserEditDTO.LastName"
+                      Label="Last Name"/>
+        <MudTextField @bind-Value="UserEditDTO.Email" T="string" Label="Email" Required="true" RequiredError="Email is required!"
+                      Validation="@(new EmailAddressAttribute() { ErrorMessage = "The email address is invalid" })"/>
+        <MudTextField @bind-Value="UserEditDTO.AboutMe" T="string" Label="About Me" Variant="Variant.Text" Lines="5"/>
+
+        <MudButton OnClick="async () => await HandleEditSubmit()"
+                   Variant="Variant.Filled"
+                   Color="Color.Primary"
+                   Disabled="@(!validUserDetailsForm)"
+                   Class="ml-auto">Submit Changes</MudButton>
+        @foreach (var error in UserDetailsFormErrors)
+        {
+            <MudText Color="@Color.Error">@error</MudText>
+        }
+    </MudForm>
+    
+    <MudText Typo="Typo.h4" Class="mt-4">Change Password</MudText>
+    
+    <MudForm @ref="ChangePasswordForm" @bind-IsValid="@validChangePasswordForm" @bind-Errors="@ChangePasswordFormErrors" Spacing="6" Class="mt-4">
+        <MudTextField @bind-Value="@ChangePasswordDto.CurrentPassword" T="string"
+                      Label="Current Password" Required="true"
+                      InputType="InputType.Password" RequiredError="Current Password is required!"/>
+        <MudTextField @bind-Value="ChangePasswordDto.NewPassword" T="string" Label="Password" HelperText="Choose a strong password"
+                      InputType="InputType.Password"
+                      Validation="@(new Func<string, IEnumerable<string>>(PasswordStrength))" Required="true"
+                      RequiredError="Password is required!"/>
+        <MudButton OnClick="async () => await HandleChangePassword()"
+                   Variant="Variant.Filled"
+                   Color="Color.Primary"
+                   Disabled="@(!validChangePasswordForm)"
+                   Class="ml-auto">Submit Changes</MudButton>
+        @foreach (var error in ChangePasswordFormErrors)
+        {
+            <MudText Color="@Color.Error">@error</MudText>
+        }
+    </MudForm>
+
+    <MudText Typo="Typo.h4" Class="mt-4">Delete Account</MudText>
+
+    <MudButton Variant="Variant.Filled" 
+               StartIcon="@Icons.Material.Filled.Delete" 
+               Color="Color.Error"
+               @onclick="OnDeleteButtonClick"
+               Class="mt-4 mb-4 ml-4">Delete</MudButton>
 }
