@@ -7,49 +7,74 @@
 <AuthorizeView Context="authContext">
     @if (!_isLoading)
     {
-        @if (Tool.ToolOwnerName == @authContext.User.Identity.Name)
+        @if (Tool.ToolOwnerName == @authContext.User.Identity?.Name)
         {
-            <h3>@Tool.Name</h3>
-            <p>You own this tool. If you would like to change the details. Please
-                do so below.</p>
-
-            <img src="@Tool.ToolPhotoUrl" alt="Photo of Tool" width="100px"/>
+            <MudText Typo="Typo.h3" Align="Align.Center" Class="mt-4">Tool Detail: @Tool.Name</MudText>
+            <MudText Typo="Typo.body1" Align="Align.Center" Class="mb-4">
+                You own this tool. If you would like to change the details. Please do so below.
+            </MudText>
             
-            <EditForm Model="@UpdateToolDTO" OnSubmit="HandleEditSubmit">
-                <DataAnnotationsValidator />
-                <ValidationSummary />
-                <div class="form-group row m-3">
-                    <label for="ToolName" class="col-sm-2 col-form-label"> Name: </label>
-                    <div class="col-sm-10">
-                        <InputText class="form-control" id="ToolName" @bind-Value="UpdateToolDTO!.Name" />
-                    </div>
-                </div>
+            <MudContainer MaxWidth="MaxWidth.Small">
+                <MudPaper Class="pa-4" Width="100%">
+                    <MudImage Src="@Tool.ToolPhotoUrl" Alt="Photo of Tool" Width="150" Elevation="25" Class=" mb-4 rounded-lg"/>
 
-                <div class="form-group row m-3">
-                    <label for="Description" class="col-sm-2 col-form-label"> Description: </label>
-                    <div class="col-sm-10">
-                        <InputText class="form-control" id="Description" @bind-Value="UpdateToolDTO!.Description" />
-                    </div>
-                </div>
+                    <MudForm @ref="form" @bind-IsValid="@validForm" @bind-Errors="@errors" Spacing="6">
+                        <MudTextField @bind-Value="UpdateToolDTO.Name" T="string"
+                                      Label="Name" Required="true" RequiredError="Tool name is required!"/>
+                        <MudTextField @bind-Value="UpdateToolDTO.Description" T="string"
+                                      Placeholder="Tell us about the tool, e.g. what it does, any special instructions..."
+                                      Label="Description" Variant="Variant.Text" Lines="5"/>
+                        <MudNumericField @bind-Value="UpdateToolDTO.BorrowingPeriodInDays"
+                                         Label="Borrowing Period (Days)" Variant="Variant.Text"
+                                         Min="0" Max="365"/>
+                        <MudButton OnClick="async () => await HandleEditSubmit()"
+                                   Variant="Variant.Filled"
+                                   Color="Color.Primary"
+                                   Disabled="@(!validForm)"
+                                   Class="ml-auto">Submit Changes</MudButton>
+                    </MudForm>
+                    @foreach (var error in errors)
+                    {
+                        <MudText Color="@Color.Error">@error</MudText>
+                    }
+                </MudPaper>
+            </MudContainer>
 
-                <div class="form-group row m-3">
-                    <label for="BorrowingPeriodInDays" class="col-sm-2 col-form-label"> Borrowing Period (Day): </label>
-                    <div class="col-sm-10">
-                        <InputNumber class="form-control" id="BorrowingPeriodInDays" @bind-Value="UpdateToolDTO!.BorrowingPeriodInDays" />
-                    </div>
-                </div>
-                
-                <div class="form-group row m-3">
-                    <div class="col-sm-10">
-                        <button type="submit" class="btn btn-primary">Submit Changes</button>
-                    </div>
-                </div>
-
-            </EditForm>
-            @if (Message != String.Empty)
-            {
-                <p>@Message</p>
-            }
+            @* <EditForm Model="@UpdateToolDTO" OnSubmit="HandleEditSubmit"> *@
+            @*     <DataAnnotationsValidator /> *@
+            @*     <ValidationSummary /> *@
+            @*     <div class="form-group row m-3"> *@
+            @*         <label for="ToolName" class="col-sm-2 col-form-label"> Name: </label> *@
+            @*         <div class="col-sm-10"> *@
+            @*             <InputText class="form-control" id="ToolName" @bind-Value="UpdateToolDTO!.Name" /> *@
+            @*         </div> *@
+            @*     </div> *@
+            @* *@
+            @*     <div class="form-group row m-3"> *@
+            @*         <label for="Description" class="col-sm-2 col-form-label"> Description: </label> *@
+            @*         <div class="col-sm-10"> *@
+            @*             <InputText class="form-control" id="Description" @bind-Value="UpdateToolDTO!.Description" /> *@
+            @*         </div> *@
+            @*     </div> *@
+            @* *@
+            @*     <div class="form-group row m-3"> *@
+            @*         <label for="BorrowingPeriodInDays" class="col-sm-2 col-form-label"> Borrowing Period (Day): </label> *@
+            @*         <div class="col-sm-10"> *@
+            @*             <InputNumber class="form-control" id="BorrowingPeriodInDays" @bind-Value="UpdateToolDTO!.BorrowingPeriodInDays" /> *@
+            @*         </div> *@
+            @*     </div> *@
+            @*      *@
+            @*     <div class="form-group row m-3"> *@
+            @*         <div class="col-sm-10"> *@
+            @*             <button type="submit" class="btn btn-primary">Submit Changes</button> *@
+            @*         </div> *@
+            @*     </div> *@
+            @* *@
+            @* </EditForm> *@
+            @* @if (Message != String.Empty) *@
+            @* { *@
+            @*     <p>@Message</p> *@
+            @* } *@
         }
         else
         {
@@ -58,7 +83,7 @@
             <MudContainer MaxWidth="MaxWidth.Small" Class="mt-4">
                 <MudPaper Width="100%" Class="pa-4">
                     <MudImage Src="@Tool.ToolPhotoUrl"
-                              Alt="Profile photo of User"
+                              Alt="Photo of Tool"
                               Width="150"
                               Elevation="25"
                               Class="rounded-lg border-1"/>

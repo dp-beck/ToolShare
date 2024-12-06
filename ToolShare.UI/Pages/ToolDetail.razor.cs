@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
+using MudBlazor;
 using ToolShare.UI.Dtos;
 using ToolShare.UI.DTOs;
 using ToolShare.UI.Services;
@@ -8,6 +9,9 @@ namespace ToolShare.UI.Pages;
 
 public partial class ToolDetail : ComponentBase
 {
+    private MudForm? form;
+    private bool validForm = true;
+    private string[] errors = [];
     private bool _isLoading {get;set;} = true;
     public ToolDTO Tool { get; set; }
     public UpdateToolDTO UpdateToolDTO { get; set; }
