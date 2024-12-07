@@ -10,7 +10,6 @@ using MudBlazor;
 using ToolShare.Data;
 using ToolShare.Data.Models;
 using ToolShare.UI.Dtos;
-using ToolShare.UI.Identity.Models;
 using ToolShare.UI.Services;
 
 namespace ToolShare.UI.Pages

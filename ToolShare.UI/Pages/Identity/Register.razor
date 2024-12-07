@@ -3,6 +3,7 @@
 @using System.ComponentModel.DataAnnotations
 @using System.Text.RegularExpressions
 @using ToolShare.UI.Identity
+@using ToolShare.UI.Identity.Dtos
 @attribute [AllowAnonymous]
 @inject IAccountManagement Acct
 
@@ -82,7 +83,7 @@
     MudTextField<string>? pwField1;
     private string PhotoUploadMessage { get; set; } = string.Empty;
     private string SecureUrl { get; set; } = string.Empty;
-    private RegistrationInfo registrationInfo = new ()
+    private RegistrationInfoDto registrationInfo = new ()
     {
         UserName = string.Empty,
         Email = string.Empty,

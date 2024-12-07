@@ -4,16 +4,15 @@ using System.Linq;
 using System.Threading.Tasks;
 using ToolShare.Data.Models;
 using ToolShare.UI.Dtos;
-using ToolShare.UI.Identity.Models;
 
 namespace ToolShare.UI.Services
 {
     public interface IPodsDataService
     {
-        public Task<IEnumerable<PodDto>> GetAllPods();
+        public Task<IEnumerable<PodDto>?> GetAllPods();
         public Task<IEnumerable<LimitedPodInfoDto>> GetAllPodsLimitedInfoForNoPodUser();
         public Task<PodDto> FindPodDetailsByName(string podName);
-        public Task<PodDto> FindPodDetailsById(int podId);
+        public Task<PodDto?> FindPodDetailsById(int podId);
 
         public Task<FormResult> InitializeNewPod(string podName);
         public Task<FormResult> UpdatePodName(int podId, string newPodName);

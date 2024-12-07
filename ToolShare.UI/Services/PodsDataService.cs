@@ -10,7 +10,6 @@ namespace ToolShare.UI.Services
     public class PodsDataService : IPodsDataService
     {
         private readonly HttpClient _httpClient;
-        private readonly IMapper _mapper;
         private readonly JsonSerializerOptions jsonSerializerOptions =
             new()
             {
@@ -18,10 +17,9 @@ namespace ToolShare.UI.Services
                 ReferenceHandler = ReferenceHandler.Preserve
             };
 
-        public PodsDataService(HttpClient httpClient, IMapper mapper)
+        public PodsDataService(HttpClient httpClient)
         {
             _httpClient = httpClient;
-            _mapper = mapper;
         }
 
         public async Task<PodDto> FindPodDetailsByName(string podName)
@@ -34,19 +32,17 @@ namespace ToolShare.UI.Services
             return podDetails;
         }
         
-        public async Task<PodDto> FindPodDetailsById(int podId)
+        public async Task<PodDto?> FindPodDetailsById(int podId)
         {
             var response = await _httpClient.GetAsync($"api/pods/{podId}");
             response.EnsureSuccessStatusCode();
             var jsonResponse = await response.Content.ReadAsStringAsync();
-            var podDetails = JsonSerializer.Deserialize<Pod>(jsonResponse, jsonSerializerOptions);
+            var podDto = JsonSerializer.Deserialize<PodDto>(jsonResponse, jsonSerializerOptions);
             
-            PodDto podDto = _mapper.Map<PodDto>(podDetails);
-
             return podDto;
         }
 
-        public async Task<IEnumerable<PodDto>> GetAllPods()
+        public async Task<IEnumerable<PodDto>?> GetAllPods()
         {
 
             var podsResponse = await _httpClient.GetAsync("api/pods/");
@@ -54,13 +50,9 @@ namespace ToolShare.UI.Services
             podsResponse.EnsureSuccessStatusCode();
 
             var podsJson = await podsResponse.Content.ReadAsStringAsync();
-            var podsInfo = JsonSerializer.Deserialize<IEnumerable<Pod>>(podsJson, jsonSerializerOptions);
+            var podDtos = JsonSerializer.Deserialize<IEnumerable<PodDto>>(podsJson, jsonSerializerOptions);
 
-            List<PodDto> podDTOs = _mapper.Map<List<PodDto>>(podsInfo);
-
-
-            return podDTOs;
-
+            return podDtos;
         }
 
         public async Task<IEnumerable<LimitedPodInfoDto>> GetAllPodsLimitedInfoForNoPodUser()

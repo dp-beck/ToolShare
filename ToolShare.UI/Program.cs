@@ -8,8 +8,8 @@ using ToolShare.UI.Identity;
 using ToolShare.UI.Services;
 using ToolShare.Data.Models;
 using System.Reflection;
-using ToolShare.UI.Identity.Models;
 using MudBlazor.Services;
+using ToolShare.UI.Identity.Dtos;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
@@ -21,9 +21,6 @@ builder.Services.AddTransient<CookieHandler>();
 // set up authorization
 builder.Services.AddAuthorizationCore();
 
-// register automapper
-builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
-
 // register the custom authentication state provider
 builder.Services.AddScoped<AuthenticationStateProvider, CookieAuthenticationStateProvider>();
 
@@ -32,7 +29,7 @@ builder.Services.AddScoped(
     sp => (IAccountManagement)sp.GetRequiredService<AuthenticationStateProvider>());
 
 // register the user info object
-builder.Services.AddSingleton<UserInfo>();
+builder.Services.AddSingleton<UserInfoDto>();
 
 // configure client for Pod Interactions
 builder.Services.AddHttpClient<IPodsDataService, PodsDataService>(

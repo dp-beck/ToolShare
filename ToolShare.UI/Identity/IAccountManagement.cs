@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using ToolShare.UI.Identity.Models;
+using ToolShare.UI.Identity.Dtos;
 
 namespace ToolShare.UI.Identity
 {
@@ -30,7 +30,7 @@ namespace ToolShare.UI.Identity
         /// </summary>
         /// <param name="registrationInfo">Information Needed to Register</param>
         /// <returns>The result of the request serialized to <see cref="FormResult"/>.</returns>
-        public Task<FormResult> RegisterAsync(RegistrationInfo registrationInfo);
+        public Task<FormResult> RegisterAsync(RegistrationInfoDto registrationInfo);
 
         public Task<bool> CheckAuthenticatedAsync();   
 

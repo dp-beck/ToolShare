@@ -1,17 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http.Json;
-using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using System.Text.Unicode;
-using System.Threading.Tasks;
 using AutoMapper;
-using Microsoft.AspNetCore.Components;
-using ToolShare.Data.Models;
 using ToolShare.UI.Dtos;
-using ToolShare.UI.Identity.Models;
 
 
 namespace ToolShare.UI.Services
@@ -19,7 +10,6 @@ namespace ToolShare.UI.Services
     public class UsersDataService : IUsersDataService
     {
         private readonly HttpClient _httpClient;
-        private readonly IMapper _mapper;
 
         private readonly JsonSerializerOptions jsonSerializerOptions =
             new()
@@ -28,10 +18,9 @@ namespace ToolShare.UI.Services
                 ReferenceHandler = ReferenceHandler.Preserve
             };
 
-        public UsersDataService(HttpClient httpClient, IMapper mapper)
+        public UsersDataService(HttpClient httpClient)
         {
             _httpClient = httpClient;
-            _mapper = mapper;
         }
 
         public async Task<AppUserDto> GetCurrentUser()
@@ -49,8 +38,7 @@ namespace ToolShare.UI.Services
             response.EnsureSuccessStatusCode();
             var JsonResponse = await response.Content.ReadAsStringAsync();
             var appUser = JsonSerializer.Deserialize<AppUserDto>(JsonResponse, jsonSerializerOptions);
-            var userInfo = _mapper.Map<AppUserDto>(appUser);
-            return userInfo;
+            return appUser;
         }
 
         public async Task<IQueryable<AppUserDto>> GetNoPodUsers()

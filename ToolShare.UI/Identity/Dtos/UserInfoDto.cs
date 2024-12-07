@@ -1,14 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace ToolShare.UI.Identity.Models
+namespace ToolShare.UI.Identity.Dtos
 {
     /// <summary>
     /// User info from identity endpoint to establish claims.
     /// </summary>
-    public class UserInfo
+    public class UserInfoDto
     {
         /// <summary>
         /// The email address.

@@ -3,7 +3,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
 using Microsoft.AspNetCore.Components.Authorization;
-using ToolShare.UI.Identity.Models;
+using ToolShare.UI.Identity.Dtos;
 
 namespace ToolShare.UI.Identity
 {
@@ -43,10 +43,10 @@ namespace ToolShare.UI.Identity
         /// <summary>
         /// Register a new user.
         /// </summary>
-        /// <param name="registrationInfo">Dto with registration information.</param>
+        /// <param name="registrationInfoDto">Dto with registration information.</param>
         /// <returns>The result serialized to a <see cref="FormResult"/>.
         /// </returns>
-        public async Task<FormResult> RegisterAsync(RegistrationInfo registrationInfo)
+        public async Task<FormResult> RegisterAsync(RegistrationInfoDto registrationInfoDto)
         {
             string[] defaultDetail = [ "An unknown error prevented registration from succeeding." ];
 
@@ -54,7 +54,7 @@ namespace ToolShare.UI.Identity
             {
                 // make the request
                 var result = await httpClient.PostAsJsonAsync(
-                    "api/users/register", registrationInfo);
+                    "api/users/register", registrationInfoDto);
 
                 // successful?
                 if (result.IsSuccessStatusCode)
@@ -163,7 +163,7 @@ namespace ToolShare.UI.Identity
 
                 // user is authenticated,so let's build their authenticated identity
                 var userJson = await userResponse.Content.ReadAsStringAsync();
-                var userInfo = JsonSerializer.Deserialize<UserInfo>(userJson, jsonSerializerOptions);
+                var userInfo = JsonSerializer.Deserialize<UserInfoDto>(userJson, jsonSerializerOptions);
 
                 if (userInfo != null)
                 {
