@@ -1,10 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using ToolShare.UI.Dtos;
 using ToolShare.UI.DTOs;
-using ToolShare.UI.Identity.Models;
 
 namespace ToolShare.UI.Services
 {

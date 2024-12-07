@@ -1,24 +1,13 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http.Json;
-using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using System.Threading.Tasks;
-using AutoMapper;
-using MudBlazor;
-using ToolShare.Data.Models;
-using ToolShare.UI.Dtos;
 using ToolShare.UI.DTOs;
-using ToolShare.UI.Identity.Models;
 
 namespace ToolShare.UI.Services
 {
     public class ToolsDataService : IToolsDataService
     {
         private readonly HttpClient _httpClient;
-        private readonly IMapper _mapper;
         private readonly JsonSerializerOptions jsonSerializerOptions =
             new()
             {
@@ -26,10 +15,9 @@ namespace ToolShare.UI.Services
                 ReferenceHandler = ReferenceHandler.Preserve
             };
 
-        public ToolsDataService(HttpClient httpClient, IMapper mapper)
+        public ToolsDataService(HttpClient httpClient)
         {
             _httpClient = httpClient;
-            _mapper = mapper;
         }
 
         public Task<IEnumerable<ToolDTO>> GetAllTools()
@@ -95,8 +83,8 @@ namespace ToolShare.UI.Services
         {
             var response = await _httpClient.GetAsync($"api/tools/{toolId}");
             response.EnsureSuccessStatusCode();
-            var JsonResponse = await response.Content.ReadAsStringAsync();
-            var toolDetails = JsonSerializer.Deserialize<ToolDTO>(JsonResponse, jsonSerializerOptions);
+            var jsonResponse = await response.Content.ReadAsStringAsync();
+            var toolDetails = JsonSerializer.Deserialize<ToolDTO>(jsonResponse, jsonSerializerOptions);
             
             return toolDetails;
         }
@@ -119,7 +107,7 @@ namespace ToolShare.UI.Services
                     ErrorList = [details]
                 };
             }
-            catch (Exception e)
+            catch (Exception)
             { 
                 return new FormResult
                 {
@@ -150,7 +138,7 @@ namespace ToolShare.UI.Services
                     ErrorList = [details]
                 };
             }
-            catch (Exception e)
+            catch (Exception)
             { 
                 return new FormResult
                 {
@@ -182,7 +170,7 @@ namespace ToolShare.UI.Services
                 };
 
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return new FormResult
                 {
@@ -209,7 +197,7 @@ namespace ToolShare.UI.Services
                     ErrorList = [details]
                 };
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return new FormResult
                 {
@@ -236,7 +224,7 @@ namespace ToolShare.UI.Services
                     ErrorList = [details]
                 };
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return new FormResult
                 {
@@ -261,7 +249,7 @@ namespace ToolShare.UI.Services
                     ErrorList = [details]
                 };            
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return new FormResult
                 {

@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using ToolShare.Data.Models;
-using ToolShare.UI.Dtos;
 using ToolShare.UI.DTOs;
 
 namespace ToolShare.UI.Profiles
