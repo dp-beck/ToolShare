@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Http.Extensions;
 using MudBlazor;
 using ToolShare.Data;
 using ToolShare.Data.Models;
-using ToolShare.UI.DTOs;
+using ToolShare.UI.Dtos;
 using ToolShare.UI.Identity.Models;
 using ToolShare.UI.Services;
 
@@ -24,7 +24,7 @@ namespace ToolShare.UI.Pages
         private string[] UserDetailsFormErrors = [];
         private string[] ChangePasswordFormErrors = [];
         private bool _isLoading {get;set;} = true;
-        private AppUserDTO userInfo {get;set;}
+        private AppUserDto userInfo {get;set;}
 
         [SupplyParameterFromForm]
         private UserInfoUpdateDto? UserEditDTO { get; set; }

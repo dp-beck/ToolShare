@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using MudBlazor;
-using ToolShare.UI.DTOs;
+using ToolShare.UI.Dtos;
 using ToolShare.UI.Services;
 namespace ToolShare.UI.Pages;
 
@@ -10,7 +10,7 @@ public partial class AddTool : ComponentBase
     private MudForm? form;
     private bool validForm;
     private string[] errors = [];
-    private ToolDTO ToolDto { get; set; } = new();
+    private ToolDto ToolDto { get; set; } = new();
     private bool success;
     private string secureUrl = string.Empty;
     private string PhotoUploadMessage = string.Empty;

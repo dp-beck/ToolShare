@@ -2,7 +2,7 @@ using System.Data.SqlTypes;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
 using ToolShare.Data.Models;
-using ToolShare.UI.DTOs;
+using ToolShare.UI.Dtos;
 using ToolShare.UI.Identity.Models;
 using ToolShare.UI.Services;
 
@@ -12,19 +12,19 @@ public partial class ManageTools : ComponentBase
 {
     private bool _isLoading { get; set; } = true;
     private string Message { get; set; } = string.Empty;
-    private AppUserDTO userInfo {get;set;}
+    private AppUserDto userInfo {get;set;}
     
     private string borrowedToolsNameFilter = string.Empty;
     private string OwnedToolsNameFilter = string.Empty;
     private string statusFilter = string.Empty;
-    private IQueryable<ToolDTO> ToolsBorrowedQueryable { get; set; }
-    private IQueryable<ToolDTO> ToolsOwnedQueryable { get; set; }
-    private IEnumerable<ToolDTO>? ToolsOwned { get; set; }
-    private IEnumerable<ToolDTO>? ToolsBorrowed { get; set; }
+    private IQueryable<ToolDto> ToolsBorrowedQueryable { get; set; }
+    private IQueryable<ToolDto> ToolsOwnedQueryable { get; set; }
+    private IEnumerable<ToolDto>? ToolsOwned { get; set; }
+    private IEnumerable<ToolDto>? ToolsBorrowed { get; set; }
     private string _searchStringOwnedTools = String.Empty;
     private string _searchStringBorrowedTools = String.Empty;
 
-    private IQueryable<ToolDTO> filteredBorrowedTools
+    private IQueryable<ToolDto> filteredBorrowedTools
     {
         get
         {
@@ -38,7 +38,7 @@ public partial class ManageTools : ComponentBase
         }
     }
     
-    private IQueryable<ToolDTO> filteredOwnedTools
+    private IQueryable<ToolDto> filteredOwnedTools
     {
         get
         {
@@ -130,7 +130,7 @@ public partial class ManageTools : ComponentBase
     }
     
     // quick filter for Owned Tools - filter globally across multiple columns with the same input
-    private Func<ToolDTO, bool> QuickFilterOwnedTools => tool =>
+    private Func<ToolDto, bool> QuickFilterOwnedTools => tool =>
     {
         if (string.IsNullOrWhiteSpace(_searchStringOwnedTools))
             return true;
@@ -145,7 +145,7 @@ public partial class ManageTools : ComponentBase
     };
     
     // quick filter for Owned Tools - filter globally across multiple columns with the same input
-    private Func<ToolDTO, bool> QuickFilterBorrowedTools => tool =>
+    private Func<ToolDto, bool> QuickFilterBorrowedTools => tool =>
     {
         if (string.IsNullOrWhiteSpace(_searchStringBorrowedTools))
             return true;

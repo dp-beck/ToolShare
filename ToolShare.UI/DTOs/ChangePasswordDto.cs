@@ -1,4 +1,4 @@
-namespace ToolShare.UI.DTOs;
+namespace ToolShare.UI.Dtos;
 
 public class ChangePasswordDto
 { 

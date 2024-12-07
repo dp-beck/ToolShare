@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using ToolShare.Data.Models;
-using ToolShare.UI.DTOs;
+using ToolShare.UI.Dtos;
 
 namespace ToolShare.UI.Profiles
 {
@@ -12,7 +12,7 @@ namespace ToolShare.UI.Profiles
     {
         public MappingProfile()
         {
-            this.CreateMap<AppUser, AppUserDTO>()
+            this.CreateMap<AppUser, AppUserDto>()
                 .ForMember(
                     dest => dest.PodJoinedName,
                     opt => opt.MapFrom(src => src.PodJoined.Name))
@@ -21,10 +21,10 @@ namespace ToolShare.UI.Profiles
                     opt => opt.MapFrom(src => src.PodManaged.Name))
                 .ReverseMap();
                 
-            this.CreateMap<Pod, PodDTO>().ReverseMap();
-            this.CreateMap<Tool, ToolDTO>().ReverseMap();
-            this.CreateMap<Tool, UpdateToolDTO>().ReverseMap();
-            this.CreateMap<Pod, LimitedPodInfoDTO>()
+            this.CreateMap<Pod, PodDto>().ReverseMap();
+            this.CreateMap<Tool, ToolDto>().ReverseMap();
+            this.CreateMap<Tool, UpdateToolDto>().ReverseMap();
+            this.CreateMap<Pod, LimitedPodInfoDto>()
                 .ForMember(
                     dest => dest.PodManagerName, 
                     opt => opt.MapFrom(src => src.PodManager.UserName))

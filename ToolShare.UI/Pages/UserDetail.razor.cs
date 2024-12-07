@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Components;
-using ToolShare.UI.DTOs;
+using ToolShare.UI.Dtos;
 using ToolShare.UI.Services;
 
 namespace ToolShare.UI.Pages;
@@ -7,7 +7,7 @@ namespace ToolShare.UI.Pages;
 public partial class UserDetail : ComponentBase
 {
     private bool _isLoading {get;set;} = true;
-    public AppUserDTO UserInfo { get; set; }
+    public AppUserDto UserInfo { get; set; }
     [Parameter]
     public string? Username { get; set; }
     

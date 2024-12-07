@@ -1,12 +1,12 @@
 @page "/manage-tools"
 @using ToolShare.Data.Models
-@using ToolShare.UI.DTOs
+@using ToolShare.UI.Dtos
 
 @if (!_isLoading)
 {
     <MudText Typo="Typo.h3" Align="Align.Center">Manage Tools: @userInfo.UserName</MudText>
     
-    <MudDataGrid Class="mt-4" T="ToolDTO" Items="@ToolsOwned" SortMode="SortMode.Multiple" Filterable="true" QuickFilter="@QuickFilterOwnedTools">
+    <MudDataGrid Class="mt-4" T="ToolDto" Items="@ToolsOwned" SortMode="SortMode.Multiple" Filterable="true" QuickFilter="@QuickFilterOwnedTools">
         <ToolBarContent>
             <MudText Typo="Typo.h5">Tools You Own</MudText>
             <MudSpacer />
@@ -53,7 +53,7 @@
         </Columns>
     </MudDataGrid>
     
-    <MudDataGrid Class="mt-4" T="ToolDTO" Items="@ToolsBorrowed" SortMode="SortMode.Multiple" Filterable="true" QuickFilter="@QuickFilterBorrowedTools">
+    <MudDataGrid Class="mt-4" T="ToolDto" Items="@ToolsBorrowed" SortMode="SortMode.Multiple" Filterable="true" QuickFilter="@QuickFilterBorrowedTools">
         <ToolBarContent>
             <MudText Typo="Typo.h5">Tools You've Borrowed</MudText>
             <MudSpacer />

@@ -1,7 +1,7 @@
 using System.Net.Http.Json;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using ToolShare.UI.DTOs;
+using ToolShare.UI.Dtos;
 
 namespace ToolShare.UI.Services
 {
@@ -20,50 +20,50 @@ namespace ToolShare.UI.Services
             _httpClient = httpClient;
         }
 
-        public Task<IEnumerable<ToolDTO>> GetAllTools()
+        public Task<IEnumerable<ToolDto>> GetAllTools()
         {
             throw new NotImplementedException();
         }
 
-        public async Task<IQueryable<ToolDTO>> GetToolsByPod(int podId)
+        public async Task<IQueryable<ToolDto>> GetToolsByPod(int podId)
         {
             var response = await _httpClient.GetAsync($"api/tools/tools-by-pod/{podId}");
 
             response.EnsureSuccessStatusCode();
 
             var toolsJson = await response.Content.ReadAsStringAsync();
-            var toolsInfo = JsonSerializer.Deserialize<IEnumerable<ToolDTO>>(toolsJson, jsonSerializerOptions).AsQueryable();
+            var toolsInfo = JsonSerializer.Deserialize<IEnumerable<ToolDto>>(toolsJson, jsonSerializerOptions).AsQueryable();
 
             return toolsInfo;
         }
 
-        public async Task<IQueryable<ToolDTO>> GetToolsOwnedByUser(string username)
+        public async Task<IQueryable<ToolDto>> GetToolsOwnedByUser(string username)
         {
             var response = await _httpClient.GetAsync($"api/tools/tools-by-user-owned/{username}");
             
             response.EnsureSuccessStatusCode();
             
             var toolsJson = await response.Content.ReadAsStringAsync();
-            var toolsInfo = JsonSerializer.Deserialize<IEnumerable<ToolDTO>>(toolsJson, jsonSerializerOptions).AsQueryable();
+            var toolsInfo = JsonSerializer.Deserialize<IEnumerable<ToolDto>>(toolsJson, jsonSerializerOptions).AsQueryable();
             return toolsInfo;
         }
 
-        public async Task<IQueryable<ToolDTO>> GetToolsBorrowedByUser(string username)
+        public async Task<IQueryable<ToolDto>> GetToolsBorrowedByUser(string username)
         {
             var response = await _httpClient.GetAsync($"api/tools/tools-by-user-borrowed/{username}");
             
             response.EnsureSuccessStatusCode();
             
             var toolsJson = await response.Content.ReadAsStringAsync();
-            var toolsInfo = JsonSerializer.Deserialize<IEnumerable<ToolDTO>>(toolsJson, jsonSerializerOptions).AsQueryable();
+            var toolsInfo = JsonSerializer.Deserialize<IEnumerable<ToolDto>>(toolsJson, jsonSerializerOptions).AsQueryable();
             return toolsInfo;
         }
         
-        public async Task<FormResult> CreateTool(ToolDTO tool)
+        public async Task<FormResult> CreateTool(ToolDto tool)
         {
             string[] defaultDetail = [ "An unknown error prevented tool from being created." ];
             
-            var result = await _httpClient.PostAsJsonAsync<ToolDTO>("api/tools", tool);
+            var result = await _httpClient.PostAsJsonAsync<ToolDto>("api/tools", tool);
 
             if (result.IsSuccessStatusCode)
             {
@@ -79,17 +79,17 @@ namespace ToolShare.UI.Services
             };        
         }
 
-        public async Task<ToolDTO> FindToolById(int toolId)
+        public async Task<ToolDto> FindToolById(int toolId)
         {
             var response = await _httpClient.GetAsync($"api/tools/{toolId}");
             response.EnsureSuccessStatusCode();
             var jsonResponse = await response.Content.ReadAsStringAsync();
-            var toolDetails = JsonSerializer.Deserialize<ToolDTO>(jsonResponse, jsonSerializerOptions);
+            var toolDetails = JsonSerializer.Deserialize<ToolDto>(jsonResponse, jsonSerializerOptions);
             
             return toolDetails;
         }
 
-        public async Task<FormResult> UpdateTool(int toolId, UpdateToolDTO updateToolDto)
+        public async Task<FormResult> UpdateTool(int toolId, UpdateToolDto updateToolDto)
         {
             string[] defaultDetail = [ "An unknown error prevented tool from being updated." ];
 

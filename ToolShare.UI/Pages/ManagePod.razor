@@ -1,5 +1,5 @@
 @page "/manage-pod/{podId:int}"
-@using ToolShare.UI.DTOs
+@using ToolShare.UI.Dtos
 
 @if (!_isLoading)
 {
@@ -24,7 +24,7 @@
     </MudForm>
 
     <MudText Typo="Typo.h4" Class="mt-4">Add User to Pod</MudText>
-    <MudDataGrid T="AppUserDTO" Items="@NoPodUsers">
+    <MudDataGrid T="AppUserDto" Items="@NoPodUsers">
         <Columns>
             <PropertyColumn Property="noPodUser => noPodUser.ProfilePhotoUrl" Title="Photo">
                 <CellTemplate>
@@ -49,7 +49,7 @@
     </MudDataGrid>
 
     <MudText Typo="Typo.h4" Class="mt-8">Remove Pod Members</MudText>
-    <MudDataGrid T="AppUserDTO" Items="@Pod.PodMembers">
+    <MudDataGrid T="AppUserDto" Items="@Pod.PodMembers">
         <Columns>
         <PropertyColumn Property="podMember => podMember.ProfilePhotoUrl" Title="Photo">
             <CellTemplate>

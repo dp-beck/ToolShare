@@ -4,9 +4,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using ToolShare.Data.Models;
 
-namespace ToolShare.UI.DTOs
+namespace ToolShare.UI.Dtos
 {
-    public class ToolDTO
+    public class ToolDto
     {
         public int ToolId { get; set; }
         public string Name { get; set; }

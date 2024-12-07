@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using MudBlazor;
-using ToolShare.UI.DTOs;
+using ToolShare.UI.Dtos;
 using ToolShare.UI.Services;
 
 namespace ToolShare.UI.Pages;
@@ -12,8 +12,8 @@ public partial class ToolDetail : ComponentBase
     private bool validForm = true;
     private string[] errors = [];
     private bool _isLoading {get;set;} = true;
-    public ToolDTO Tool { get; set; }
-    public UpdateToolDTO UpdateToolDTO { get; set; }
+    public ToolDto Tool { get; set; }
+    public UpdateToolDto UpdateToolDTO { get; set; }
     private EditContext? editContext;
     [Parameter]
     public int ToolId { get; set; }
@@ -27,7 +27,7 @@ public partial class ToolDetail : ComponentBase
     {
         Tool = await ToolsDataService.FindToolById(ToolId);
         
-        UpdateToolDTO = new UpdateToolDTO()
+        UpdateToolDTO = new UpdateToolDto()
         {
             Name = Tool.Name,
             Description = Tool.Description,

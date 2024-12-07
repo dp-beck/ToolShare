@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ToolShare.UI.DTOs
+namespace ToolShare.UI.Dtos
 {
-    public class LimitedPodInfoDTO
+    public class LimitedPodInfoDto
     {
         public string Name { get; set; }
         public string PodManagerName { get; set; }

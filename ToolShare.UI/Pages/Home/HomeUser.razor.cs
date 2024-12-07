@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
-using ToolShare.UI.DTOs;
+using ToolShare.UI.Dtos;
 using ToolShare.UI.Services;
 
 namespace ToolShare.UI.Pages.Home;
@@ -8,9 +8,9 @@ namespace ToolShare.UI.Pages.Home;
 public partial class HomeUser : ComponentBase
 {
     private bool IsLoading { get; set; } = true;
-    public required AppUserDTO UserInfo {get;set;}
-    private IQueryable<ToolDTO>? AllTools { get; set; }
-    private IEnumerable<ToolDTO>? FilteredTools { get; set; }
+    public required AppUserDto UserInfo {get;set;}
+    private IQueryable<ToolDto>? AllTools { get; set; }
+    private IEnumerable<ToolDto>? FilteredTools { get; set; }
     private string _searchString = String.Empty;
 
 
@@ -48,7 +48,7 @@ public partial class HomeUser : ComponentBase
     } 
     
     // quick filter - filter globally across multiple columns with the same input
-    private Func<ToolDTO, bool> QuickFilter => tool =>
+    private Func<ToolDto, bool> QuickFilter => tool =>
     {
         if (string.IsNullOrWhiteSpace(_searchString))
             return true;

@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
-using ToolShare.UI.DTOs;
+using ToolShare.UI.Dtos;
 using ToolShare.UI.Services;
 
 namespace ToolShare.UI.Pages.Home;
@@ -9,7 +9,7 @@ public partial class HomeNoPodUser : ComponentBase
 {
     private MudForm form;
     string[] errors = { };
-    public IEnumerable<LimitedPodInfoDTO>? Pods { get; set; }
+    public IEnumerable<LimitedPodInfoDto>? Pods { get; set; }
     string podName = string.Empty;
     private bool success;
     private bool validForm;

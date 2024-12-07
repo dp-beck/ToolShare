@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
-using ToolShare.UI.DTOs;
+using ToolShare.UI.Dtos;
 using ToolShare.UI.Services;
 
 namespace ToolShare.UI.Pages;
@@ -11,10 +11,10 @@ public partial class ManagePod : ComponentBase
     private bool ValidUpdatePodForm;
     private string[] UpdatePodFormErrors = [];
     private string? Message { get; set; }
-    public PodDTO Pod { get; set; }
+    public PodDto Pod { get; set; }
     public string NewPodName { get; set; } = string.Empty;
     public string NewPodManagerName { get; set; } = string.Empty;
-    private IEnumerable<AppUserDTO> NoPodUsers { get; set; }
+    private IEnumerable<AppUserDto> NoPodUsers { get; set; }
     
     [Parameter]
     public int podId { get; set; }

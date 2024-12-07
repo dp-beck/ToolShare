@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 using ToolShare.Data;
 using ToolShare.Data.Models;
 
-namespace ToolShare.UI.DTOs
+namespace ToolShare.UI.Dtos
 {
-    public class AppUserDTO
+    public class AppUserDto
     {
         public string UserName { get; set; }
         public string Email { get; set; }

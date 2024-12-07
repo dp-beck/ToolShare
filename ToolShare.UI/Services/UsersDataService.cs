@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Components;
 using ToolShare.Data.Models;
-using ToolShare.UI.DTOs;
+using ToolShare.UI.Dtos;
 using ToolShare.UI.Identity.Models;
 
 
@@ -34,31 +34,31 @@ namespace ToolShare.UI.Services
             _mapper = mapper;
         }
 
-        public async Task<AppUserDTO> GetCurrentUser()
+        public async Task<AppUserDto> GetCurrentUser()
         {
             var response = await _httpClient.GetAsync("api/users/current-user");
             response.EnsureSuccessStatusCode();
             var JsonResponse = await response.Content.ReadAsStringAsync();
-            var userInfo = JsonSerializer.Deserialize<AppUserDTO>(JsonResponse, jsonSerializerOptions);
+            var userInfo = JsonSerializer.Deserialize<AppUserDto>(JsonResponse, jsonSerializerOptions);
             return userInfo;
         }
 
-        public async Task<AppUserDTO> FindUserByUsername(string username)
+        public async Task<AppUserDto> FindUserByUsername(string username)
         {
             var response = await _httpClient.GetAsync($"api/users/{username}");
             response.EnsureSuccessStatusCode();
             var JsonResponse = await response.Content.ReadAsStringAsync();
-            var appUser = JsonSerializer.Deserialize<AppUserDTO>(JsonResponse, jsonSerializerOptions);
-            var userInfo = _mapper.Map<AppUserDTO>(appUser);
+            var appUser = JsonSerializer.Deserialize<AppUserDto>(JsonResponse, jsonSerializerOptions);
+            var userInfo = _mapper.Map<AppUserDto>(appUser);
             return userInfo;
         }
 
-        public async Task<IQueryable<AppUserDTO>> GetNoPodUsers()
+        public async Task<IQueryable<AppUserDto>> GetNoPodUsers()
         {
             var response = await _httpClient.GetAsync("api/users/users-without-pods");
             response.EnsureSuccessStatusCode();
             var JsonResponse = await response.Content.ReadAsStringAsync();
-            var NoPodUsers = JsonSerializer.Deserialize<IEnumerable<AppUserDTO>>(JsonResponse, jsonSerializerOptions)
+            var NoPodUsers = JsonSerializer.Deserialize<IEnumerable<AppUserDto>>(JsonResponse, jsonSerializerOptions)
                 .AsQueryable();
 
             return NoPodUsers;

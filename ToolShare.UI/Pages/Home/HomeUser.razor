@@ -1,12 +1,12 @@
 @using ToolShare.Data.Models
-@using ToolShare.UI.DTOs
+@using ToolShare.UI.Dtos
 @if (!IsLoading)
 {
     <MudText Typo="Typo.body1" Class="mt-4 mb-4">You are a member of @UserInfo.PodJoinedName. See any tools you want to borrow?
         Just hit the request button. Feel free to email the tool owner to let them know
         you requested a tool.</MudText>
     
-    <MudDataGrid T="ToolDTO" Items="@FilteredTools" SortMode="SortMode.Multiple" Filterable="true" QuickFilter="@QuickFilter">
+    <MudDataGrid T="ToolDto" Items="@FilteredTools" SortMode="SortMode.Multiple" Filterable="true" QuickFilter="@QuickFilter">
         <ToolBarContent>
             <MudText Typo="Typo.h6">@UserInfo.PodJoinedName Tools</MudText>
             <MudSpacer />

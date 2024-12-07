@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Components;
-using ToolShare.UI.DTOs;
+using ToolShare.UI.Dtos;
 using ToolShare.UI.Identity;
 using ToolShare.UI.Services;
 
@@ -8,7 +8,7 @@ namespace ToolShare.UI.Layout
     public partial class MainLayout
     {
         bool _drawerOpen = true;
-        public AppUserDTO UserInfo { get; set; } = new AppUserDTO();
+        public AppUserDto UserInfo { get; set; } = new AppUserDto();
         [Inject]
         public required IUsersDataService UsersDataService { get; set; }
         

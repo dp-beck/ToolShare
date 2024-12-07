@@ -3,7 +3,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using AutoMapper;
 using ToolShare.Data.Models;
-using ToolShare.UI.DTOs;
+using ToolShare.UI.Dtos;
 
 namespace ToolShare.UI.Services
 {
@@ -24,29 +24,29 @@ namespace ToolShare.UI.Services
             _mapper = mapper;
         }
 
-        public async Task<PodDTO> FindPodDetailsByName(string podName)
+        public async Task<PodDto> FindPodDetailsByName(string podName)
         {
             var response = await _httpClient.GetAsync($"api/Pods/{podName}");
             response.EnsureSuccessStatusCode();
             var jsonResponse = await response.Content.ReadAsStringAsync();
-            var podDetails = JsonSerializer.Deserialize<PodDTO>(jsonResponse, jsonSerializerOptions);
+            var podDetails = JsonSerializer.Deserialize<PodDto>(jsonResponse, jsonSerializerOptions);
             
             return podDetails;
         }
         
-        public async Task<PodDTO> FindPodDetailsById(int podId)
+        public async Task<PodDto> FindPodDetailsById(int podId)
         {
             var response = await _httpClient.GetAsync($"api/pods/{podId}");
             response.EnsureSuccessStatusCode();
             var jsonResponse = await response.Content.ReadAsStringAsync();
             var podDetails = JsonSerializer.Deserialize<Pod>(jsonResponse, jsonSerializerOptions);
             
-            PodDTO podDto = _mapper.Map<PodDTO>(podDetails);
+            PodDto podDto = _mapper.Map<PodDto>(podDetails);
 
             return podDto;
         }
 
-        public async Task<IEnumerable<PodDTO>> GetAllPods()
+        public async Task<IEnumerable<PodDto>> GetAllPods()
         {
 
             var podsResponse = await _httpClient.GetAsync("api/pods/");
@@ -56,14 +56,14 @@ namespace ToolShare.UI.Services
             var podsJson = await podsResponse.Content.ReadAsStringAsync();
             var podsInfo = JsonSerializer.Deserialize<IEnumerable<Pod>>(podsJson, jsonSerializerOptions);
 
-            List<PodDTO> podDTOs = _mapper.Map<List<PodDTO>>(podsInfo);
+            List<PodDto> podDTOs = _mapper.Map<List<PodDto>>(podsInfo);
 
 
             return podDTOs;
 
         }
 
-        public async Task<IEnumerable<LimitedPodInfoDTO>> GetAllPodsLimitedInfoForNoPodUser()
+        public async Task<IEnumerable<LimitedPodInfoDto>> GetAllPodsLimitedInfoForNoPodUser()
         {
 
             var podsResponse = await _httpClient.GetAsync("api/pods/pod-list-for-nopoduser");
@@ -71,7 +71,7 @@ namespace ToolShare.UI.Services
             podsResponse.EnsureSuccessStatusCode();
 
             var podsJson = await podsResponse.Content.ReadAsStringAsync();
-            var podsInfo = JsonSerializer.Deserialize<IEnumerable<LimitedPodInfoDTO>>(podsJson, jsonSerializerOptions);
+            var podsInfo = JsonSerializer.Deserialize<IEnumerable<LimitedPodInfoDto>>(podsJson, jsonSerializerOptions);
 
             return podsInfo;
         }
