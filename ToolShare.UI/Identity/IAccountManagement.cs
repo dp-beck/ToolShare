@@ -16,8 +16,8 @@ namespace ToolShare.UI.Identity
         /// </summary>
         /// <param name="username">User's username.</param>
         /// <param name="password">User's password.</param>
-        /// <returns>The result of the request serialized to <see cref="FormResult"/>.</returns>
-        public Task<FormResult> LoginAsync(string username, string password);
+        /// <returns>The result of the request serialized to <see cref="ServiceResult"/>.</returns>
+        public Task<ServiceResult> LoginAsync(string username, string password);
 
         /// <summary>
         /// Log out the logged in user.
@@ -29,8 +29,8 @@ namespace ToolShare.UI.Identity
         /// Registration service.
         /// </summary>
         /// <param name="registrationInfo">Information Needed to Register</param>
-        /// <returns>The result of the request serialized to <see cref="FormResult"/>.</returns>
-        public Task<FormResult> RegisterAsync(RegistrationInfoDto registrationInfo);
+        /// <returns>The result of the request serialized to <see cref="ServiceResult"/>.</returns>
+        public Task<ServiceResult> RegisterAsync(RegistrationInfoDto registrationInfo);
 
         public Task<bool> CheckAuthenticatedAsync();   
 

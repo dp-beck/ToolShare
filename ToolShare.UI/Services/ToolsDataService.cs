@@ -59,7 +59,7 @@ namespace ToolShare.UI.Services
             return toolsInfo;
         }
         
-        public async Task<FormResult> CreateTool(ToolDto tool)
+        public async Task<ServiceResult> CreateTool(ToolDto tool)
         {
             string[] defaultDetail = [ "An unknown error prevented tool from being created." ];
             
@@ -67,12 +67,12 @@ namespace ToolShare.UI.Services
 
             if (result.IsSuccessStatusCode)
             {
-                return new FormResult { Succeeded = true };
+                return new ServiceResult { Succeeded = true };
             }
             
             var details = await result.Content.ReadAsStringAsync();
                 
-            return new FormResult
+            return new ServiceResult
             {
                 Succeeded = false,
                 ErrorList = [details]
@@ -89,7 +89,7 @@ namespace ToolShare.UI.Services
             return toolDetails;
         }
 
-        public async Task<FormResult> UpdateTool(int toolId, UpdateToolDto updateToolDto)
+        public async Task<ServiceResult> UpdateTool(int toolId, UpdateToolDto updateToolDto)
         {
             string[] defaultDetail = [ "An unknown error prevented tool from being updated." ];
 
@@ -98,10 +98,10 @@ namespace ToolShare.UI.Services
                 var result = await _httpClient.PutAsJsonAsync($"api/tools/{toolId}", updateToolDto);
                 if (result.IsSuccessStatusCode)
                 {
-                    return new FormResult { Succeeded = true };
+                    return new ServiceResult { Succeeded = true };
                 }
                 var details = await result.Content.ReadAsStringAsync();
-                return new FormResult
+                return new ServiceResult
                 {
                     Succeeded = false,
                     ErrorList = [details]
@@ -109,7 +109,7 @@ namespace ToolShare.UI.Services
             }
             catch (Exception)
             { 
-                return new FormResult
+                return new ServiceResult
                 {
                     Succeeded = false,
                     ErrorList = defaultDetail
@@ -117,7 +117,7 @@ namespace ToolShare.UI.Services
             }
         }
 
-        public async Task<FormResult> RequestTool(int toolId)
+        public async Task<ServiceResult> RequestTool(int toolId)
         {
             string[] defaultDetail = [ "An unknown error prevented tool from being requested." ];
 
@@ -127,12 +127,12 @@ namespace ToolShare.UI.Services
                 using var result = await _httpClient.SendAsync(request);
                 if (result.IsSuccessStatusCode)
                 {
-                    return new FormResult { Succeeded = true };
+                    return new ServiceResult { Succeeded = true };
                 }
                 
                 var details = await result.Content.ReadAsStringAsync();
                 
-                return new FormResult
+                return new ServiceResult
                 {
                     Succeeded = false,
                     ErrorList = [details]
@@ -140,7 +140,7 @@ namespace ToolShare.UI.Services
             }
             catch (Exception)
             { 
-                return new FormResult
+                return new ServiceResult
                 {
                     Succeeded = false,
                     ErrorList = defaultDetail
@@ -148,7 +148,7 @@ namespace ToolShare.UI.Services
             }
         }
 
-        public async Task<FormResult> LendTool(int toolId)
+        public async Task<ServiceResult> LendTool(int toolId)
         {
             string[] defaultDetail = [ "An unknown error prevented tool from being lent." ];
 
@@ -158,12 +158,12 @@ namespace ToolShare.UI.Services
                 using var result = await _httpClient.SendAsync(request);
                 if (result.IsSuccessStatusCode)
                 {
-                    return new FormResult { Succeeded = true };
+                    return new ServiceResult { Succeeded = true };
                 }
                 
                 var details = await result.Content.ReadAsStringAsync();
                 
-                return new FormResult
+                return new ServiceResult
                 {
                     Succeeded = false,
                     ErrorList = [details]
@@ -172,7 +172,7 @@ namespace ToolShare.UI.Services
             }
             catch (Exception)
             {
-                return new FormResult
+                return new ServiceResult
                 {
                     Succeeded = false,
                     ErrorList = defaultDetail
@@ -180,7 +180,7 @@ namespace ToolShare.UI.Services
             }
         }
 
-        public async Task<FormResult> RequestToolReturn(int toolId)
+        public async Task<ServiceResult> RequestToolReturn(int toolId)
         {
             string[] defaultDetail = [ "An unknown error prevented the return from being requested." ];
 
@@ -188,10 +188,10 @@ namespace ToolShare.UI.Services
             {
                 var request = new HttpRequestMessage(HttpMethod.Put, $"api/tools/{toolId}/request-tool-return");
                 using var result = await _httpClient.SendAsync(request);
-                if (result.IsSuccessStatusCode) return new FormResult { Succeeded = true };
+                if (result.IsSuccessStatusCode) return new ServiceResult { Succeeded = true };
                 
                 var details = await result.Content.ReadAsStringAsync();
-                return new FormResult
+                return new ServiceResult
                 {
                     Succeeded = false,
                     ErrorList = [details]
@@ -199,7 +199,7 @@ namespace ToolShare.UI.Services
             }
             catch (Exception)
             {
-                return new FormResult
+                return new ServiceResult
                 {
                     Succeeded = false,
                     ErrorList = defaultDetail
@@ -207,7 +207,7 @@ namespace ToolShare.UI.Services
             }        
         }
 
-        public async Task<FormResult> AcceptToolReturned(int toolId)
+        public async Task<ServiceResult> AcceptToolReturned(int toolId)
         {
             string[] defaultDetail = [ "An unknown error prevented tool return from being accepted." ];
 
@@ -215,10 +215,10 @@ namespace ToolShare.UI.Services
             {
                 var request = new HttpRequestMessage(HttpMethod.Put, $"api/tools/{toolId}/accept-tool-return");
                 using var result = await _httpClient.SendAsync(request);
-                if (result.IsSuccessStatusCode) return new FormResult { Succeeded = true };
+                if (result.IsSuccessStatusCode) return new ServiceResult { Succeeded = true };
                 
                 var details = await result.Content.ReadAsStringAsync();
-                return new FormResult
+                return new ServiceResult
                 {
                     Succeeded = false,
                     ErrorList = [details]
@@ -226,7 +226,7 @@ namespace ToolShare.UI.Services
             }
             catch (Exception)
             {
-                return new FormResult
+                return new ServiceResult
                 {
                     Succeeded = false,
                     ErrorList = defaultDetail
@@ -234,16 +234,16 @@ namespace ToolShare.UI.Services
             }
         }
 
-        public async Task<FormResult> DeleteTool(int toolId)
+        public async Task<ServiceResult> DeleteTool(int toolId)
         {
             string[] defaultDetail = [ "An unknown error prevented the tool from being deleted." ];
 
             try
             {
                 var response = await _httpClient.DeleteAsync($"api/tools/{toolId}");
-                if (response.IsSuccessStatusCode) return new FormResult { Succeeded = true };
+                if (response.IsSuccessStatusCode) return new ServiceResult { Succeeded = true };
                 var details = await response.Content.ReadAsStringAsync();
-                return new FormResult
+                return new ServiceResult
                 {
                     Succeeded = false,
                     ErrorList = [details]
@@ -251,7 +251,7 @@ namespace ToolShare.UI.Services
             }
             catch (Exception)
             {
-                return new FormResult
+                return new ServiceResult
                 {
                     Succeeded = false,
                     ErrorList = defaultDetail

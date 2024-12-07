@@ -44,9 +44,9 @@ namespace ToolShare.UI.Identity
         /// Register a new user.
         /// </summary>
         /// <param name="registrationInfoDto">Dto with registration information.</param>
-        /// <returns>The result serialized to a <see cref="FormResult"/>.
+        /// <returns>The result serialized to a <see cref="ServiceResult"/>.
         /// </returns>
-        public async Task<FormResult> RegisterAsync(RegistrationInfoDto registrationInfoDto)
+        public async Task<ServiceResult> RegisterAsync(RegistrationInfoDto registrationInfoDto)
         {
             string[] defaultDetail = [ "An unknown error prevented registration from succeeding." ];
 
@@ -59,7 +59,7 @@ namespace ToolShare.UI.Identity
                 // successful?
                 if (result.IsSuccessStatusCode)
                 {
-                    return new FormResult { Succeeded = true };
+                    return new ServiceResult { Succeeded = true };
                 }
 
                 // body should contain details about why it failed
@@ -84,7 +84,7 @@ namespace ToolShare.UI.Identity
                 }
 
                 // return the error list
-                return new FormResult
+                return new ServiceResult
                 {
                     Succeeded = false,
                     ErrorList = problemDetails == null ? defaultDetail : [.. errors]
@@ -93,7 +93,7 @@ namespace ToolShare.UI.Identity
             catch { }
 
             // unknown error
-            return new FormResult
+            return new ServiceResult
             {
                 Succeeded = false,
                 ErrorList = defaultDetail
@@ -105,8 +105,8 @@ namespace ToolShare.UI.Identity
         /// </summary>
         /// <param name="username">The user's email address.</param>
         /// <param name="password">The user's password.</param>
-        /// <returns>The result of the login request serialized to a <see cref="FormResult"/>.</returns>
-        public async Task<FormResult> LoginAsync(string username, string password)
+        /// <returns>The result of the login request serialized to a <see cref="ServiceResult"/>.</returns>
+        public async Task<ServiceResult> LoginAsync(string username, string password)
         {
             try
             {
@@ -125,13 +125,13 @@ namespace ToolShare.UI.Identity
                     NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
 
                     // success!
-                    return new FormResult { Succeeded = true };
+                    return new ServiceResult { Succeeded = true };
                 }
             }
             catch { }
 
             // unknown error
-            return new FormResult
+            return new ServiceResult
             {
                 Succeeded = false,
                 ErrorList = [ "Invalid username and/or password." ]

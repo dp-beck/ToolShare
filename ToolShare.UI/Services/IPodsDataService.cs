@@ -14,11 +14,11 @@ namespace ToolShare.UI.Services
         public Task<PodDto> FindPodDetailsByName(string podName);
         public Task<PodDto?> FindPodDetailsById(int podId);
 
-        public Task<FormResult> InitializeNewPod(string podName);
-        public Task<FormResult> UpdatePodName(int podId, string newPodName);
-        public Task<FormResult> AddUser(int podId, string username);
-        public Task<FormResult> RemoveUser(int podId, string username);
-        public Task<FormResult> ChangeManager(int podId, string username);
-        public Task<FormResult> DeletePod(int podId);
+        public Task<ServiceResult> InitializeNewPod(string podName);
+        public Task<ServiceResult> UpdatePodName(int podId, string newPodName);
+        public Task<ServiceResult> AddUser(int podId, string username);
+        public Task<ServiceResult> RemoveUser(int podId, string username);
+        public Task<ServiceResult> ChangeManager(int podId, string username);
+        public Task<ServiceResult> DeletePod(int podId);
     }
 }

@@ -1,8 +1,6 @@
 using System.Net.Http.Json;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using AutoMapper;
-using ToolShare.Data.Models;
 using ToolShare.UI.Dtos;
 
 namespace ToolShare.UI.Services
@@ -68,7 +66,7 @@ namespace ToolShare.UI.Services
             return podsInfo;
         }
 
-        public async Task<FormResult> InitializeNewPod(string podName)
+        public async Task<ServiceResult> InitializeNewPod(string podName)
         {
             string[] defaultDetail = [ "An unknown error prevented pod from being created." ];
 
@@ -78,14 +76,14 @@ namespace ToolShare.UI.Services
                 
                 if (result.IsSuccessStatusCode)
                 {
-                    return new FormResult { Succeeded = true };
+                    return new ServiceResult { Succeeded = true };
                 }
                 
                 // body should contain details about why it failed
                 var details = await result.Content.ReadAsStringAsync();
                 
                 // return the error list
-                return new FormResult
+                return new ServiceResult
                 {
                     Succeeded = false,
                     ErrorList = [details]
@@ -94,7 +92,7 @@ namespace ToolShare.UI.Services
             catch (Exception)
             {
                 // unknown error
-                return new FormResult
+                return new ServiceResult
                 {
                     Succeeded = false,
                     ErrorList = defaultDetail
@@ -103,7 +101,7 @@ namespace ToolShare.UI.Services
             
         }
 
-        public async Task<FormResult> UpdatePodName(int podId, string newPodName)
+        public async Task<ServiceResult> UpdatePodName(int podId, string newPodName)
         {
             string[] defaultDetail = [ "An unknown error prevented pod from being renamed." ];
 
@@ -112,11 +110,11 @@ namespace ToolShare.UI.Services
                 var result = await _httpClient.PutAsJsonAsync($"api/pods/{podId}/updatename", newPodName);
                 if (result.IsSuccessStatusCode)
                 {
-                    return new FormResult { Succeeded = true };
+                    return new ServiceResult { Succeeded = true };
                 }
                 var details = await result.Content.ReadAsStringAsync();
                 
-                return new FormResult
+                return new ServiceResult
                 {
                     Succeeded = false,
                     ErrorList = [details]
@@ -125,7 +123,7 @@ namespace ToolShare.UI.Services
             }
             catch (Exception)
             { 
-                return new FormResult
+                return new ServiceResult
                 {
                     Succeeded = false,
                     ErrorList = defaultDetail
@@ -133,7 +131,7 @@ namespace ToolShare.UI.Services
             }
         }
 
-        public async Task<FormResult> AddUser(int podId, string username)
+        public async Task<ServiceResult> AddUser(int podId, string username)
         {
             string[] defaultDetail = [ "An unknown error prevented the user from being added." ];
 
@@ -142,10 +140,10 @@ namespace ToolShare.UI.Services
                 var result = await _httpClient.PutAsJsonAsync($"api/pods/{podId}/add-user", username);
                 if (result.IsSuccessStatusCode)
                 {
-                    return new FormResult { Succeeded = true };
+                    return new ServiceResult { Succeeded = true };
                 }
                 var details = await result.Content.ReadAsStringAsync();
-                return new FormResult
+                return new ServiceResult
                 {
                     Succeeded = false,
                     ErrorList = [details]
@@ -153,7 +151,7 @@ namespace ToolShare.UI.Services
             }
             catch (Exception)
             { 
-                return new FormResult
+                return new ServiceResult
                 {
                     Succeeded = false,
                     ErrorList = defaultDetail
@@ -161,7 +159,7 @@ namespace ToolShare.UI.Services
             }
         }
 
-        public async Task<FormResult> RemoveUser(int podId, string username)
+        public async Task<ServiceResult> RemoveUser(int podId, string username)
         {
             string[] defaultDetail = [ "An unknown error prevented the user from being removed." ];
 
@@ -170,10 +168,10 @@ namespace ToolShare.UI.Services
                 var result = await _httpClient.PutAsJsonAsync($"api/pods/{podId}/remove-user", username);
                 if (result.IsSuccessStatusCode)
                 {
-                    return new FormResult { Succeeded = true };
+                    return new ServiceResult { Succeeded = true };
                 }
                 var details = await result.Content.ReadAsStringAsync();
-                return new FormResult
+                return new ServiceResult
                 {
                     Succeeded = false,
                     ErrorList = [details]
@@ -181,7 +179,7 @@ namespace ToolShare.UI.Services
             }
             catch (Exception)
             {
-                return new FormResult
+                return new ServiceResult
                 {
                     Succeeded = false,
                     ErrorList = defaultDetail
@@ -189,7 +187,7 @@ namespace ToolShare.UI.Services
             }
         }
 
-        public async Task<FormResult> ChangeManager(int podId, string username)
+        public async Task<ServiceResult> ChangeManager(int podId, string username)
         {
             string[] defaultDetail = [ "An unknown error prevented the user from being removed." ];
    
@@ -198,10 +196,10 @@ namespace ToolShare.UI.Services
                 var result = await _httpClient.PutAsJsonAsync($"api/pods/{podId}/change-pod-manager", username);
                 if (result.IsSuccessStatusCode)
                 {
-                    return new FormResult { Succeeded = true };
+                    return new ServiceResult { Succeeded = true };
                 }
                 var details = await result.Content.ReadAsStringAsync();
-                return new FormResult
+                return new ServiceResult
                 {
                     Succeeded = false,
                     ErrorList = [details]
@@ -209,7 +207,7 @@ namespace ToolShare.UI.Services
             }
             catch (Exception)
             {
-                return new FormResult
+                return new ServiceResult
                 {
                     Succeeded = false,
                     ErrorList = defaultDetail
@@ -217,7 +215,7 @@ namespace ToolShare.UI.Services
             }
         }
 
-        public async Task<FormResult> DeletePod(int podId)
+        public async Task<ServiceResult> DeletePod(int podId)
         {
             string[] defaultDetail = [ "An unknown error prevented the pod from being deleted." ];
 
@@ -226,10 +224,10 @@ namespace ToolShare.UI.Services
                 var result = await _httpClient.DeleteAsync("api/pods/delete/{podId}");
                 if (result.IsSuccessStatusCode)
                 {
-                    return new FormResult { Succeeded = true };
+                    return new ServiceResult { Succeeded = true };
                 }
                 var details = await result.Content.ReadAsStringAsync();
-                return new FormResult
+                return new ServiceResult
                 {
                     Succeeded = false,
                     ErrorList = [details]
@@ -237,7 +235,7 @@ namespace ToolShare.UI.Services
             }
             catch (Exception)
             {
-                return new FormResult
+                return new ServiceResult
                 {
                     Succeeded = false,
                     ErrorList = defaultDetail

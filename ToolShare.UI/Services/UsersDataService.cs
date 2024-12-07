@@ -1,7 +1,6 @@
 using System.Net.Http.Json;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using AutoMapper;
 using ToolShare.UI.Dtos;
 
 
@@ -52,7 +51,7 @@ namespace ToolShare.UI.Services
             return NoPodUsers;
         }
 
-        public async Task<FormResult> UpdateCurrentUser(UserInfoUpdateDto userInfoUpdateDto)
+        public async Task<ServiceResult> UpdateCurrentUser(UserInfoUpdateDto userInfoUpdateDto)
         {
             string[] defaultDetail = ["An unknown error prevented the user from being updated."];
 
@@ -61,11 +60,11 @@ namespace ToolShare.UI.Services
                 var result = await _httpClient.PutAsJsonAsync("api/users/update", userInfoUpdateDto);
                 if (result.IsSuccessStatusCode)
                 {
-                    return new FormResult { Succeeded = true };
+                    return new ServiceResult { Succeeded = true };
                 }
 
                 var details = await result.Content.ReadAsStringAsync();
-                return new FormResult
+                return new ServiceResult
                 {
                     Succeeded = false,
                     ErrorList = [details]
@@ -73,7 +72,7 @@ namespace ToolShare.UI.Services
             }
             catch (Exception e)
             {
-                return new FormResult
+                return new ServiceResult
                 {
                     Succeeded = false,
                     ErrorList = defaultDetail
@@ -81,7 +80,7 @@ namespace ToolShare.UI.Services
             }
         }
 
-        public async Task<FormResult> UpdatePassword(ChangePasswordDto changePasswordDto)
+        public async Task<ServiceResult> UpdatePassword(ChangePasswordDto changePasswordDto)
         {
             string[] defaultDetail = ["An unknown error prevented the user from changing the password."];
 
@@ -90,12 +89,12 @@ namespace ToolShare.UI.Services
                 var result = await _httpClient.PutAsJsonAsync("api/users/change-password", changePasswordDto);
                 if (result.IsSuccessStatusCode)
                 {
-                    return new FormResult { Succeeded = true };
+                    return new ServiceResult { Succeeded = true };
                 }
 
                 var details = await result.Content.ReadAsStringAsync();
 
-                return new FormResult
+                return new ServiceResult
                 {
                     Succeeded = false,
                     ErrorList = [details]
@@ -103,7 +102,7 @@ namespace ToolShare.UI.Services
             }
             catch (Exception e)
             {
-                return new FormResult
+                return new ServiceResult
                 {
                     Succeeded = false,
                     ErrorList = defaultDetail
@@ -111,7 +110,7 @@ namespace ToolShare.UI.Services
             }
         }
 
-        public async Task<FormResult> DeleteCurrentUser()
+        public async Task<ServiceResult> DeleteCurrentUser()
         {
             string[] defaultDetail = ["An unknown error prevented the user from changing the password."];
 
@@ -120,12 +119,12 @@ namespace ToolShare.UI.Services
                 var result = await _httpClient.DeleteAsync("api/users/delete");
                 if (result.IsSuccessStatusCode)
                 {
-                    return new FormResult { Succeeded = true };
+                    return new ServiceResult { Succeeded = true };
                 }
 
                 var details = await result.Content.ReadAsStringAsync();
 
-                return new FormResult
+                return new ServiceResult
                 {
                     Succeeded = false,
                     ErrorList = [details]
@@ -133,7 +132,7 @@ namespace ToolShare.UI.Services
             }
             catch (Exception e)
             {
-                return new FormResult
+                return new ServiceResult
                 {
                     Succeeded = false,
                     ErrorList = defaultDetail

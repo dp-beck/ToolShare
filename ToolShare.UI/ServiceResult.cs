@@ -1,9 +1,9 @@
 namespace ToolShare.UI
 {
     /// <summary>
-    /// Response for login and registration.
+    /// General Object for Result of Call to a Service
     /// </summary>
-    public class FormResult
+    public class ServiceResult
     {
          /// <summary>
         /// Gets or sets a value indicating whether the action was successful.
