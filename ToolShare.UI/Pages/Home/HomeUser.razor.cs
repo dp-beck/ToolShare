@@ -3,7 +3,7 @@ using MudBlazor;
 using ToolShare.UI.DTOs;
 using ToolShare.UI.Services;
 
-namespace ToolShare.UI.Components;
+namespace ToolShare.UI.Pages.Home;
 
 public partial class HomeUser : ComponentBase
 {

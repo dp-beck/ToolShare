@@ -1,104 +1,100 @@
 @page "/manage-pod/{podId:int}"
-@using AutoMapper.Execution
+@using ToolShare.UI.DTOs
 
 @if (!_isLoading)
 {
-    <h3>Manage Pod: @Pod.Name</h3>
+    <MudText Typo="Typo.h3" Align="Align.Center">Manage Pod: @NewPodName</MudText>
 
-    <p>Hi @Pod.podManager.UserName, you are the manager of this pod. You can change pod name, add new pod members, remove users from pod transfer management to another user, or delete the pod.</p>
+    <MudText Typo="Typo.body1">Hi @Pod.podManager.UserName, you are the manager of this pod. You can change pod name, add new pod members, remove users from pod transfer management to another user, or delete the pod.</MudText>
     
-    <h4>Change Pod Name</h4>
-    <EditForm Model="@NewPodName" OnSubmit="HandleEditSubmit">
-        <DataAnnotationsValidator />
-        <ValidationSummary />
-        <div class="form-group row m-3">
-            <label for="PodName" class="col-sm-2 col-form-label"> Name: </label>
-            <div class="col-sm-10">
-                <InputText class="form-control" id="PodName" @bind-Value="NewPodName" />
-            </div>
-        </div>
-        
-        <div class="form-group row m-3">
-            <div class="col-sm-10">
-                <button type="submit" class="btn btn-primary">Submit Changes</button>
-            </div>
-        </div>
+    <MudText Typo="Typo.h4" Class="mt-4">Change Pod Name</MudText>
 
-    </EditForm>
-    
-    <h4>Add User to Pod</h4>
-    
-    <MudDataGrid Items="@NoPodUsers">
-        <TemplateColumn Title="Photo">
-            <CellTemplate>
-                <img src="@context.Item.ProfilePhotoUrl" alt="picture of the user" width="50px"/>    
-            </CellTemplate>
-        </TemplateColumn>
-        
-        <TemplateColumn Title="UserName">
-            <CellTemplate>
-                <a class="nav-link" href="user-detail/@context.Item.UserName">@context.Item.UserName</a>    
-            </CellTemplate>
-            
-        </TemplateColumn>
-        <PropertyColumn Property="NoPodUser => NoPodUser.FirstName" Title="First Name"></PropertyColumn>
-        <PropertyColumn Property="NoPodUser => NoPodUser.LastName" Title="Last Name"></PropertyColumn>
-        <TemplateColumn Title="">
-            <CellTemplate>
-                <button @onclick="async () => await HandleAddUserClick(context.Item.UserName)">Add?</button>
-            </CellTemplate>
-        </TemplateColumn>
+    <MudForm @bind-IsValid="@ValidUpdatePodForm" @bind-Errors="@UpdatePodFormErrors" Spacing="6" Class="mt-4">
+        <MudTextField @bind-Value="@NewPodName" T="string"
+                      Label="New Pod Name" Required="true" RequiredError="Username is required!"/>
+        <MudButton OnClick="async () => await HandleEditSubmit()"
+                   Variant="Variant.Filled"
+                   Color="Color.Primary"
+                   Disabled="@(!ValidUpdatePodForm)"
+                   Class="ml-auto">Submit Changes</MudButton>
+        @foreach (var error in UpdatePodFormErrors)
+        {
+            <MudText Color="@Color.Error">@error</MudText>
+        }
+    </MudForm>
+
+    <MudText Typo="Typo.h4" Class="mt-4">Add User to Pod</MudText>
+    <MudDataGrid T="AppUserDTO" Items="@NoPodUsers">
+        <Columns>
+            <PropertyColumn Property="noPodUser => noPodUser.ProfilePhotoUrl" Title="Photo">
+                <CellTemplate>
+                    <MudImage Class="rounded-circle" Src="@context.Item.ProfilePhotoUrl" Alt="picture of the user" Width="50"/>
+                </CellTemplate>
+            </PropertyColumn>
+
+            <PropertyColumn Property="noPodUser => noPodUser.UserName" Title="User Name">
+                <CellTemplate>
+                    <MudLink Href="@($"user-detail/{context.Item.UserName}")">@context.Item.UserName</MudLink>
+                </CellTemplate>
+            </PropertyColumn>
+            <PropertyColumn Property="noPodUser => noPodUser.FirstName" Title="First Name"></PropertyColumn>
+            <PropertyColumn Property="noPodUser => noPodUser.LastName" Title="Last Name"></PropertyColumn>
+            <PropertyColumn Property="noPodUser => noPodUser.UserName" Title="">
+                <CellTemplate>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary"
+                        @onclick="async () => await HandleAddUserClick(context.Item.UserName)">Add</MudButton>
+                </CellTemplate>
+            </PropertyColumn>
+            </Columns>
     </MudDataGrid>
 
-    <h4>Remove Pod Members</h4>
-    <p>Make this a Grid of Pod Members with Photo, Username, First Name, Last Name, Button to Remove from Pod</p>
-    <MudDataGrid Items="@Pod.PodMembers.AsQueryable()">
-        <TemplateColumn Title="Photo">
+    <MudText Typo="Typo.h4" Class="mt-8">Remove Pod Members</MudText>
+    <MudDataGrid T="AppUserDTO" Items="@Pod.PodMembers">
+        <Columns>
+        <PropertyColumn Property="podMember => podMember.ProfilePhotoUrl" Title="Photo">
             <CellTemplate>
-                <img src="@context.Item.ProfilePhotoUrl" alt="picture of the user" width="50px"/>
+                <MudImage Class="rounded-circle" Src="@context.Item.ProfilePhotoUrl" Alt="picture of the user" Width="50"/>
             </CellTemplate>
-        </TemplateColumn>
-        <TemplateColumn Title="UserName">
+        </PropertyColumn>
+        <PropertyColumn Property="podMember => podMember.UserName" Title="User Name">
             <CellTemplate>
-                <a class="nav-link" href="user-detail/@context.Item.UserName">@context.Item.UserName</a>    
+                <MudLink Href="@($"user-detail/{context.Item.UserName}")">@context.Item.UserName</MudLink>
             </CellTemplate>
-        </TemplateColumn>
-        <PropertyColumn Property="PodMember => PodMember.FirstName" Title="First Name"></PropertyColumn>
-        <PropertyColumn Property="PodMember => PodMember.LastName" Title="Last Name"></PropertyColumn>
-        <TemplateColumn Title="">
+        </PropertyColumn>
+        <PropertyColumn Property="podMember => podMember.FirstName" Title="First Name"></PropertyColumn>
+        <PropertyColumn Property="podMember => podMember.LastName" Title="Last Name"></PropertyColumn>
+        <PropertyColumn Property="podMember => podMember.UserName" Title="">
             <CellTemplate>
-                <button @onclick="async () => await HandleRemoveMemberClick(context.Item.UserName)">Delete?</button>    
+                <MudButton Variant="Variant.Filled" Color="Color.Secondary"
+                           @onclick="async () => await HandleRemoveMemberClick(context.Item.UserName)">Remove</MudButton>
             </CellTemplate>
-        </TemplateColumn>
+        </PropertyColumn>
+        </Columns>
     </MudDataGrid>
     
-    <h4>Choose a new Pod Manager</h4>
-    <p>Make this a drop down menu of pod members, selecting will change the manager
-        Require another button press to make it happen </p>
+    <MudText Typo="Typo.h4" Class="mt-8">Choose a new Pod Manager</MudText>
+    <MudText Typo="Typo.body1" Class="mt-2">Once you change managers, you will be redirected to the home page.</MudText>
     
-    <EditForm Model="@NewPodManagerName" OnSubmit="HandleChangeManagerClick">
-        <div class="form-group row m-3">
-            <label for="NewPodManager" class="col-sm-2 col-form-label"> Choose New Pod Manager: </label>
-            <div class="col-sm-10">
-                <InputSelect class="form-control" id="NewPodManager" @bind-Value="NewPodManagerName">
-                    @foreach (var member in Pod.PodMembers)
-                    {
-                        <option value="@member.UserName">@member.UserName</option>
-                    }
-                </InputSelect>
-            </div>
-        </div>
-        
-        <div class="form-group row m-3">
-            <div class="col-sm-10">
-                <button type="submit" class="btn btn-primary">Submit Changes</button>
-            </div>
-        </div>
+    <MudForm Spacing="6" Class="mt-4">
+        <MudSelect @bind-Value="NewPodManagerName">
+            @foreach (var member in Pod.PodMembers)
+            {
+                <MudSelectItem Value="@member.UserName">@member.UserName</MudSelectItem>
+            }
+        </MudSelect>
+        <MudButton OnClick="HandleChangeManagerClick"
+                   Variant="Variant.Filled"
+                   Color="Color.Primary"
+                   Class="ml-auto">Submit Changes</MudButton>
+    </MudForm>
 
-    </EditForm>
-    <h4>Delete Pod</h4>
-    <p>Note! You cannot delete your pod until you have removed all other users from the pod. Please note
-        that by deleting the pod you manage, you delete your account from the app as well!</p>
-    <button type="button" class="btn btn-danger" @onclick="HandleDelete">Delete Pod</button>
-
+    <MudText Typo="Typo.h4" Class="mt-8">Delete Pod</MudText>
+    <MudText Typo="Typo.body1">Note! You cannot delete your pod until you have removed all other users from the pod. Please note
+        that by deleting the pod you manage, you delete your account from the app as well!</MudText>
+    
+    <MudButton Variant="Variant.Filled" 
+               StartIcon="@Icons.Material.Filled.Delete" 
+               Color="Color.Error"
+               @onclick="OnDeleteButtonClick"
+               Class="mt-4 mb-4 ml-4">Delete</MudButton>
 }

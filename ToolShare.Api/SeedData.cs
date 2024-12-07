@@ -317,7 +317,8 @@ namespace ToolShare.Api
                     ToolPhotoUrl = "https://res.cloudinary.com/dzsqoueki/image/upload/w_1000,ar_1:1,c_fill,g_auto,e_art:hokusai/v1732847991/cub-cadet-gas-self-propelled-lawn-mowers-cc800-64_1000_agqcge.jpg",
                     ToolOwner = tomsmith,
                     ToolStatus = ToolStatus.Borrowed,
-                    ToolBorrower = napoleondynamite
+                    ToolBorrower = napoleondynamite,
+                    DateBorrowed = DateOnly.FromDateTime(DateTime.UtcNow)
                 },
 
                 new () 
@@ -337,7 +338,8 @@ namespace ToolShare.Api
                     ToolPhotoUrl = "https://res.cloudinary.com/dzsqoueki/image/upload/w_1000,ar_1:1,c_fill,g_auto,e_art:hokusai/v1732848104/146b0a4304d448c5b04ed50630097831_t2pp5w.jpg",
                     ToolOwner = napoleondynamite,
                     ToolStatus = ToolStatus.Borrowed,
-                    ToolBorrower = oliviasmith
+                    ToolBorrower = oliviasmith,
+                    DateBorrowed = DateOnly.FromDateTime(DateTime.UtcNow)
                 },
 
                 new () 
@@ -406,7 +408,8 @@ namespace ToolShare.Api
                     ToolPhotoUrl = "https://res.cloudinary.com/dzsqoueki/image/upload/w_1000,ar_1:1,c_fill,g_auto,e_art:hokusai/v1732848568/dewalt-brad-nailers-dwfp12233-64_1000_ky37mo.jpg",
                     ToolOwner = oliviasmith,
                     ToolStatus = ToolStatus.Borrowed,
-                    ToolBorrower = bigmike
+                    ToolBorrower = bigmike,
+                    DateBorrowed = DateOnly.FromDateTime(DateTime.UtcNow)
                 },
                 
                 new () 
@@ -448,7 +451,8 @@ namespace ToolShare.Api
                     ToolPhotoUrl = "https://res.cloudinary.com/dzsqoueki/image/upload/w_1000,ar_1:1,c_fill,g_auto,e_art:hokusai/v1732848775/5989305_Main_1200x_eowdva.jpg",
                     ToolOwner = wendy123,
                     ToolStatus = ToolStatus.Borrowed,
-                    ToolBorrower = bobbo
+                    ToolBorrower = bobbo,
+                    DateBorrowed = DateOnly.FromDateTime(DateTime.UtcNow)
                 },
                 
                 new () 
@@ -459,7 +463,8 @@ namespace ToolShare.Api
                     ToolPhotoUrl = "https://res.cloudinary.com/dzsqoueki/image/upload/w_1000,ar_1:1,c_fill,g_auto,e_art:hokusai/v1732848808/XT45360M_IMG_IU2_RGB_1500_lrztii.jpg",
                     ToolOwner = sunshine,
                     ToolStatus = ToolStatus.Borrowed,
-                    ToolBorrower = hungryhippo325
+                    ToolBorrower = hungryhippo325,
+                    DateBorrowed = DateOnly.FromDateTime(DateTime.UtcNow)
                 },
 
                 new () 

@@ -4,7 +4,6 @@ using System.Text.Json.Serialization;
 using AutoMapper;
 using ToolShare.Data.Models;
 using ToolShare.UI.DTOs;
-using ToolShare.UI.Identity.Models;
 
 namespace ToolShare.UI.Services
 {
@@ -100,7 +99,7 @@ namespace ToolShare.UI.Services
                     ErrorList = [details]
                 };
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 // unknown error
                 return new FormResult
@@ -112,73 +111,145 @@ namespace ToolShare.UI.Services
             
         }
 
-        public async Task<string> UpdatePodName(int podId, string NewPodName)
+        public async Task<FormResult> UpdatePodName(int podId, string newPodName)
         {
+            string[] defaultDetail = [ "An unknown error prevented pod from being renamed." ];
+
             try
             {
-                var response = await _httpClient.PutAsJsonAsync($"api/pods/{podId}/updatename", NewPodName);
-                response.EnsureSuccessStatusCode();
-                return "Success";
+                var result = await _httpClient.PutAsJsonAsync($"api/pods/{podId}/updatename", newPodName);
+                if (result.IsSuccessStatusCode)
+                {
+                    return new FormResult { Succeeded = true };
+                }
+                var details = await result.Content.ReadAsStringAsync();
+                
+                return new FormResult
+                {
+                    Succeeded = false,
+                    ErrorList = [details]
+                };
+                
             }
-            catch (Exception e)
+            catch (Exception)
             { 
-                return e.Message;
+                return new FormResult
+                {
+                    Succeeded = false,
+                    ErrorList = defaultDetail
+                };            
             }
         }
 
-        public async Task<string> AddUser(int podId, string username)
+        public async Task<FormResult> AddUser(int podId, string username)
         {
+            string[] defaultDetail = [ "An unknown error prevented the user from being added." ];
+
             try
             {
-                var response = await _httpClient.PutAsJsonAsync($"api/pods/{podId}/add-user", username);
-                response.EnsureSuccessStatusCode();
-                return "Success";
+                var result = await _httpClient.PutAsJsonAsync($"api/pods/{podId}/add-user", username);
+                if (result.IsSuccessStatusCode)
+                {
+                    return new FormResult { Succeeded = true };
+                }
+                var details = await result.Content.ReadAsStringAsync();
+                return new FormResult
+                {
+                    Succeeded = false,
+                    ErrorList = [details]
+                };
             }
-            catch (Exception e)
+            catch (Exception)
             { 
-                return e.Message;
-            }        
-        }
-
-        public async Task<string> RemoveUser(int podId, string username)
-        {
-            try
-            {
-                var response = await _httpClient.PutAsJsonAsync($"api/pods/{podId}/remove-user", username);
-                response.EnsureSuccessStatusCode();
-                return "Success";
-            }
-            catch (Exception e)
-            {
-                return e.Message;
+                return new FormResult
+                {
+                    Succeeded = false,
+                    ErrorList = defaultDetail
+                };            
             }
         }
 
-        public async Task<string> ChangeManager(int podId, string username)
+        public async Task<FormResult> RemoveUser(int podId, string username)
         {
+            string[] defaultDetail = [ "An unknown error prevented the user from being removed." ];
+
             try
             {
-                var response = await _httpClient.PutAsJsonAsync($"api/pods/{podId}/change-pod-manager", username);
-                response.EnsureSuccessStatusCode();
-                return "Success";
+                var result = await _httpClient.PutAsJsonAsync($"api/pods/{podId}/remove-user", username);
+                if (result.IsSuccessStatusCode)
+                {
+                    return new FormResult { Succeeded = true };
+                }
+                var details = await result.Content.ReadAsStringAsync();
+                return new FormResult
+                {
+                    Succeeded = false,
+                    ErrorList = [details]
+                };
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                return e.Message;
-            }        
+                return new FormResult
+                {
+                    Succeeded = false,
+                    ErrorList = defaultDetail
+                };                        
+            }
         }
 
-        public async Task<string> DeletePod(int podId)
+        public async Task<FormResult> ChangeManager(int podId, string username)
         {
+            string[] defaultDetail = [ "An unknown error prevented the user from being removed." ];
+   
             try
             {
-                var response = await _httpClient.DeleteAsync("api/pods/delete/{podId}");
-                response.EnsureSuccessStatusCode();
-                return "success";
+                var result = await _httpClient.PutAsJsonAsync($"api/pods/{podId}/change-pod-manager", username);
+                if (result.IsSuccessStatusCode)
+                {
+                    return new FormResult { Succeeded = true };
+                }
+                var details = await result.Content.ReadAsStringAsync();
+                return new FormResult
+                {
+                    Succeeded = false,
+                    ErrorList = [details]
+                };
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                return e.Message;
+                return new FormResult
+                {
+                    Succeeded = false,
+                    ErrorList = defaultDetail
+                };                        
+            }
+        }
+
+        public async Task<FormResult> DeletePod(int podId)
+        {
+            string[] defaultDetail = [ "An unknown error prevented the pod from being deleted." ];
+
+            try
+            {
+                var result = await _httpClient.DeleteAsync("api/pods/delete/{podId}");
+                if (result.IsSuccessStatusCode)
+                {
+                    return new FormResult { Succeeded = true };
+                }
+                var details = await result.Content.ReadAsStringAsync();
+                return new FormResult
+                {
+                    Succeeded = false,
+                    ErrorList = [details]
+                };
+            }
+            catch (Exception)
+            {
+                return new FormResult
+                {
+                    Succeeded = false,
+                    ErrorList = defaultDetail
+                };
             }
         }
     }
