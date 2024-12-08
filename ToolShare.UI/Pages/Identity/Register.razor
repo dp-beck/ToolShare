@@ -95,6 +95,7 @@
     
     [Inject] public required IJSRuntime Js { get; set; }
     
+    // Project Feature: Implement a Regex. I wrote the final regex in this list.
     private IEnumerable<string> PasswordStrength(string pw)
     {
         if (string.IsNullOrWhiteSpace(pw))
