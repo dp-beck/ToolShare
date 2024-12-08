@@ -83,6 +83,7 @@
     MudTextField<string>? pwField1;
     private string PhotoUploadMessage { get; set; } = string.Empty;
     private string SecureUrl { get; set; } = string.Empty;
+    private const string Transformation = "w_1000,c_fill,ar_1:1,g_auto,r_max,bo_5px_solid_red,b_rgb:262c35";
     private RegistrationInfoDto registrationInfo = new ()
     {
         UserName = string.Empty,
@@ -91,7 +92,6 @@
         LastName = string.Empty,
         AboutMe = string.Empty,
         Password = string.Empty,
-        ProfilePhotoUrl = string.Empty
     };
     
     [Inject] public required IJSRuntime Js { get; set; }
@@ -124,19 +124,28 @@
     {
         success =  false;
         errors = [];
-        registrationInfo.ProfilePhotoUrl = TransformImageUrl(SecureUrl, "w_1000,c_fill,ar_1:1,g_auto,r_max,bo_5px_solid_red,b_rgb:262c35");
+
+        if (registrationInfo.ProfilePhotoUrl is null)
+        {
+            registrationInfo.ProfilePhotoUrl = "https://res.cloudinary.com/dzsqoueki/image/upload/w_1000,c_fill,ar_1:1,g_auto,r_max,bo_5px_solid_red,b_rgb:262c35/v1731154587/blank-profile-picture-973460_1280_pxrhwm.png";
+        }
+        else
+        {
+            registrationInfo.ProfilePhotoUrl = TransformImageUrl(SecureUrl, Transformation);
+        }
+        
         var result = await Acct.RegisterAsync(registrationInfo);
 
         if (result.Succeeded)
         {
             success = true;
-            registrationInfo.Email = 
-            registrationInfo.Password =
-            registrationInfo.UserName =
-            registrationInfo.FirstName =
-            registrationInfo.LastName =
-            registrationInfo.AboutMe = 
-            registrationInfo.ProfilePhotoUrl = string.Empty;
+            registrationInfo.Email =
+                registrationInfo.Password =
+                    registrationInfo.UserName =
+                        registrationInfo.FirstName =
+                            registrationInfo.LastName =
+                                registrationInfo.AboutMe = String.Empty;
+            registrationInfo.ProfilePhotoUrl = null;
         }
         else
         {
@@ -147,7 +156,7 @@
     private async Task OpenWidget()
     {
         SecureUrl = await Js.InvokeAsync<string>("openWidget");
-        if (!string.IsNullOrEmpty(registrationInfo.ProfilePhotoUrl))
+        if (!string.IsNullOrEmpty(SecureUrl))
         {
             PhotoUploadMessage = "Photo successfully uploaded!";
         }

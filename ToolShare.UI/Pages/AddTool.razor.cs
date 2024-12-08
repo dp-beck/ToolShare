@@ -14,13 +14,23 @@ public partial class AddTool : ComponentBase
     private bool success;
     private string secureUrl = string.Empty;
     private string PhotoUploadMessage = string.Empty;
+    private const string Transformation = "w_1000,ar_1:1,c_fill,g_auto,e_art:hokusai";
+    
     [Inject]
     public required IToolsDataService ToolsDataService { get; set; }
     [Inject] public required IJSRuntime JS { get; set; }
     
     private async Task HandleSubmit()
     { 
-        ToolDto.ToolPhotoUrl = TransformImageUrl(secureUrl, "w_1000,ar_1:1,c_fill,g_auto,e_art:hokusai");
+        if (ToolDto.ToolPhotoUrl is null)
+        {
+            ToolDto.ToolPhotoUrl = "https://res.cloudinary.com/dzsqoueki/image/upload/w_1000,ar_1:1,c_fill,g_auto,e_art:hokusai/v1732729454/screwdriver-1294338_1280_e5qlme.png";
+        }
+        else
+        {
+            ToolDto.ToolPhotoUrl = TransformImageUrl(secureUrl, Transformation);
+        }
+        
         var result = await ToolsDataService.CreateTool(ToolDto);
         if (result.Succeeded)
         {
@@ -37,7 +47,7 @@ public partial class AddTool : ComponentBase
     {
         secureUrl = await JS.InvokeAsync<string>("openWidget");
         
-        if (!string.IsNullOrEmpty(ToolDto.ToolPhotoUrl))
+        if (!string.IsNullOrEmpty(secureUrl))
         {
             PhotoUploadMessage = "Photo successfully uploaded!";
         }

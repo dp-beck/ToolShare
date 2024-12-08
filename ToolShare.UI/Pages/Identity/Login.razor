@@ -18,16 +18,16 @@
             </MudItem>
             <MudItem xs="12" sm="6">
                 <MudText Typo="Typo.h4">Welcome!</MudText>
-                <MudText Typo="Typo.body1"> An app for making it possible to share your tools with family and friends.
-                    Say goodbye to misplacing your tools by keeping track of who has what
-                    and for how long.
+                <MudText Typo="Typo.body1"> This is Tool Share -- an app to help you share your tools with 
+                    family, friends and neighbors more easily. Keep track of who has what and never misplace your
+                    tools again!
                 </MudText>
             </MudItem>
             
             <MudItem xs="12" sm="6">
                 <MudPaper Class="white pa-4" Elevation="3" Width="75%">
                     <MudText Typo="Typo.body1">Welcome back! Sign in to get started!</MudText>
-                    <MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
+                    <MudForm @bind-IsValid="@success" @bind-Errors="@errors">
                         <MudTextField @bind-Value="username" T="string" Label="Username" Required="true" RequiredError="User name is required!"/>
                         <MudTextField @bind-Value="password" T="string" Label="Password"
                                       InputType="InputType.Password"
@@ -53,19 +53,12 @@
 @code {
     bool success;
     string[] errors = { };
-    MudForm? form;
     private string username = string.Empty;
     private string password = string.Empty;
 
     private async Task DoLoginAsync()
     {
-        if (form != null)
-        {
-            await form.Validate();
-            if (form.IsValid)
-            {
-                StateHasChanged();
-                var result = await Acct.LoginAsync(username, password);
+        var result = await Acct.LoginAsync(username, password);
                 if (result.Succeeded)
                 {
                     success = true;
@@ -78,6 +71,5 @@
             }
         }
         
-    
     }
 }
