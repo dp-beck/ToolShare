@@ -180,6 +180,40 @@ namespace ToolShare.UI.Services
             }
         }
 
+        public async Task<ServiceResult> RejectToolRequest(int toolId)
+        {
+            {
+                string[] defaultDetail = [ "An unknown error prevented tool request from being rejected." ];
+
+                try
+                {
+                    var request = new HttpRequestMessage(HttpMethod.Put, $"api/tools/{toolId}/reject-tool-request");
+                    using var result = await _httpClient.SendAsync(request);
+                    if (result.IsSuccessStatusCode)
+                    {
+                        return new ServiceResult { Succeeded = true };
+                    }
+                
+                    var details = await result.Content.ReadAsStringAsync();
+                
+                    return new ServiceResult
+                    {
+                        Succeeded = false,
+                        ErrorList = [details]
+                    };
+
+                }
+                catch (Exception)
+                {
+                    return new ServiceResult
+                    {
+                        Succeeded = false,
+                        ErrorList = defaultDetail
+                    };
+                }
+            }
+        }
+
         public async Task<ServiceResult> RequestToolReturn(int toolId)
         {
             string[] defaultDetail = [ "An unknown error prevented the return from being requested." ];

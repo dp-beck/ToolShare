@@ -221,7 +221,7 @@ namespace ToolShare.UI.Services
 
             try
             {
-                var result = await _httpClient.DeleteAsync("api/pods/delete/{podId}");
+                var result = await _httpClient.DeleteAsync($"api/pods/{podId}");
                 if (result.IsSuccessStatusCode)
                 {
                     return new ServiceResult { Succeeded = true };

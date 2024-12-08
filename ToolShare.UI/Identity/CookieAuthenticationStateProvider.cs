@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using System.Net.Http.Json;
 using System.Security.Claims;
 using System.Text;
@@ -22,7 +23,7 @@ namespace ToolShare.UI.Identity
         private readonly JsonSerializerOptions jsonSerializerOptions =
             new()
             {
-                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
             };
 
         /// <summary>
@@ -67,20 +68,11 @@ namespace ToolShare.UI.Identity
                 var problemDetails = JsonDocument.Parse(details);
                 var errors = new List<string>();
                 var errorList = problemDetails.RootElement.GetProperty("errors");
+                var errorValues = errorList.GetProperty("$values");
 
-                foreach (var errorEntry in errorList.EnumerateObject())
+                foreach (var errorValue in errorValues.EnumerateArray())
                 {
-                    if (errorEntry.Value.ValueKind == JsonValueKind.String)
-                    {
-                        errors.Add(errorEntry.Value.GetString()!);
-                    }
-                    else if (errorEntry.Value.ValueKind == JsonValueKind.Array)
-                    {
-                        errors.AddRange(
-                            errorEntry.Value.EnumerateArray().Select(
-                                e => e.GetString() ?? string.Empty)
-                            .Where(e => !string.IsNullOrEmpty(e)));
-                    }
+                        errors.Add(errorValue.GetProperty("description").GetString() ?? string.Empty);
                 }
 
                 // return the error list

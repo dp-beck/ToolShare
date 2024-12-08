@@ -1,29 +1,41 @@
 @page "/current-user/"
 @using System.ComponentModel.DataAnnotations
-@using ToolShare.UI.Dtos
 
 @if (!_isLoading)
 {
     <MudText Typo="Typo.h3" Align="Align.Center">@UserEditDTO.UserName</MudText>
+    <AuthorizeView Roles="NoPodUser">
+        <Authorized>
+            <MudText Typo="Typo.body1" Align="Align.Center">You are not yet a member of a pod.</MudText>
+        </Authorized>
+    </AuthorizeView>
     
-    <MudText Typo="Typo.body1" Align="Align.Center"> You are a member of the @userInfo.PodJoinedName.</MudText>
-    @if (userInfo.PodManagedName is null)
-    {
-        
-        <MudText Typo="Typo.body1" Align="Align.Center">You are not the manager of the pod.</MudText>
-    }
-    else
-    {
-        <MudText Typo="Typo.body1" Align="Align.Center">You are the manager of the pod.</MudText>
-    }
-    
-    <MudImage Src="@userInfo.ProfilePhotoUrl" 
-         Alt="Profile photo of user"
-         Width="150"
-         Class="rounded-circle"
-         />
+    <AuthorizeView Roles="User">
+        <Authorized>
+            <MudText Typo="Typo.body1" Align="Align.Center"> You are a member of the @userInfo.PodJoinedName.</MudText>
+            @if (userInfo.PodManagedName == String.Empty)
+            {
 
-    <MudForm @ref="UserDetailsForm" @bind-IsValid="@validUserDetailsForm" @bind-Errors="@UserDetailsFormErrors" Spacing="6" Class="mt-4">
+                <MudText Typo="Typo.body1" Align="Align.Center">You are not the manager of the pod.</MudText>
+            }
+            else
+            {
+                <MudText Typo="Typo.body1" Align="Align.Center">You are the manager of the pod.</MudText>
+            }
+        </Authorized>
+    </AuthorizeView>
+    
+    <MudContainer Class="mx-4">
+        <MudImage Src="@userInfo.ProfilePhotoUrl" 
+                  Alt="Profile photo of user"
+                  Width="150"
+                  Class="rounded-circle"
+        />
+        
+        <MudText Typo="Typo.body1" Color="Color.Default">Change any of your details below.
+            Please note that if you change your username, you will be logged out and need to log back in.</MudText>
+
+        <MudForm @ref="UserDetailsForm" @bind-IsValid="@validUserDetailsForm" @bind-Errors="@UserDetailsFormErrors" Spacing="6" Class="mt-4">
         <MudTextField @bind-Value="@UserEditDTO.UserName" T="string"
                       Label="Username" Required="true" RequiredError="Username is required!"/>
         <MudTextField @bind-Value="UserEditDTO.FirstName" T="string"
@@ -68,9 +80,10 @@
 
     <MudText Typo="Typo.h4" Class="mt-4">Delete Account</MudText>
 
-    <MudButton Variant="Variant.Filled" 
-               StartIcon="@Icons.Material.Filled.Delete" 
-               Color="Color.Error"
-               @onclick="OnDeleteButtonClick"
-               Class="mt-4 mb-4 ml-4">Delete</MudButton>
+         <MudButton Variant="Variant.Filled" 
+                    StartIcon="@Icons.Material.Filled.Delete" 
+                    Color="Color.Error"
+                    @onclick="OnDeleteButtonClick"
+                    Class="mt-4 mb-4 ml-4">Delete</MudButton>
+    </MudContainer>
 }

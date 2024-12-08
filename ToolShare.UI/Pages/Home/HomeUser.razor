@@ -24,9 +24,31 @@
                     <MudLink Href="@($"tool-detail/{context.Item.ToolId}")">@context.Item.Name</MudLink>
                 </CellTemplate>
             </PropertyColumn>
-            <PropertyColumn Property="tool => tool.ToolOwnerName" Title="Tool Owner"/>
+            <PropertyColumn Property="tool => tool.ToolOwnerName" 
+                            Title="Tool Owner"/>
             <PropertyColumn Property="tool => tool.BorrowingPeriodInDays" Title="Loan Period (Days)"/>
-            <PropertyColumn Property="tool => tool.ToolStatus" Title="Availability"/>
+            <PropertyColumn Property="tool => tool.ToolStatus" Title="Availability">
+                <CellTemplate>
+                    @switch (context.Item.ToolStatus)
+                    {
+                        case ToolStatus.Available:
+                            <MudText Typo="Typo.body1" Color="Color.Tertiary">Available</MudText>
+                            break;
+                        case ToolStatus.Borrowed:
+                            <MudText Typo="Typo.body1" Color="Color.Secondary">Borrowed</MudText>
+                            break;
+                        case ToolStatus.Requested:
+                            <MudText Typo="Typo.body1" Color="Color.Primary">Requested</MudText>
+                            break;
+                        case ToolStatus.ReturnPending:
+                            <MudText Typo="Typo.body1" Color="Color.Dark">Return Pending</MudText>
+                            break;
+                        default:
+                            <MudText Typo="Typo.body1" Color="Color.Default">@context.Item.ToolStatus</MudText>
+                            break;
+                    }
+                </CellTemplate>
+            </PropertyColumn>
             <PropertyColumn Property="tool => tool.ToolId" Title="" Sortable="false" Filterable="false">
                 <CellTemplate>
                     @if (context.Item.ToolStatus == ToolStatus.Available)

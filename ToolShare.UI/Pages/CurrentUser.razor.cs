@@ -1,14 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Forms;
-using Microsoft.AspNetCore.Http.Extensions;
 using MudBlazor;
-using ToolShare.Data;
-using ToolShare.Data.Models;
 using ToolShare.UI.Dtos;
 using ToolShare.UI.Services;
 
@@ -34,12 +26,8 @@ namespace ToolShare.UI.Pages
         [Inject] public required IUsersDataService UsersDataService { get; set; }
         [Inject] public required NavigationManager PageManager { get; set; }
         [Inject] public required ISnackbar Snackbar { get; set; }
-        
         [Inject] public required IDialogService DialogService { get; set; }
-
         
-        protected string Message = string.Empty;
-
         protected override async Task OnInitializedAsync()
         {
             userInfo = await UsersDataService.GetCurrentUser();
@@ -67,7 +55,11 @@ namespace ToolShare.UI.Pages
             var result = await UsersDataService.UpdateCurrentUser(UserEditDTO);
             if (result.Succeeded)
             {    
-                Snackbar.Add("User details successfully updated!", Severity.Success);    
+                Snackbar.Add("User details successfully updated!", Severity.Success);
+                if (userInfo.UserName != UserEditDTO.UserName)
+                {
+                    PageManager.NavigateTo("logout", forceLoad: true);
+                }
             }
             else
             {

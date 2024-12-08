@@ -22,47 +22,13 @@ public partial class ManageTools : ComponentBase
     private IEnumerable<ToolDto>? ToolsBorrowed { get; set; }
     private string _searchStringOwnedTools = String.Empty;
     private string _searchStringBorrowedTools = String.Empty;
-
-    private IQueryable<ToolDto> filteredBorrowedTools
-    {
-        get
-        {
-            var result = ToolsBorrowedQueryable;
-            if (!string.IsNullOrEmpty(borrowedToolsNameFilter))
-            {
-                result = result.Where(x => x.Name.Contains(borrowedToolsNameFilter, StringComparison.CurrentCultureIgnoreCase));
-            }
-
-            return result;
-        }
-    }
     
-    private IQueryable<ToolDto> filteredOwnedTools
-    {
-        get
-        {
-            var result = ToolsOwnedQueryable;
-            if (!string.IsNullOrEmpty(OwnedToolsNameFilter))
-            {
-                result = result.Where(x => x.Name.Contains(OwnedToolsNameFilter, StringComparison.CurrentCultureIgnoreCase));
-            }
-
-            if (!string.IsNullOrEmpty(statusFilter))
-            {
-                result = result.Where(x => x.ToolStatus.ToString() == statusFilter);
-            }
-            return result;
-        }
-    }
-
-    [Inject]
-    public required IUsersDataService UsersDataService { get; set; }
+    
+    [Inject] public required IUsersDataService UsersDataService { get; set; }
         
-    [Inject]
-    public required IToolsDataService ToolsDataService { get; set; }
+    [Inject] public required IToolsDataService ToolsDataService { get; set; }
     
-    [Inject]
-    public required ISnackbar Snackbar { get; set; }
+    [Inject] public required ISnackbar Snackbar { get; set; }
     protected override async Task OnInitializedAsync()
     {
         userInfo = await UsersDataService.GetCurrentUser();
@@ -78,6 +44,7 @@ public partial class ManageTools : ComponentBase
         if (result.Succeeded)
         {
             ToolsOwned = (await ToolsDataService.GetToolsOwnedByUser(userInfo.UserName)).ToList();
+            ToolsBorrowed = (await ToolsDataService.GetToolsBorrowedByUser(userInfo.UserName)).ToList();
             Snackbar.Add("Tool successfully lent!", Severity.Success);    
         }
         else
@@ -86,11 +53,28 @@ public partial class ManageTools : ComponentBase
         }
     }
    
+    private async Task HandleRejectToolRequestClick(int toolId)
+    {
+        var result = await ToolsDataService.RejectToolRequest(toolId);
+        
+        if (result.Succeeded)
+        {
+            ToolsOwned = (await ToolsDataService.GetToolsOwnedByUser(userInfo.UserName)).ToList();
+            ToolsBorrowed = (await ToolsDataService.GetToolsBorrowedByUser(userInfo.UserName)).ToList();
+            Snackbar.Add("Tool request rejected!", Severity.Success);    
+        }
+        else
+        {
+            Snackbar.Add($"Error: {result.ErrorList}", Severity.Error);
+        }
+    }
+    
     private async Task HandleRequestReturnClick(int toolId)
     {
         var result = await ToolsDataService.RequestToolReturn(toolId);
         if (result.Succeeded)
         {
+            ToolsOwned = (await ToolsDataService.GetToolsOwnedByUser(userInfo.UserName)).ToList();
             ToolsBorrowed = (await ToolsDataService.GetToolsBorrowedByUser(userInfo.UserName)).ToList();
             Snackbar.Add("Tool return successfully requested!", Severity.Success);
         }
@@ -106,6 +90,7 @@ public partial class ManageTools : ComponentBase
         if (result.Succeeded)
         {
             ToolsOwned = (await ToolsDataService.GetToolsOwnedByUser(userInfo.UserName)).ToList();
+            ToolsBorrowed = (await ToolsDataService.GetToolsBorrowedByUser(userInfo.UserName)).ToList();
             Snackbar.Add("Tool return successfully accepted!", Severity.Success);    
         }
         else
@@ -120,6 +105,7 @@ public partial class ManageTools : ComponentBase
         if (result.Succeeded)
         {
             ToolsOwned = (await ToolsDataService.GetToolsOwnedByUser(userInfo.UserName)).ToList();
+            ToolsBorrowed = (await ToolsDataService.GetToolsBorrowedByUser(userInfo.UserName)).ToList();
             Snackbar.Add("Tool successfully deleted!", Severity.Success);    
         }
         else

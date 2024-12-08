@@ -14,7 +14,7 @@ public partial class ManagePod : ComponentBase
     public PodDto Pod { get; set; }
     public string NewPodName { get; set; } = string.Empty;
     public string NewPodManagerName { get; set; } = string.Empty;
-    private IEnumerable<AppUserDto> NoPodUsers { get; set; }
+    private List<AppUserDto> NoPodUsers { get; set; } = new List<AppUserDto>();
     
     [Parameter]
     public int podId { get; set; }
@@ -30,6 +30,8 @@ public partial class ManagePod : ComponentBase
         NewPodName = Pod.Name;
         NewPodManagerName = Pod.podManager.UserName;
         NoPodUsers = (await UsersDataService.GetNoPodUsers()).ToList();
+        var admin = NoPodUsers.FirstOrDefault(u => u.UserName == "admin");
+        if (admin != null) NoPodUsers.Remove(admin);
         _isLoading = false;
     }
 
@@ -51,7 +53,6 @@ public partial class ManagePod : ComponentBase
             Pod = await PodsDataService.FindPodDetailsById(podId);
             NoPodUsers = (await UsersDataService.GetNoPodUsers()).ToList();
             Snackbar.Add("User Added Successfully!", Severity.Success);
-
         }
         else
         {
@@ -79,7 +80,7 @@ public partial class ManagePod : ComponentBase
         var result = await PodsDataService.ChangeManager(Pod.PodId, NewPodManagerName);
         if (result.Succeeded)
         {
-            NavigationManager.NavigateTo("", forceLoad: true);
+            NavigationManager.NavigateTo("logout", forceLoad: true);
         }
         else
         {
@@ -106,7 +107,8 @@ public partial class ManagePod : ComponentBase
     {
         bool? result = await DialogService.ShowMessageBox(
             "Warning", 
-            "Deleting can not be undone! Are you sure? Once deleted, you " +
+            "Deleting can not be undone! Are you really sure? Once deleted, your user" +
+            "will also be deleted and" +
             "will be sent back to the login page.", 
             yesText:"Delete!", cancelText:"Cancel");
 

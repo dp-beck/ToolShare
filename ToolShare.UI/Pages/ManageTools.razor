@@ -24,7 +24,28 @@
                     <MudLink Href="@($"tool-detail/{context.Item.ToolId}")">@context.Item.Name</MudLink>
                 </CellTemplate>
             </PropertyColumn>
-            <PropertyColumn Property="tool => tool.ToolStatus" Title="Availability"/>
+            <PropertyColumn Property="tool => tool.ToolStatus" Title="Availability">
+                <CellTemplate>
+                    @switch (context.Item.ToolStatus)
+                    {
+                        case ToolStatus.Available:
+                            <MudText Typo="Typo.body1" Color="Color.Tertiary">Available</MudText>
+                            break;
+                        case ToolStatus.Borrowed:
+                            <MudText Typo="Typo.body1" Color="Color.Secondary">Borrowed</MudText>
+                            break;
+                        case ToolStatus.Requested:
+                            <MudText Typo="Typo.body1" Color="Color.Primary">Requested</MudText>
+                            break;
+                        case ToolStatus.ReturnPending:
+                            <MudText Typo="Typo.body1" Color="Color.Dark">Return Pending</MudText>
+                            break;
+                        default:
+                            <MudText Typo="Typo.body1" Color="Color.Default">@context.Item.ToolStatus</MudText>
+                            break;
+                    }
+                </CellTemplate>
+            </PropertyColumn>            
             <PropertyColumn Property="tool => tool.ToolRequesterName" Title="Requester"/>
             <PropertyColumn Property="tool => tool.ToolBorrowerName" Title="Borrower"/>
             <PropertyColumn Property="tool => tool.BorrowingPeriodInDays" Title="Loan Period (Days)"/>
@@ -40,8 +61,11 @@
                             <MudText Typo="Typo.body1">Due: @context.Item.DateDue</MudText>
                             break;
                         case ToolStatus.Requested:
-                            <MudButton OnClick="async () => await HandleAcceptClick(context.Item.ToolId)"
-                                       Variant="Variant.Filled" Color="Color.Primary">Lend Tool</MudButton>
+                            <MudIconButton Icon="@Icons.Material.Filled.CheckCircleOutline" OnClick="async () => await HandleAcceptClick(context.Item.ToolId)"
+                                           Color="Color.Success"/>
+                            
+                            <MudIconButton Icon="@Icons.Material.Outlined.Cancel" OnClick="async () => await HandleRejectToolRequestClick(context.Item.ToolId)"
+                                           Color="Color.Error"/>
                             break;
                         case ToolStatus.ReturnPending:
                             <MudButton OnClick="async () => await HandleAcceptReturnClick(context.Item.ToolId)"
@@ -74,7 +98,28 @@
             <PropertyColumn Property="tool => tool.ToolOwnerName" Title="Borrower"/>
             <PropertyColumn Property="tool => tool.BorrowingPeriodInDays" Title="Loan Period (Days)"/>
             <PropertyColumn Property="tool => tool.DateDue" Title="Date Due"/>
-            <PropertyColumn Property="tool => tool.ToolStatus" Title="Tool Status"/>
+            <PropertyColumn Property="tool => tool.ToolStatus" Title="Availability">
+            <CellTemplate>
+                @switch (context.Item.ToolStatus)
+                {
+                    case ToolStatus.Available:
+                        <MudText Typo="Typo.body1" Color="Color.Tertiary">Available</MudText>
+                        break;
+                    case ToolStatus.Borrowed:
+                        <MudText Typo="Typo.body1" Color="Color.Secondary">Borrowed</MudText>
+                        break;
+                    case ToolStatus.Requested:
+                        <MudText Typo="Typo.body1" Color="Color.Primary">Requested</MudText>
+                        break;
+                    case ToolStatus.ReturnPending:
+                        <MudText Typo="Typo.body1" Color="Color.Dark">Return Pending</MudText>
+                        break;
+                    default:
+                        <MudText Typo="Typo.body1" Color="Color.Default">@context.Item.ToolStatus</MudText>
+                        break;
+                }
+            </CellTemplate>
+            </PropertyColumn>
             <PropertyColumn Property="tool => tool.ToolId" Title="" Sortable="false" Filterable="false">
                 <CellTemplate>
                     @if(context.Item.ToolStatus == ToolStatus.Borrowed)

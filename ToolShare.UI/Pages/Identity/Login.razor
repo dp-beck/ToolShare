@@ -59,17 +59,15 @@
     private async Task DoLoginAsync()
     {
         var result = await Acct.LoginAsync(username, password);
-                if (result.Succeeded)
-                {
-                    success = true;
-                    username = password = string.Empty;
-                }
-                else
-                {
-                    errors = result.ErrorList;
-                }
-            }
-        }
         
+        if (result.Succeeded)
+        { 
+            success = true; 
+            username = password = string.Empty;
+        }
+        else 
+        { 
+            errors = result.ErrorList;
+        }
     }
 }

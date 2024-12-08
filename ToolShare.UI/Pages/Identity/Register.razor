@@ -27,7 +27,7 @@
             <MudGrid>
                 <MudItem xs="12" sm="7">
                     <MudPaper Class="pa-4">
-                        <MudForm @ref="form" @bind-IsValid="@validForm" @bind-Errors="@errors">
+                        <MudForm @bind-IsValid="@validForm" @bind-Errors="@errors">
                             <MudTextField @bind-Value="registrationInfo.UserName" T="string" Label="Username" Required="true" RequiredError="User name is required!"/>
                             <MudTextField @bind-Value="registrationInfo.Email" T="string" Label="Email" Required="true" RequiredError="Email is required!"
                                           Validation="@(new EmailAddressAttribute() { ErrorMessage = "The email address is invalid" })"/>
@@ -76,7 +76,6 @@
 </AuthorizeView>
 
 @code {
-    private MudForm? form;
     string[] errors = { };
     private bool success;
     private bool validForm;
@@ -111,6 +110,8 @@
             yield return "Password must contain at least one lowercase letter";
         if (!Regex.IsMatch(pw, @"[0-9]"))
             yield return "Password must contain at least one digit";
+        if (!Regex.IsMatch(pw, @"[^a-zA-Z0-9]"))
+            yield return "Password must contain at least one non-alphanumeric character";
     }
     
     private string? PasswordMatch(string arg)
@@ -125,7 +126,7 @@
         success =  false;
         errors = [];
 
-        if (registrationInfo.ProfilePhotoUrl is null)
+        if (SecureUrl == String.Empty)
         {
             registrationInfo.ProfilePhotoUrl = "https://res.cloudinary.com/dzsqoueki/image/upload/w_1000,c_fill,ar_1:1,g_auto,r_max,bo_5px_solid_red,b_rgb:262c35/v1731154587/blank-profile-picture-973460_1280_pxrhwm.png";
         }
@@ -150,6 +151,7 @@
         else
         {
             errors = result.ErrorList;
+            registrationInfo.ProfilePhotoUrl = null;
         }
     }
     

@@ -13,6 +13,7 @@ namespace ToolShare.UI.Services
         public Task<ServiceResult> UpdateTool(int toolId, UpdateToolDto updateToolDto);
         public Task<ServiceResult> RequestTool(int toolId);
         public Task<ServiceResult> LendTool(int toolId);
+        public Task<ServiceResult> RejectToolRequest(int toolId);
         public Task<ServiceResult> RequestToolReturn(int toolId);
         public Task<ServiceResult> AcceptToolReturned(int toolId);
         public Task<ServiceResult> DeleteTool(int toolId);

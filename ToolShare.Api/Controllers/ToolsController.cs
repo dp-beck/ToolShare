@@ -298,6 +298,44 @@ namespace ToolShare.Api.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, $"Database Failure {e.Message}");
             }
         }
+        
+        [HttpPut]
+        [Authorize(Roles = "User,PodManager")]
+        [Route("{toolId}/reject-tool-request")]
+        public async Task<IActionResult> RejectToolRequest(int toolId)
+        {
+            try 
+            {
+                var toolRequested = await _toolsRepository.FindByIdWithIncludes(toolId, 
+                    t => t.ToolId == toolId,
+                    t => t.ToolRequester, t=> t.ToolBorrower);
+                if (toolRequested == null) return NotFound("Could not find tool with this id.");
+                
+                var currentUser = await _userManager.GetUserAsync(HttpContext.User);
+                if (currentUser is null) return NotFound("Could not find current user.");
+                
+                if (toolRequested.ToolRequester is null) return BadRequest(new {Message = "No one has requested this tool."});
+
+                if (toolRequested.OwnerId != currentUser.Id)
+                    return BadRequest(new {Message = "You are not the owner of this tool."});
+                
+                toolRequested.ToolRequester = null;
+                toolRequested.ToolStatus = ToolStatus.Available;
+
+                await _toolsRepository.SaveChanges();
+
+                return Ok(new {Message = "Tool request rejected."});
+            }
+            catch (Exception e)
+            {
+                if (e.InnerException != null)
+                {
+                    return StatusCode(StatusCodes.Status500InternalServerError,
+                        $"Database Failure: {e.InnerException.Message}");   
+                } 
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Database Failure {e.Message}");
+            }
+        }
 
         [HttpPut]
         [Authorize(Roles = "User,PodManager")]

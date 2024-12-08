@@ -22,7 +22,7 @@ public partial class AddTool : ComponentBase
     
     private async Task HandleSubmit()
     { 
-        if (ToolDto.ToolPhotoUrl is null)
+        if (secureUrl == string.Empty)
         {
             ToolDto.ToolPhotoUrl = "https://res.cloudinary.com/dzsqoueki/image/upload/w_1000,ar_1:1,c_fill,g_auto,e_art:hokusai/v1732729454/screwdriver-1294338_1280_e5qlme.png";
         }

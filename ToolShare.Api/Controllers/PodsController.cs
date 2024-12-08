@@ -306,15 +306,15 @@ namespace ToolShare.Api.Controllers
                     podId, p => p != null && p.PodId == podId, p => p.PodMembers);
                 if (pod is null) return BadRequest(new {Message ="No pod located with that id"});
 
-                if (pod.PodMembers.Any())
-                    return BadRequest(new { Message = "You must remove all members from the pod before deleting, including yourself"});
-                
-                await _userManager.RemoveFromRoleAsync(currentPodManager, "PodManager");
-                await _userManager.AddToRoleAsync(currentPodManager, "NoPodUser");
-            
-                await _podsRepository.Delete(pod);
+                if (pod.PodMembers.Count == 1 && pod.PodMembers.Contains(currentPodManager))
+                {
+                    await _podsRepository.Delete(pod);
 
-                return Ok(new {Message = "Pod sucessfully deleted."});
+                    return Ok(new {Message = "Pod sucessfully deleted."});    
+                }    
+                
+                return BadRequest(new { Message = "You must remove all other members from the pod before deleting."});
+                
             }
             catch (Exception)
             {
