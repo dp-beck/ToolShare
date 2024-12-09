@@ -240,11 +240,8 @@ namespace ToolShare.Api.Controllers
 
                 if (toolRequested.ToolStatus != ToolStatus.Available)
                     return BadRequest(new { Message = "This tool is not available." });
-
-                toolRequested.ToolRequester = currentUser;
-                toolRequested.ToolStatus = ToolStatus.Requested;
-
-                await _toolsRepository.SaveChanges();
+                
+                await _toolsRepository.RequestTool(toolRequested, currentUser);
 
                 return Ok(new {Message = "Tool successfully requested."});
             }
@@ -279,12 +276,7 @@ namespace ToolShare.Api.Controllers
                 if (toolBorrowed.OwnerId != currentUser.Id)
                     return BadRequest(new {Message = "You are not the owner of this tool."});
             
-                toolBorrowed.ToolBorrower = toolBorrowed.ToolRequester;
-                toolBorrowed.ToolRequester = null;
-                toolBorrowed.ToolStatus = ToolStatus.Borrowed;
-                toolBorrowed.DateBorrowed = DateOnly.FromDateTime(DateTime.Now);
-
-                await _toolsRepository.SaveChanges();
+                await _toolsRepository.LendTool(toolBorrowed, currentUser);
 
                 return Ok(new {Message = "Tool successfully lent."});
             }
@@ -319,10 +311,7 @@ namespace ToolShare.Api.Controllers
                 if (toolRequested.OwnerId != currentUser.Id)
                     return BadRequest(new {Message = "You are not the owner of this tool."});
                 
-                toolRequested.ToolRequester = null;
-                toolRequested.ToolStatus = ToolStatus.Available;
-
-                await _toolsRepository.SaveChanges();
+                await _toolsRepository.RejectToolRequest(toolRequested);
 
                 return Ok(new {Message = "Tool request rejected."});
             }
@@ -344,26 +333,21 @@ namespace ToolShare.Api.Controllers
         {
             try 
             {
-                var toolBorrowed = await _toolsRepository.FindByIdWithIncludes(toolId, 
+                var toolReturned = await _toolsRepository.FindByIdWithIncludes(toolId, 
                     t => t.ToolId == toolId,
                     t=> t.ToolBorrower);
-                if (toolBorrowed == null) return NotFound("Could not find tool with this id.");
+                if (toolReturned == null) return NotFound("Could not find tool with this id.");
 
                 var currentUser = await _userManager.GetUserAsync(HttpContext.User);
                 if (currentUser is null) return NotFound("Could not find current user.");
 
-                if (toolBorrowed.OwnerId != currentUser.Id)
+                if (toolReturned.OwnerId != currentUser.Id)
                     return BadRequest(new {Message = "You are not the owner of this tool."});
                 
-                if (toolBorrowed.ToolStatus != ToolStatus.ReturnPending)
+                if (toolReturned.ToolStatus != ToolStatus.ReturnPending)
                     return BadRequest(new {Message = "This tool is not pending return."});
-            
-                toolBorrowed.ToolBorrower = null;
-                toolBorrowed.BorrowerId = null;
-                toolBorrowed.ToolStatus = ToolStatus.Available;
-
-                await _toolsRepository.SaveChanges();
-
+                
+                await _toolsRepository.AcceptToolReturn(toolReturned);
                 return Ok(new {Message = "Tool return accepted successfully."});
             }
             catch (Exception e)
