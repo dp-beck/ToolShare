@@ -31,10 +31,36 @@ This app was created as the capstone project for the Code Kentucky Software
 Development Course (2024). I have integrate the following features in the
 app from the Features List:
 
-| Feature                                    | Description                                                                                                                                                                                                                                                                                                                             | Location in Code                                            |
-|--------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------|
-| Implement a regular <br/>expression (regex)| I use MudForms from Mudblazor to accept and validate user input to create a new user. The validation function for the password uses Regexes to enforce password strength rules. While most of these were provided by MudBlazor, I wrote a custom regex to enforce rule that password must have at least one non-alphanumeric character. | ToolShare.UI / Pages / Identity / Register.razor - Line 113 |
+1. **Implement a regular expression (regex) to validate or ensure a field is always stored and 
+displayed in the correct format:**
+   1. I use MudForms from Mudblazor to accept and validate user input to create a new user. 
+   The validation function for the password uses Regexes to enforce password strength rules. 
+   While most of these were provided by MudBlazor, I wrote a custom regex to enforce rule that 
+   password must have at least one non-alphanumeric character.
+   2. *Location in Code* - ToolShare.UI / Pages / Identity / Register.razor - Line 113
 
-Identify 3+ features from the provided list that you've integrated.
+2. **Create a dictionary or list, populate it with several values, retrieve at least one value, 
+and use it in your program**
+   1. One Example: Both the AppUser and Pod Models use ICollections to store lists of objects associated
+   with that user or pod (e.g., tools owned, tools borrowed, pod members). Those lists are accessed in the 
+   UI projects and the contents are displayed in tables or lists for the user.
+   2. *Location in Code* - ToolShare.Data / Models / Pod.cs & AppUser.cs; Usage: ToolShare.UI / Pages / Home / HomePodUser.cs & HomeNoPodUser.cs
 
-Add any special instructions for the reviewer to run your project.
+3. **Make a generic class and use it**
+   1. I created a Generic Repository class to handle some of the more generic operations on
+   the database for the different tables (e.g., GetAll, FindById, Delete)
+   2. *Location in Code* - ToolShare.Data / Repositories / GenericRepository.cs; Usage: ToolShare.API / Controllers
+
+4. **Make your application an API.**
+   1. I separated my Frontend / Client from my API in my solution, so interaction with the database is mediated by
+   an API, thus enabling the API to interact with additional frontends. The client interacts with the
+   database through a number of defined endpoints.
+   2. *Location in Code* - ToolShare.API
+
+5. **Make your application a CRUD API**
+   1. The API for this project supports creating, reading, updating, and deleting databse entries.
+   2. *Location in Code* - ToolShare.API
+
+6. **Make your application asynchronous**
+   1. Numerous methods in the solution as defined asynchronously, primarily any that mediate
+   interaction with the database.
