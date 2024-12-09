@@ -24,6 +24,18 @@ how long someone has had your tool.
 
 ## Instructions: running the App locally
 
+1. Clone the repo to your local machine.
+2. There are two projects to run, as the API and UI are separate projects: 
+ToolShare.API and ToolShare.UI
+3. The App uses a local SQLITE database with seed data. Upon launching the API,
+a new database will be spun up with sample data, including sample users. You can
+test the app using one of these fake users.
+
+User Name: fredjones
+Password: Passw0rd!
+
+You can also register a new user to experience what the app is like for a completely new user.
+
 ** IN PROGRESS **
 
 ## Features

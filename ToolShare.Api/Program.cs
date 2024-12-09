@@ -1,6 +1,7 @@
 using System.Reflection;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using ToolShare.Api;
 using ToolShare.Data;
 using ToolShare.Data.Models;
@@ -63,31 +64,48 @@ builder.Services.AddScoped<IPodsRepository, PodsRepository>();
 
 var app = builder.Build();
 
-// Configure Roles for Authorization
-using (var scope = app.Services.CreateScope())
-{
-    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-    string[] roles = ["NoPodUser", "User", "PodManager", "Administrator"];
-
-    foreach (var role in roles)
-    {
-        if (!await roleManager.RoleExistsAsync(role))
-            await roleManager.CreateAsync(new IdentityRole(role));
-    }
-}
-
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    // Seed the Database
-    await using var scope = app.Services.CreateAsyncScope();
-    await SeedData.InitializeUsersAsync(scope.ServiceProvider);
-    await SeedData.InitializePodsAsync(scope.ServiceProvider);
-    await SeedData.InitializeToolsAsync(scope.ServiceProvider);
+    await using (var scope = app.Services.CreateAsyncScope())
+    {
+        // Ensure Local Database Is Created and Migrations Applied 
+        var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        await db.Database.MigrateAsync();
+        
+        // Configure Roles for Authorization
+        var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+        string[] roles = ["NoPodUser", "User", "PodManager", "Administrator"];
+
+        foreach (var role in roles)
+        {
+            if (!await roleManager.RoleExistsAsync(role))
+                await roleManager.CreateAsync(new IdentityRole(role));
+        }
+        
+        // See Local Database
+        await SeedData.InitializeUsersAsync(scope.ServiceProvider);
+        await SeedData.InitializePodsAsync(scope.ServiceProvider);
+        await SeedData.InitializeToolsAsync(scope.ServiceProvider);
+        
+    }
     
     app.UseOpenApi();
     app.UseSwaggerUI();
 }
+
+// Configure Roles for Authorization
+// using (var scope = app.Services.CreateScope())
+// {
+//     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+//     string[] roles = ["NoPodUser", "User", "PodManager", "Administrator"];
+//
+//     foreach (var role in roles)
+//     {
+//         if (!await roleManager.RoleExistsAsync(role))
+//             await roleManager.CreateAsync(new IdentityRole(role));
+//     }
+// }
 
 app.UseCors("wasm");
 
