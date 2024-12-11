@@ -23,6 +23,8 @@ requests to borrow your tools. The app displays due dates so that you can track
 how long someone has had your tool. 
 
 You can access the app at https://toolshare.azurewebsites.net.
+*Currently not playing nicely with Safari, but should be fine on Chrome or Firefox.*
+*I have not tested it on other browsers.*
 
 ## Instructions: running the app locally
 
