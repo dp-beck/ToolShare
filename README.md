@@ -22,21 +22,37 @@ Through the app you can request a tool, as well as accept (or reject!) others'
 requests to borrow your tools. The app displays due dates so that you can track
 how long someone has had your tool. 
 
-## Instructions: running the App locally
+You can access the app at https://toolshare.azurewebsites.net.
+
+## Instructions: running the app locally
 
 1. Clone the repo to your local machine.
-2. There are two projects to run, as the API and UI are separate projects: 
-ToolShare.API and ToolShare.UI
+2. There are two projects to launch, as the API and UI are separate projects: 
+ToolShare.API and ToolShare.UI. Please launch both projects.
 3. The App uses a local SQLITE database with seed data. Upon launching the API,
-a new database will be spun up with sample data, including sample users. You can
-test the app using one of these fake users.
+a new database will be spun up with sample data, including sample users. So, you do 
+not need to create your own database before launching the projects.
 
-User Name: fredjones
-Password: Passw0rd!
+## Seed Data
 
-You can also register a new user to experience what the app is like for a completely new user.
+Feel free to create a new user to get a sense for what the site looks like for a new user.
+The site has also been seeded with several fake users so that you can get a feel for the
+site as it may be experienced by users with different roles. Access the site with the 
+following usernames to see the site through these fake users' experience. The password
+for all these fake users is Passw0rd! 
 
-** IN PROGRESS **
+### Pod Managers
+1. fredjones
+2. tomsmith
+
+### Pod Users
+1. wendy123
+2. janedoe
+3. Sunshine
+
+### No Pod Users
+1. jonjon
+2. SharpScissors
 
 ## Features
 This app was created as the capstone project for the Code Kentucky Software
