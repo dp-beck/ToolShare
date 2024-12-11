@@ -35,6 +35,8 @@ builder.Services.ConfigureApplicationCookie(options =>
         context.Response.StatusCode = 401; // Unauthorized
         return Task.CompletedTask;
     };
+    options.Cookie.SameSite = SameSiteMode.None;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
 });
     
 
