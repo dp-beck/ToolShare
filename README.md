@@ -23,8 +23,14 @@ requests to borrow your tools. The app displays due dates so that you can track
 how long someone has had your tool. 
 
 You can access the app at https://toolshare.azurewebsites.net.
-*Currently not playing nicely with Safari, but should be fine on Chrome or Firefox.*
-*I have not tested it on other browsers.*
+
+*I have tested, and it works fine on most major browsers, except Safari.*
+
+*Safari prevent cross-site tracking by default, and this prevents the browser
+from sending the app's identity / authorization cookie along with http requests. If using
+Safari, you need to disable "Prevent cross-site tracking", for the authorization to work.*
+
+*Future iterations of this app will likely involve changes to the authorization scheme to prevent such issues.*
 
 ## Instructions: running the app locally
 
