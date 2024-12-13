@@ -62,7 +62,13 @@ Feel free to create a new user to get a sense for what the site looks like for a
 The site has also been seeded with several fake users so that you can get a feel for the
 site as it may be experienced by users with different roles. Access the site with the 
 following usernames to see the site through these fake users' experience. The password
-for all these fake users is Passw0rd! 
+for all these fake users is Passw0rd! You can see the Seed Data added to an empty database
+at ToolShare.Api/SeedData.cs
+
+*Note: If you are not accessing the site in development mode via a locally cloned version of the
+project, some of these seed data users may have been changed by other users' actions. Please, if you
+are using the seed data users to test updates to usernames or passwords, change them back to their
+original configuration so others can still access.*
 
 ### Pod Managers
 1. fredjones
