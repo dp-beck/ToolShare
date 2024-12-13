@@ -34,10 +34,25 @@ Safari, you need to disable "Prevent cross-site tracking", for the authorization
 
 ## Instructions: running the app locally
 
-1. Clone the repo to your local machine.
-2. There are two projects to launch, as the API and UI are separate projects: 
-ToolShare.API and ToolShare.UI. Please launch both projects.
-3. The App uses a local SQLITE database with seed data. Upon launching the API,
+1. This project targets the .NET v.8.0 Framework. Ensure you have the
+appropriate .NET SDK and Runtime installed on your machine: https://dotnet.microsoft.com/en-us/download/dotnet/8.0
+
+
+2. Clone the repo to your local machine.
+
+```
+git clone https://github.com/dp-beck/ToolShare.git
+```
+3. There are two projects to launch, as the API and UI are separate projects: 
+ToolShare.API and ToolShare.UI. Please launch both projects. 
+   1. From Terminal, navigate to the project folder holding ToolShare.API and run "dotnet run." This project
+   implements Swagger UI in Development mode. Navigate to the localhost url + "/swagger" in your browser to 
+   test the API using Swagger.
+   2. Then, navigate to the project folder holding ToolShare.UI and run "dotnet run." Open the localhost url 
+   outputted in the the terminal console in your browser.
+
+
+4. The App uses a local SQLITE database with seed data. Upon launching the API,
 a new database will be spun up with sample data, including sample users. So, you do 
 not need to create your own database before launching the projects.
 
