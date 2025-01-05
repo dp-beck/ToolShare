@@ -59,3 +59,11 @@ builder.Services.AddHttpClient(
 builder.Services.AddMudServices();
 
 await builder.Build().RunAsync();
+// Possible code to add -- delete above line first
+// var app = builder.Build();
+// app.Use(async (context, next) =>
+// {
+//     context.Response.Headers.Append("Content-Security-Policy", "script-src 'self' https://upload-widget.cloudinary.com;");
+//     await next();
+// });
+// app.RunAync();

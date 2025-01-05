@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ToolShare.Data", "ToolShare
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ToolShare.UI", "ToolShare.UI\ToolShare.UI.csproj", "{089181AD-444C-472A-8784-70A2D12DE0D6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ToolShare.Tests", "ToolShare.Tests\ToolShare.Tests.csproj", "{5EFAC058-BD05-4361-9D03-B1D1479613A0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,5 +32,9 @@ Global
 		{089181AD-444C-472A-8784-70A2D12DE0D6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{089181AD-444C-472A-8784-70A2D12DE0D6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{089181AD-444C-472A-8784-70A2D12DE0D6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5EFAC058-BD05-4361-9D03-B1D1479613A0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5EFAC058-BD05-4361-9D03-B1D1479613A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5EFAC058-BD05-4361-9D03-B1D1479613A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5EFAC058-BD05-4361-9D03-B1D1479613A0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
